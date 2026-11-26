@@ -1,0 +1,16 @@
+# généré par tools/kit-github.mjs
+name: 🐛 Bug
+description: Quelque chose ne marche pas comme prévu
+labels: [bug]
+body:
+  - type: textarea
+    id: quoi
+    attributes: { label: Ce qui se passe, description: "Ce que tu as fait, ce que tu attendais, ce qui est arrivé." }
+    validations: { required: true }
+  - type: input
+    id: page
+    attributes: { label: Page ou écran concerné }
+  - type: dropdown
+    id: priorite
+    attributes: { label: Priorité, options: ["P0 — bloque le jalon ouvert", "P1 — jalon suivant", "P2 — confort"] }
+    validations: { required: true }

@@ -1,0 +1,65 @@
+{
+ "_": "généré par tools/kit-github.mjs",
+ "labels": [
+  {
+   "name": "priorité:P0",
+   "color": "b60205",
+   "description": "🔴 bloque le jalon ouvert"
+  },
+  {
+   "name": "priorité:P1",
+   "color": "d93f0b",
+   "description": "🟠 jalon suivant"
+  },
+  {
+   "name": "priorité:P2",
+   "color": "fbca04",
+   "description": "🟡 outillage, confort"
+  },
+  {
+   "name": "jalon:N0",
+   "color": "0e8a16",
+   "description": "Socle"
+  },
+  {
+   "name": "jalon:N1",
+   "color": "1d76db",
+   "description": "Montrable"
+  },
+  {
+   "name": "jalon:N2",
+   "color": "5319e7",
+   "description": "Présentable"
+  },
+  {
+   "name": "jalon:N3",
+   "color": "000000",
+   "description": "Professionnel"
+  },
+  {
+   "name": "qualité",
+   "color": "c5def5",
+   "description": "ouvert par la boucle qualité (tools/boucle.mjs)"
+  },
+  {
+   "name": "bug",
+   "color": "ee0701",
+   "description": "🐛"
+  },
+  {
+   "name": "fonctionnalité",
+   "color": "a2eeef",
+   "description": "✨"
+  },
+  {
+   "name": "dépendances",
+   "color": "0366d6",
+   "description": "📦 Dependabot"
+  },
+  {
+   "name": "release",
+   "color": "ededed",
+   "description": "🔖 release-please"
+  }
+ ]
+}

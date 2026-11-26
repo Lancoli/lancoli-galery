@@ -1,0 +1,17 @@
+# généré par tools/kit-github.mjs
+name: ✨ Fonctionnalité
+description: Une évolution, rattachée à un jalon
+labels: [fonctionnalité]
+body:
+  - type: textarea
+    id: besoin
+    attributes: { label: Le besoin, description: "Pour qui, pour quoi faire. Le comment vient après." }
+    validations: { required: true }
+  - type: dropdown
+    id: jalon
+    attributes: { label: Jalon, options: [N0 Socle, N1 Montrable, N2 Présentable, N3 Professionnel] }
+    validations: { required: true }
+  - type: textarea
+    id: fini
+    attributes: { label: "C'est fini quand…", description: "Critère vérifiable, idéalement par tools/jalons.mjs." }
+    validations: { required: true }

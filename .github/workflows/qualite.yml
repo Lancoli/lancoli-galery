@@ -1,0 +1,23 @@
+# généré par tools/kit-github.mjs
+# Lint des commits et du titre de PR, avec la même règle que le hook local (scripts/commit-msg.mjs).
+name: qualité
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+permissions: { contents: read, pull-requests: read }
+jobs:
+  commits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: titre de la PR
+        env: { TITRE: "${{ github.event.pull_request.title }}" }
+        run: node .github/scripts/commit-msg.mjs --texte "$TITRE"
+      - name: messages des commits
+        run: |
+          for c in $(git rev-list ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}); do
+            git log -1 --format=%B "$c" > /tmp/msg && node .github/scripts/commit-msg.mjs /tmp/msg || exit 1
+          done

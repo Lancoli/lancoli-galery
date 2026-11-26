@@ -1,0 +1,14 @@
+# généré par tools/kit-github.mjs
+# PR de release automatique : à chaque push sur main, release-please tient une PR « chore: release »
+# (version, CHANGELOG.md tiré des feat/fix). La fusionner crée le tag et la release GitHub.
+name: release
+on:
+  push:
+    branches: [main]
+permissions: { contents: write, pull-requests: write }
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with: { release-type: simple }
