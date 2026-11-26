@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="fr" class="film film--horla stage">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Horlando Blast — Film d’animation 3D, deuil et visions | Lancoli</title>
+    <meta name="description" content="Paris, la nuit, un poste sur l’épaule. Horlando Blast, film d’animation 3D en cours : un storyboard audio à écouter, une ville à parcourir, un récit sur le deuil.">
+    <link rel="canonical" href="https://lancoli.fr/horla.html">
+    <meta name="author" content="Lancoli">
+    <meta name="theme-color" content="#100f0d">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- Partage : aperçu sur les réseaux et les messageries -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Lancoli">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content="Horlando Blast — Film d’animation 3D, deuil et visions | Lancoli">
+    <meta property="og:description" content="Paris, la nuit, un poste sur l’épaule. Horlando Blast, film d’animation 3D en cours : un storyboard audio à écouter, une ville à parcourir, un récit sur le deuil.">
+    <meta property="og:url" content="https://lancoli.fr/horla.html">
+    <meta property="og:image" content="https://lancoli.fr/assets/share/horlando-blast.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Un boombox posé sur un meuble, une chaise vide, une pièce baignée de lumière orange">
+    <meta name="twitter:card" content="summary_large_image">
+    <!-- Données structurées : qui, quoi, où, pour les moteurs -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "CreativeWork",
+                "@id": "https://lancoli.fr/horla.html#film",
+                "name": "Horlando Blast",
+                "description": "Horlando vit à Paris, un poste sur l’épaule. Depuis l’accident, ce qu’il voit et ce dont il se souvient ne se séparent plus.",
+                "url": "https://lancoli.fr/horla.html",
+                "image": "https://lancoli.fr/assets/projects/Horla/web/salon-05.jpg",
+                "genre": [
+                    "Film",
+                    "Animation 3D",
+                    "Drame"
+                ],
+                "creativeWorkStatus": "Ébauche",
+                "inLanguage": "fr",
+                "creator": {
+                    "@id": "https://lancoli.fr/#lancoli"
+                },
+                "author": {
+                    "@id": "https://lancoli.fr/#lancoli"
+                }
+            },
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Lancoli",
+                        "item": "https://lancoli.fr/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Projets",
+                        "item": "https://lancoli.fr/projets.html"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Horlando Blast",
+                        "item": "https://lancoli.fr/horla.html"
+                    }
+                ]
+            }
+        ]
+    }
+    </script>
+    <script>document.documentElement.classList.add('js')</script>
+    <link rel="stylesheet" href="css/lancoli.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+
+<body data-chapter="3">
+    <div class="aura" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="curtain" aria-hidden="true"><span class="curtain-label"></span></div>
+
+    <header class="reveal" style="--d:0">
+        <div class="page nav">
+            <a class="logo" href="./" data-transition data-label="La galerie">Lancoli<sup>®</sup></a>
+            <nav>
+                <div class="chapter" style="--step:2"><span>II</span><span class="chapter-bar"></span><span>03</span></div>
+                <a href="./" data-transition data-label="La galerie" data-i18n="nav.gallery">Galerie</a>
+                <a href="demarche.html" data-transition data-label="Démarche" data-i18n="footer.approach">Démarche</a>
+                <a href="projets.html" data-transition data-label="Projets" data-i18n="nav.projects">Projets</a>
+                <a href="./#ateliers" data-transition data-label="Ateliers" data-i18n="nav.tools">Ateliers</a>
+                <div class="lang" role="group" aria-label="Langue" data-i18n-attr="aria-label:nav.lang"><button type="button" data-lang="fr">FR</button><button type="button" data-lang="en">EN</button></div>
+                <a class="pill" href="contact.html" data-transition data-label="Contact" data-i18n="nav.contact">Contact ↗</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page horla">
+        <!-- Temps 1 : l'entrée. Un titre, un poste, une cassette. -->
+        <section class="horla-intro">
+            <div class="kicker reveal" style="--d:1"><a href="projets.html" data-transition data-label="Projets">← Projets</a> · Projet 02 · Film</div>
+            <h1 class="reveal" style="--d:2">Horlando <em>Blast</em></h1>
+            <p class="horla-lead reveal" style="--d:3">Tout commence par une cassette.</p>
+            <p class="reveal" style="--d:4">Horlando vit à Paris, sans emploi, dans quinze mètres carrés, un poste sur
+                l’épaule. Sa sœur est morte dans un accident de voiture. Depuis, ce qu’il voit et ce dont il se
+                souvient ne se séparent plus.</p>
+            <button type="button" class="horla-start slate reveal" style="--d:5">
+                <span class="horla-start-icon" aria-hidden="true"></span>
+                <span>Insérer la cassette<small>Storyboard audio · v0.6 · 4:44</small></span>
+            </button>
+            <button type="button" class="horla-who slate reveal" style="--d:6" data-file="horlando">Qui est Horlando ? →</button>
+        </section>
+
+        <!-- Temps 2 : la ville. Le son conduit, la carte suit. -->
+        <section class="horla-world" aria-label="La ville de Horlando Blast">
+            <div class="world-legend slate"><b>N05</b>Horlando Blast · storyboard audio</div>
+            <div class="world-tabs">
+                <button type="button" class="world-tab slate" data-file="horlando">Horlando · 00</button>
+                <button type="button" class="world-tab slate" data-file="coulisses">Coulisses · 06</button>
+            </div>
+
+            <div class="stops">
+                <button type="button" class="stop" style="--accent:#58c7e0" data-file="chambre">
+                    <span class="stop-pin"></span>
+                    <span class="stop-name slate"><i>03</i>La chambre</span>
+                    <span class="stop-card"><span class="stop-stack"><img src="assets/projects/Horla/web/room-03-s.jpg" alt=""><img src="assets/projects/Horla/web/room-02-s.jpg" alt=""><img src="assets/projects/Horla/web/room-07-s.jpg" alt=""></span><span class="slate">Ouvrir le dossier →</span></span>
+                </button>
+                <button type="button" class="stop" style="--accent:#ff8a2a" data-file="poste">
+                    <span class="stop-pin"></span>
+                    <span class="stop-name slate"><i>05</i>Le poste</span>
+                    <span class="stop-card"><span class="stop-stack"><img src="assets/projects/Horla/web/salon-05-s.jpg" alt=""><img src="assets/projects/Horla/web/salon-01-s.jpg" alt=""><img src="assets/projects/Horla/web/salon-03-s.jpg" alt=""></span><span class="slate">Ouvrir le dossier →</span></span>
+                </button>
+                <button type="button" class="stop" style="--accent:#f2c14e" data-file="barres">
+                    <span class="stop-pin"></span>
+                    <span class="stop-name slate"><i>01</i>Les barres</span>
+                    <span class="stop-card"><span class="stop-stack"><img src="assets/projects/Horla/web/bars-03-s.jpg" alt=""><img src="assets/projects/Horla/web/bars-01-s.jpg" alt=""><img src="assets/projects/Horla/web/bars-02-s.jpg" alt=""></span><span class="slate">Ouvrir le dossier →</span></span>
+                </button>
+                <button type="button" class="stop" style="--accent:#c79bf2" data-file="lotissement">
+                    <span class="stop-pin"></span>
+                    <span class="stop-name slate"><i>02</i>Le lotissement</span>
+                    <span class="stop-card"><span class="stop-stack"><img src="assets/projects/Horla/web/estate-04-s.jpg" alt=""><img src="assets/projects/Horla/web/estate-03-s.jpg" alt=""><img src="assets/projects/Horla/web/estate-07-s.jpg" alt=""></span><span class="slate">Ouvrir le dossier →</span></span>
+                </button>
+                <button type="button" class="stop" style="--accent:#ff4d3d" data-file="terminus">
+                    <span class="stop-pin"></span>
+                    <span class="stop-name slate"><i>04</i>Le terminus</span>
+                    <span class="stop-card"><span class="stop-stack"><img src="assets/projects/Horla/web/station-03-s.jpg" alt=""><img src="assets/projects/Horla/web/station-01-s.jpg" alt=""><img src="assets/projects/Horla/web/station-04-s.jpg" alt=""></span><span class="slate">Ouvrir le dossier →</span></span>
+                </button>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-now">
+                    <span class="timeline-num slate">Lieu 01 / 05</span>
+                    <strong class="timeline-title">Les barres</strong>
+                    <button type="button" class="timeline-open slate">Ouvrir le dossier →</button>
+                </div>
+                <div class="timeline-bar">
+                    <button type="button" class="timeline-play" aria-label="Lecture / pause"></button>
+                    <div>
+                        <div class="timeline-track">
+                            <canvas aria-hidden="true"></canvas>
+                            <input type="range" class="timeline-seek" min="0" max="1000" value="0" aria-label="Position dans le storyboard audio">
+                        </div>
+                        <div class="timeline-chapters"></div>
+                    </div>
+                    <span class="timeline-time slate">0:00 / 4:44</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="world-stage" aria-hidden="true"></div>
+    <div class="tape-cue slate" aria-hidden="true"><span></span>Insérer la cassette</div>
+    <audio id="horla-audio" preload="auto" src="assets/projects/Horla/horla_storyboard_0.6.mp3"></audio>
+
+    <dialog class="file" id="file-horlando" style="--accent:#ff8a2a" aria-labelledby="file-horlando-title">
+        <div class="file-body">
+            <div class="file-head slate"><span>Dossier 00 · Personnage principal</span><button type="button" class="file-close slate" data-close>Fermer ✕</button></div>
+            <div class="paper">
+            <div class="paper-head slate"><span>Fiche de renseignements</span><span>Dossier n° 00 · Ligne N05</span></div>
+            <span class="paper-stamp" aria-hidden="true">Ébauche</span>
+            <h2 id="file-horlando-title">Horl<em>ando</em></h2>
+            <div class="file-intro">
+                <!-- la photo se dépose ici : assets/projects/Horla/Horlando/portrait.jpg -->
+                <figure class="mugshot">
+                    <img src="assets/projects/Horla/Horlando/portrait.jpg" alt="Portrait de Horlando" onerror="this.remove()">
+                    <figcaption class="slate">Horlando · N05</figcaption>
+                </figure>
+                <p>Urbain, sans emploi, quinze mètres carrés insalubres. Il a grandi face à la mer et ne peut plus y
+                    retourner.</p>
+            </div>
+            <h3>Identité</h3>
+            <dl class="sheet-list">
+                <div><dt class="slate">Prénom</dt><dd>Horlando</dd></div>
+                <div><dt class="slate">Sexe</dt><dd>Masculin</dd></div>
+                <div><dt class="slate">Âge</dt><dd><span class="redacted" role="img" aria-label="À définir"></span></dd></div>
+                <div><dt class="slate">Mode de vie</dt><dd>Urbain, sans emploi</dd></div>
+                <div><dt class="slate">Passion</dt><dd><span class="redacted" role="img" aria-label="À définir"></span></dd></div>
+                <div><dt class="slate">Marque distinctive</dt><dd><span class="redacted" role="img" aria-label="À définir"></span></dd></div>
+            </dl>
+            <h3>Habitat</h3>
+            <dl class="sheet-list">
+                <div><dt class="slate">Logement</dt><dd>15 m², insalubre</dd></div>
+                <div><dt class="slate">Né</dt><dd>En province <span class="redacted" role="img" aria-label="À définir"></span></dd></div>
+                <div><dt class="slate">A vécu</dt><dd>La majeure partie de sa vie sur une côte maritime. Plusieurs déménagements.</dd></div>
+                <div><dt class="slate">La côte</dt><dd>Plus possible, depuis un événement.</dd></div>
+                <div><dt class="slate">La ville</dt><dd>Il s’y fait. Ce n’est pas son vrai problème.</dd></div>
+                <div><dt class="slate">La campagne</dt><dd>Elle déclenche chez lui de très mauvaises sensations.</dd></div>
+            </dl>
+            <h3>Personnalité</h3>
+            <dl class="sheet-list">
+                <div><dt class="slate">Rang familial</dt><dd>Aîné</dd></div>
+                <div><dt class="slate">Parents</dt><dd><span class="redacted" role="img" aria-label="À définir"></span> · niveau de vie correct</dd></div>
+                <div><dt class="slate">Frères et sœurs</dt><dd><span class="redacted" role="img" aria-label="À définir"></span></dd></div>
+                <div><dt class="slate">Qualités</dt><dd>Habile, engagé, autonome, persévérant</dd></div>
+                <div><dt class="slate">Défauts</dt><dd>Susceptible. Un faux calme, qui peut être dangereux.</dd></div>
+                <div><dt class="slate">Malgré lui</dt><dd>N’écoute plus personne.</dd></div>
+                <div><dt class="slate">Vice</dt><dd>Un égoïsme naissant.</dd></div>
+            </dl>
+            <h3>Liens</h3>
+            <dl class="sheet-list">
+                <div><dt class="slate">Situation</dt><dd>Célibataire. Plus longue relation : six ans.</dd></div>
+                <div><dt class="slate">Popularité</dt><dd>Autrefois entouré. Désormais fantôme, caché, isolé.</dd></div>
+                <div><dt class="slate">Amis</dt><dd>Un seul encore actif. Beaucoup d’autres, plus aucun lien entretenu.</dd></div>
+            </dl>
+            <h3>Corps et tête</h3>
+            <dl class="sheet-list">
+                <div><dt class="slate">Alimentation</dt><dd>Industrielle. Cuisine pour de bon à quelques occasions.</dd></div>
+                <div><dt class="slate">Lithium</dt><dd>Il s’empoisonne sans en mesurer l’effet. Autre lecture du film : une intoxication plutôt qu’un traumatisme.</dd></div>
+                <div><dt class="slate">Fumées</dt><dd>Combustions diverses, actives et passives.</dd></div>
+                <div><dt class="slate">Médecins</dt><dd>Il les craint, et consulte malgré tout : psy, analyste, psychiatre. Aucun ne l’a connu avant le lithium.</dd></div>
+            </dl>
+            <h3>Ce qui s’est passé</h3>
+            <dl class="sheet-list">
+                <div><dt class="slate">L’accident</dt><dd>Il a provoqué, sans le vouloir, la mort d’un proche.</dd></div>
+                <div><dt class="slate">Circonstances</dt><dd><span class="redacted" role="img" aria-label="À définir"></span></dd></div>
+            </dl>
+            <h3>Pratiques</h3>
+            <dl class="sheet-list">
+                <div><dt class="slate">Sport</dt><dd>Marche, plongée. Un record d’apnée.</dd></div>
+                <div><dt class="slate">Musique</dt><dd>Funk, groove</dd></div>
+                <div><dt class="slate">Flûte</dt><dd>Très fort. Tout le monde s’en fiche.</dd></div>
+                <div><dt class="slate">Passé</dt><dd>A fait partie d’un comité décisionnel.</dd></div>
+                <div><dt class="slate">Formation</dt><dd>Pas scientifique : il ne comprend pas ce que fait le lithium qui coule.</dd></div>
+                <div><dt class="slate">Métier</dt><dd><span class="redacted" role="img" aria-label="À définir"></span></dd></div>
+                <div><dt class="slate">Religion</dt><dd><span class="redacted" role="img" aria-label="À définir"></span></dd></div>
+            </dl>
+            <div class="paper-foot slate"><span>Les zones noircies ne sont pas encore écrites.</span><span>Visa<i></i></span></div>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="file" id="file-chambre" style="--accent:#58c7e0" aria-labelledby="file-chambre-title">
+        <div class="file-body">
+            <div class="file-head slate"><span>Dossier 03 / 06 · 5 fichiers</span><button type="button" class="file-close slate" data-close>Fermer ✕</button></div>
+            <h2 id="file-chambre-title">La <em>chambre</em></h2>
+            <p>Une chambre bleue, un lit défait, un plan de la ville au mur. Le jour n’entre que par une fenêtre.</p>
+            <div class="shots">
+                <figure class="shot shot--wide">
+                    <a href="assets/projects/Horla/web/room-03.jpg" data-zoom data-caption="room_03 · La chambre">
+                        <img loading="lazy" src="assets/projects/Horla/web/room-03.jpg" alt="Une chambre aux murs décrépis baignée de lumière bleue, un lit défait sous la fenêtre">
+                    </a>
+                    <figcaption class="slate">room_03</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/room-02.jpg" data-zoom data-caption="room_02 · Le chevet">
+                        <img loading="lazy" src="assets/projects/Horla/web/room-02.jpg" alt="La chambre bleue, une radio et une tasse sur la table de chevet">
+                    </a>
+                    <figcaption class="slate">room_02</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/room-04.jpg" data-zoom data-caption="room_04 · Le plan au mur">
+                        <img loading="lazy" src="assets/projects/Horla/web/room-04.jpg" alt="La chambre vue de plus loin, un plan de ville et une cible au mur">
+                    </a>
+                    <figcaption class="slate">room_04</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/room-05.jpg" data-zoom data-caption="room_05 · Lumière froide">
+                        <img loading="lazy" src="assets/projects/Horla/web/room-05.jpg" alt="La chambre dans une lumière blanche et froide, des livres sur une étagère">
+                    </a>
+                    <figcaption class="slate">room_05</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/room-07.jpg" data-zoom data-caption="room_07 · Les bougies">
+                        <img loading="lazy" src="assets/projects/Horla/web/room-07.jpg" alt="La chambre de nuit, des bougies allumées devant des photos au mur">
+                    </a>
+                    <figcaption class="slate">room_07</figcaption>
+                </figure>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="file" id="file-poste" style="--accent:#ff8a2a" aria-labelledby="file-poste-title">
+        <div class="file-body">
+            <div class="file-head slate"><span>Dossier 05 / 06 · 5 fichiers</span><button type="button" class="file-close slate" data-close>Fermer ✕</button></div>
+            <h2 id="file-poste-title">Le <em>poste</em></h2>
+            <p>Le boombox, les cassettes, une chaise vide. Dans cette pièce orange, les visions commencent : un écran
+                s’allume, la fenêtre change.</p>
+            <div class="shots">
+                <figure class="shot shot--wide">
+                    <a href="assets/projects/Horla/web/salon-05.jpg" data-zoom data-caption="salon_test_05 · Le poste">
+                        <img loading="lazy" src="assets/projects/Horla/web/salon-05.jpg" alt="Un boombox posé sur un meuble, une chaise vide, une pièce baignée de lumière orange">
+                    </a>
+                    <figcaption class="slate">salon_test_05</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/salon-01.jpg" data-zoom data-caption="room_test_01 · Le boombox">
+                        <img loading="lazy" src="assets/projects/Horla/web/salon-01.jpg" alt="Un boombox et un vieux téléviseur sur un meuble bas, une chaise en plastique, des photos au mur">
+                    </a>
+                    <figcaption class="slate">room_test_01</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/salon-02.jpg" data-zoom data-caption="salon_test_02 · Avant">
+                        <img loading="lazy" src="assets/projects/Horla/web/salon-02.jpg" alt="Le salon orange, un cadre vide et lumineux au fond">
+                    </a>
+                    <figcaption class="slate">salon_test_02</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/salon-03.jpg" data-zoom data-caption="salon_test_03 · La vision">
+                        <img loading="lazy" src="assets/projects/Horla/web/salon-03.jpg" alt="Le même salon, une image bleue apparue dans le cadre du fond">
+                    </a>
+                    <figcaption class="slate">salon_test_03</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/salon-04.jpg" data-zoom data-caption="salon_test_04 · La fenêtre">
+                        <img loading="lazy" src="assets/projects/Horla/web/salon-04.jpg" alt="Le salon, une fenêtre ouverte sur un ciel rose">
+                    </a>
+                    <figcaption class="slate">salon_test_04</figcaption>
+                </figure>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="file" id="file-barres" style="--accent:#f2c14e" aria-labelledby="file-barres-title">
+        <div class="file-body">
+            <div class="file-head slate"><span>Dossier 01 / 06 · 4 fichiers</span><button type="button" class="file-close slate" data-close>Fermer ✕</button></div>
+            <h2 id="file-barres-title">Les <em>barres</em></h2>
+            <p>Dehors, les tours alignées. Quelques fenêtres jaunes, le reste éteint.</p>
+            <div class="shots">
+                <figure class="shot shot--wide">
+                    <a href="assets/projects/Horla/web/bars-03.jpg" data-zoom data-caption="bars_03 · Fenêtres allumées">
+                        <img loading="lazy" src="assets/projects/Horla/web/bars-03.jpg" alt="Une barre d’immeuble de nuit, des fenêtres jaunes allumées, un escalier de secours">
+                    </a>
+                    <figcaption class="slate">bars_03</figcaption>
+                </figure>
+                <figure class="shot">
+                    <a href="assets/projects/Horla/web/bars-01.jpg" data-zoom data-caption="bars_01 · L’alignement">
+                        <img loading="lazy" src="assets/projects/Horla/web/bars-01.jpg" alt="Des tours alignées en perspective sous un ciel gris-vert">
+                    </a>
+                    <figcaption class="slate">bars_01</figcaption>
+                </figure>
+                <figure class="shot">
+                    <a href="assets/projects/Horla/web/bars-02.jpg" data-zoom data-caption="bars_02 · Flou">
+                        <img loading="lazy" src="assets/projects/Horla/web/bars-02.jpg" alt="Les tours hors foyer, des fenêtres orange réduites à des points flous">
+                    </a>
+                    <figcaption class="slate">bars_02</figcaption>
+                </figure>
+                <figure class="shot">
+                    <a href="assets/projects/Horla/web/bars-04.jpg" data-zoom data-caption="bars_04 · Façades">
+                        <img loading="lazy" src="assets/projects/Horla/web/bars-04.jpg" alt="Des façades d’immeubles serrées, balcons et paraboles">
+                    </a>
+                    <figcaption class="slate">bars_04</figcaption>
+                </figure>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="file" id="file-lotissement" style="--accent:#c79bf2" aria-labelledby="file-lotissement-title">
+        <div class="file-body">
+            <div class="file-head slate"><span>Dossier 02 / 06 · 5 fichiers</span><button type="button" class="file-close slate" data-close>Fermer ✕</button></div>
+            <h2 id="file-lotissement-title">Le <em>lotissement</em></h2>
+            <p>Des maisons jamais finies, des fers à béton contre le ciel. Au loin, deux points de lumière qui
+                ressemblent à des phares.</p>
+            <div class="shots">
+                <figure class="shot shot--wide">
+                    <a href="assets/projects/Horla/web/estate-04.jpg" data-zoom data-caption="estate_04 · Le chantier, la nuit">
+                        <img loading="lazy" src="assets/projects/Horla/web/estate-04.jpg" alt="Des maisons en construction à contre-jour dans une brume rousse">
+                    </a>
+                    <figcaption class="slate">estate_04</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/estate-03.jpg" data-zoom data-caption="estate_03 · Les lumières">
+                        <img loading="lazy" src="assets/projects/Horla/web/estate-03.jpg" alt="Les carcasses de maisons, des lumières au loin entre les piliers">
+                    </a>
+                    <figcaption class="slate">estate_03</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/estate-07.jpg" data-zoom data-caption="lotissement_07 · L’aube">
+                        <img loading="lazy" src="assets/projects/Horla/web/estate-07.jpg" alt="Le lotissement en silhouette sous un ciel bleu nuit, une lueur jaune à l’horizon">
+                    </a>
+                    <figcaption class="slate">lotissement_07</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/estate-05.jpg" data-zoom data-caption="estate_05 · Brume">
+                        <img loading="lazy" src="assets/projects/Horla/web/estate-05.jpg" alt="Le lotissement dans la brume, quelques fenêtres éclairées">
+                    </a>
+                    <figcaption class="slate">estate_05</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/estate-06.jpg" data-zoom data-caption="estate_06 · Brume, plus tard">
+                        <img loading="lazy" src="assets/projects/Horla/web/estate-06.jpg" alt="Le même cadre, plus sombre, sous un ciel poussiéreux">
+                    </a>
+                    <figcaption class="slate">estate_06</figcaption>
+                </figure>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="file" id="file-terminus" style="--accent:#ff4d3d" aria-labelledby="file-terminus-title">
+        <div class="file-body">
+            <div class="file-head slate"><span>Dossier 04 / 06 · 3 fichiers</span><button type="button" class="file-close slate" data-close>Fermer ✕</button></div>
+            <h2 id="file-terminus-title">Le <em>terminus</em></h2>
+            <p>Un bus à l’arrêt, ses feux rouges sur le sol mouillé. La nuit, tout ce qui roule le ramène au même
+                endroit.</p>
+            <div class="shots">
+                <figure class="shot shot--wide">
+                    <a href="assets/projects/Horla/web/station-03.jpg" data-zoom data-caption="station_03 · Le bus">
+                        <img loading="lazy" src="assets/projects/Horla/web/station-03.jpg" alt="Un bus de nuit vu de l’arrière, feux rouges allumés, des détritus au sol">
+                    </a>
+                    <figcaption class="slate">station_03</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/station-01.jpg" data-zoom data-caption="station_01 · La gare routière">
+                        <img loading="lazy" src="assets/projects/Horla/web/station-01.jpg" alt="Une gare routière de nuit, ses lampes reflétées sur le sol trempé">
+                    </a>
+                    <figcaption class="slate">station_01</figcaption>
+                </figure>
+                <figure class="shot shot--half shot--scope">
+                    <a href="assets/projects/Horla/web/station-04.jpg" data-zoom data-caption="station_04 · Feux rouges">
+                        <img loading="lazy" src="assets/projects/Horla/web/station-04.jpg" alt="Le bus à quai, des lumières rouges et bleues sur les flaques">
+                    </a>
+                    <figcaption class="slate">station_04</figcaption>
+                </figure>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="file" id="file-coulisses" style="--accent:#ece7df" aria-labelledby="file-coulisses-title">
+        <div class="file-body">
+            <div class="file-head slate"><span>Dossier 06 / 06 · 5 fichiers</span><button type="button" class="file-close slate" data-close>Fermer ✕</button></div>
+            <h2 id="file-coulisses-title">Coulisses</h2>
+            <h3>Face B · Horlando Blast</h3>
+            <p>La bande son : ce qui sort du poste.</p>
+            <div class="tape" style="--accent:#58c7e0">
+                <audio controls preload="metadata" src="assets/projects/Horla/Horlando%20Blast%200.2.mp3"></audio>
+                <div class="tape-ui" hidden>
+                    <button type="button" class="tape-play" aria-label="Lire Horlando Blast"></button>
+                    <div class="tape-label"><span class="slate">Face B · v0.2</span><strong>Horlando Blast</strong></div>
+                    <input type="range" class="tape-seek" min="0" max="1000" value="0" aria-label="Position dans Horlando Blast">
+                    <span class="tape-time slate">0:00</span>
+                </div>
+            </div>
+            <h3>Le lotissement, en plein jour</h3>
+            <p>Avant la nuit et la brume : le plan des fondations, puis une maison posée sur le terrain, éclairée sans
+                effet.</p>
+            <div class="shots">
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/estate-01.jpg" data-zoom data-caption="estate_01 · Fondations">
+                        <img loading="lazy" src="assets/projects/Horla/web/estate-01.jpg" alt="Des fondations tracées dans un terrain boueux, sur fond noir">
+                    </a>
+                    <figcaption class="slate">estate_01</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/estate-02.jpg" data-zoom data-caption="estate_02 · La maison, de jour">
+                        <img loading="lazy" src="assets/projects/Horla/web/estate-02.jpg" alt="Une maison en béton inachevée sous un ciel bleu, des plots sur le sol">
+                    </a>
+                    <figcaption class="slate">estate_02</figcaption>
+                </figure>
+            </div>
+            <h3>Une chambre qui se remplit</h3>
+            <p>La même pièce, vide puis habitée : le lit, les affiches, le plan de la ville arrivent par couches.</p>
+            <div class="shots">
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/room-01.jpg" data-zoom data-caption="room_01 · La pièce vide">
+                        <img loading="lazy" src="assets/projects/Horla/web/room-01.jpg" alt="La chambre presque vide, un lit nu et des murs sans affiches">
+                    </a>
+                    <figcaption class="slate">room_01</figcaption>
+                </figure>
+                <figure class="shot shot--half">
+                    <a href="assets/projects/Horla/web/room-06.jpg" data-zoom data-caption="room_06 · La pièce habitée">
+                        <img loading="lazy" src="assets/projects/Horla/web/room-06.jpg" alt="La chambre habitée, draps froissés, étagères et affiches">
+                    </a>
+                    <figcaption class="slate">room_06</figcaption>
+                </figure>
+            </div>
+        </div>
+    </dialog>
+
+    <script src="js/i18n/fr.js"></script>
+    <script src="js/i18n/en.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/lancoli.js"></script>
+    <script src="js/analytics.js" defer></script>
+    <script src="js/horla-envelope.js"></script>
+    <script src="js/horla.js"></script>
+    <!-- retours:debut --><script src="retours/retours-config.js"></script><script src="retours/retours.js" defer></script><!-- retours:fin -->
+</body>
+
+</html>

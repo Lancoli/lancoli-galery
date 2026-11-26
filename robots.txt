@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+# Fichiers de travail : rendus bruts, plans VFX, archives
+Disallow: /assets/projects/Horla/Hallucinations/VFX_plates/
+Disallow: /*.exr$
+Disallow: /*.mkv$
+
+Sitemap: https://lancoli.fr/sitemap.xml

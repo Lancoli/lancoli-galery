@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <title data-i18n="mur.pageTitle">Mur libre — Graffiti en ligne gratuit : bombe, coulures, mur en 3D | Lancoli</title>
+    <meta name="description" content="Peins un mur en ligne, gratuitement et sans compte : bombe de peinture, marqueur, pinceau, taches et vraies coulures, puis regarde ton graffiti sur un mur en 3D et exporte-le.">
+    <link rel="canonical" href="https://lancoli.fr/graffiti.html">
+    <meta name="author" content="Lancoli">
+    <meta name="theme-color" content="#1c1b19">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Lancoli">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content="Mur libre — Graffiti en ligne gratuit | Lancoli">
+    <meta property="og:description" content="Une bombe, un mur, des coulures. Gratuit, sans compte, rien n’est envoyé.">
+    <meta property="og:url" content="https://lancoli.fr/graffiti.html">
+    <meta name="twitter:card" content="summary">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Mur libre",
+        "url": "https://lancoli.fr/graffiti.html",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Navigateur web",
+        "description": "Outil de graffiti en ligne : bombe de peinture, marqueur, pinceau, taches et coulures, projection sur un mur en 3D, export PNG et JPG.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+        "isAccessibleForFree": true,
+        "inLanguage": ["fr", "en"],
+        "creator": { "@id": "https://lancoli.fr/#lancoli" }
+    }
+    </script>
+    <link rel="stylesheet" href="assets/fonts/fonts.css">
+    <link rel="stylesheet" href="css/graffiti.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="mur" id="app" data-view="atelier" data-tool="spray">
+
+        <header class="mur-top">
+            <a class="mur-logo" href="projets.html" aria-label="Retour aux projets" data-i18n-attr="aria-label:mur.back">Lancoli<sup>®</sup></a>
+            <h1 class="mur-name" data-i18n="mur.title">Mur libre</h1>
+
+            <div class="seg" role="group" aria-label="Vue" data-i18n-attr="aria-label:mur.view">
+                <button type="button" data-view="atelier" aria-pressed="true">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="1.5"/></svg>
+                    <span data-i18n="mur.view.flat">Atelier</span>
+                </button>
+                <button type="button" data-view="mur" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg>
+                    <span data-i18n="mur.view.wall">Mur 3D</span>
+                </button>
+            </div>
+
+            <label class="wallpick">
+                <span data-i18n="mur.wall">Mur</span>
+                <select id="wallKind">
+                    <option value="brique" data-i18n="mur.wall.brick">Brique</option>
+                    <option value="beton" data-i18n="mur.wall.concrete">Béton</option>
+                    <option value="crepi" data-i18n="mur.wall.plaster">Crépi</option>
+                </select>
+            </label>
+
+            <div class="acts">
+                <button type="button" class="ico" id="undo" disabled aria-label="Annuler" title="Annuler" data-i18n-attr="aria-label:mur.undo; title:mur.undo">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg>
+                </button>
+                <button type="button" class="ico" id="redo" disabled aria-label="Rétablir" title="Rétablir" data-i18n-attr="aria-label:mur.redo; title:mur.redo">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 000 12h3"/></svg>
+                </button>
+                <button type="button" class="ico" id="clear" aria-label="Tout effacer" title="Tout effacer" data-i18n-attr="aria-label:mur.clear; title:mur.clear">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+                </button>
+
+                <div class="export">
+                    <button type="button" class="pill-ink" id="exportBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="exportMenu">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg>
+                        <span data-i18n="mur.export">Exporter</span>
+                        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="export-menu" id="exportMenu" role="menu" hidden>
+                        <button type="button" role="menuitem" data-export="paint-png">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h4M4 4v4M20 4h-4M20 4v4M4 20h4M4 20v-4M20 20h-4M20 20v-4"/><circle cx="12" cy="12" r="3.5"/></svg>
+                            <span><strong data-i18n="mur.export.paint">Peinture seule</strong><small data-i18n="mur.export.paint.sub">PNG transparent, à poser où tu veux</small></span>
+                        </button>
+                        <button type="button" role="menuitem" data-export="wall-png">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3zM3 10h18M3 15h18M9 5v5M15 10v5M9 15v4"/></svg>
+                            <span><strong data-i18n="mur.export.wall">Sur le mur</strong><small data-i18n="mur.export.wall.sub">PNG à plat, pleine définition</small></span>
+                        </button>
+                        <button type="button" role="menuitem" data-export="wall-jpg">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16l5-5 4 4 3-3 4 4"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>
+                            <span><strong data-i18n="mur.export.light">Version légère</strong><small data-i18n="mur.export.light.sub">JPG à plat, pour partager vite</small></span>
+                        </button>
+                        <button type="button" role="menuitem" data-export="view-png">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+                            <span><strong data-i18n="mur.export.view">Vue 3D</strong><small data-i18n="mur.export.view.sub">PNG de ce que montre la caméra</small></span>
+                        </button>
+                        <button type="button" role="menuitem" data-export="copy">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 00-1-1H5a1 1 0 00-1 1v10a1 1 0 001 1h3"/></svg>
+                            <span><strong data-i18n="mur.export.copy">Copier l’image</strong><small data-i18n="mur.export.copy.sub">Dans le presse-papiers, à coller direct</small></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="lang" role="group" aria-label="Langue" data-i18n-attr="aria-label:nav.lang"><button type="button" data-lang="fr">FR</button><button type="button" data-lang="en">EN</button></div>
+            </div>
+        </header>
+
+        <nav class="tools" role="toolbar" aria-label="Outils" data-i18n-attr="aria-label:mur.tools">
+            <button type="button" data-tool="spray" aria-pressed="true" aria-keyshortcuts="B">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="8" height="13" rx="2"/><path d="M10 8V6h4v2M11 4h2M18 3l2-1M18 5h3M18 7l2 1"/></svg>
+                <span data-i18n="mur.tool.spray">Bombe</span>
+            </button>
+            <button type="button" data-tool="marker" aria-pressed="false" aria-keyshortcuts="M">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6-9 9H5v-6z"/><path d="M12 6l6 6"/></svg>
+                <span data-i18n="mur.tool.marker">Marqueur</span>
+            </button>
+            <button type="button" data-tool="brush" aria-pressed="false" aria-keyshortcuts="P">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4l-8 8M12 12l-2-2c-2 0-4 1-4 4 0 2-1 4-3 5 4 1 8 0 9-3z"/></svg>
+                <span data-i18n="mur.tool.brush">Pinceau</span>
+            </button>
+            <button type="button" data-tool="splash" aria-pressed="false" aria-keyshortcuts="T">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6c3 0 5 2 5 5 2 1 2 4 0 5-1 3-5 4-7 2-3 1-6-1-5-4-2-2 0-5 2-5 0-2 2-3 5-3z"/><circle cx="20" cy="5" r="1"/><circle cx="4" cy="4" r="1.3"/><circle cx="21" cy="19" r=".8"/></svg>
+                <span data-i18n="mur.tool.splash">Tache</span>
+            </button>
+            <button type="button" data-tool="letters" aria-pressed="false" aria-keyshortcuts="L">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20L9 5h2l5 15M6 15h8"/><path d="M18 4l1-1M19 7h2M18 10l1 1"/></svg>
+                <span data-i18n="mur.tool.letters">Lettrage</span>
+            </button>
+            <button type="button" data-tool="eraser" aria-pressed="false" aria-keyshortcuts="E">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 4l5 5-10 10H6l-3-3z"/><path d="M10 9l5 5M6 19h14"/></svg>
+                <span data-i18n="mur.tool.eraser">Gomme</span>
+            </button>
+        </nav>
+
+        <main class="stagebox">
+            <section class="view view--flat" id="atelier">
+                <div class="stage" id="stage" role="img" aria-label="Mur à peindre" data-i18n-attr="aria-label:mur.canvas"></div>
+                <div class="ring" id="ring" aria-hidden="true"></div>
+                <p class="hint" data-i18n="mur.hint.flat">Molette pour zoomer · clic droit ou Espace pour déplacer · F pour recadrer</p>
+            </section>
+            <section class="view view--wall" id="wall3d" hidden>
+                <p class="hint" data-i18n="mur.hint.wall">Clic gauche pour peindre · clic droit pour tourner · molette pour approcher</p>
+            </section>
+            <p class="loading" id="loading" data-i18n="mur.loading">On prépare le mur…</p>
+            <p class="toast" id="toast" role="status" aria-live="polite"></p>
+        </main>
+
+        <footer class="dock">
+            <div class="palette" id="palette" role="radiogroup" aria-label="Couleurs" data-i18n-attr="aria-label:mur.colors"></div>
+            <label class="custom" title="Autre couleur" data-i18n-attr="title:mur.color.custom">
+                <input type="color" id="customColor" value="#e8302a" aria-label="Autre couleur" data-i18n-attr="aria-label:mur.color.custom">
+            </label>
+            <button type="button" class="ico" id="picker" aria-pressed="false" aria-keyshortcuts="I" aria-label="Pipette (Alt + clic)" title="Pipette (Alt + clic)" data-i18n-attr="aria-label:mur.picker; title:mur.picker">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6-2 2-6-6zM12 6l-8 8v4h4l8-8"/></svg>
+            </button>
+            <!-- lettrage : le mot et sa typo (les typos du site, assets/fonts/fonts.css) ; visible avec l'outil -->
+            <div class="lettrage">
+                <label><span data-i18n="mur.letters.text">Texte</span><input type="text" id="letterText" value="LANCOLI" maxlength="40" spellcheck="false"></label>
+                <label><span data-i18n="mur.letters.font">Typo</span>
+                    <select id="letterFont"><!-- rempli par js/graffiti/app.js depuis assets/fonts/catalogue.js --></select>
+                </label>
+            </div>
+            <div class="sliders">
+                <label><span data-i18n="mur.size">Taille</span><input type="range" id="size" min="4" max="180" value="40"></label>
+                <label><span data-i18n="mur.flow">Débit</span><input type="range" id="flow" min="5" max="100" value="70"></label>
+                <label><span data-i18n="mur.drips">Coulures</span><input type="range" id="drips" min="0" max="100" value="50"></label>
+            </div>
+            <p class="free" data-i18n="mur.free">Gratuit, sans compte. Rien n’est envoyé : ta peinture reste dans ton navigateur.</p>
+        </footer>
+    </div>
+
+    <!-- Messages affichés par le script, traduits comme le reste de la page -->
+    <div hidden>
+        <span data-msg="exported" data-i18n="mur.msg.exported">C’est enregistré.</span>
+        <span data-msg="copied" data-i18n="mur.msg.copied">Image copiée, prête à coller.</span>
+        <span data-msg="copyFail" data-i18n="mur.msg.copyFail">Copie impossible ici : passe par un export.</span>
+        <span data-msg="no3d" data-i18n="mur.msg.no3d">La vue 3D ne se charge pas (connexion ?). L’atelier reste disponible.</span>
+        <span data-msg="confirmClear" data-i18n="mur.msg.confirmClear">Effacer toute la peinture ?</span>
+    </div>
+
+    <script src="js/i18n/fr.js"></script>
+    <script src="js/i18n/en.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/analytics.js" defer></script>
+    <script src="assets/fonts/catalogue.js"></script>
+    <script type="module" src="js/graffiti/app.js"></script>
+    <!-- retours:debut --><script src="retours/retours-config.js"></script><script src="retours/retours.js" defer></script><!-- retours:fin -->
+</body>
+
+</html>

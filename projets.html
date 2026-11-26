@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title data-i18n="projects.title">Projets — Pochettes d’album, films 3D, mondes urbains | Lancoli</title>
+    <meta name="description" content="Pochettes d’album et trois mondes : Leaving home et Horlando Blast, films d’animation 3D sous Blender, et Lyon, micro edits skate et graffiti. Les travaux de Lancoli.">
+    <link rel="canonical" href="https://lancoli.fr/projets.html">
+    <meta name="author" content="Lancoli">
+    <meta name="theme-color" content="#fbfaf7">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- Partage : aperçu sur les réseaux et les messageries -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Lancoli">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content="Projets — Pochettes d’album, films 3D, mondes urbains | Lancoli">
+    <meta property="og:description" content="Pochettes d’album et trois mondes : Leaving home et Horlando Blast, films d’animation 3D sous Blender, et Lyon, micro edits skate et graffiti. Les travaux de Lancoli.">
+    <meta property="og:url" content="https://lancoli.fr/projets.html">
+    <meta property="og:image" content="https://lancoli.fr/assets/share/lancoli.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Une maison blanche sur un talus, des mélèzes et un ciel de fin de jour — image du film Leaving home">
+    <meta name="twitter:card" content="summary_large_image">
+    <!-- Données structurées : qui, quoi, où, pour les moteurs -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "CollectionPage",
+                "@id": "https://lancoli.fr/projets.html",
+                "name": "Projets de Lancoli",
+                "url": "https://lancoli.fr/projets.html",
+                "inLanguage": "fr",
+                "author": {
+                    "@id": "https://lancoli.fr/#lancoli"
+                },
+                "hasPart": [
+                    {
+                        "@id": "https://lancoli.fr/leaving-home.html#film"
+                    },
+                    {
+                        "@id": "https://lancoli.fr/horla.html#film"
+                    },
+                    {
+                        "@id": "https://lancoli.fr/lyon.html#univers"
+                    }
+                ]
+            },
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Lancoli",
+                        "item": "https://lancoli.fr/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Projets",
+                        "item": "https://lancoli.fr/projets.html"
+                    }
+                ]
+            }
+        ]
+    }
+    </script>
+    <script>document.documentElement.classList.add('js')</script>
+    <link rel="stylesheet" href="css/lancoli.css">
+    <!-- three.js, pour le livre des contes (livre.js) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"
+            }
+        }
+    </script>
+</head>
+
+<body data-chapter="3">
+    <div class="aura" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="curtain" aria-hidden="true"><span class="curtain-label"></span></div>
+
+    <header class="reveal" style="--d:0">
+        <div class="page nav">
+            <a class="logo" href="./" data-transition data-label="La galerie">Lancoli<sup>®</sup></a>
+            <nav>
+                <div class="chapter" style="--step:2"><span>II</span><span class="chapter-bar"></span><span>03</span></div>
+                <a href="./" data-transition data-label="La galerie" data-i18n="nav.gallery">Galerie</a>
+                <a href="demarche.html" data-transition data-label="Démarche" data-i18n="footer.approach">Démarche</a>
+                <a href="projets.html" aria-current="page" data-i18n="nav.projects">Projets</a>
+                <a href="./#ateliers" data-transition data-label="Ateliers" data-i18n="nav.tools">Ateliers</a>
+                <div class="lang" role="group" aria-label="Langue" data-i18n-attr="aria-label:nav.lang"><button type="button" data-lang="fr">FR</button><button type="button" data-lang="en">EN</button></div>
+                <a class="pill" href="contact.html" data-transition data-label="Contact" data-i18n="nav.contact">Contact ↗</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page">
+        <section class="chapter-hero">
+            <div>
+                <div class="kicker reveal" style="--d:1" data-i18n="projects.kicker">Chapitre II · Sélection</div>
+                <h1 class="reveal" style="--d:2" data-i18n-html="projects.heading.html">Travaux <em>choisis</em></h1>
+            </div>
+            <p class="reveal" style="--d:3" data-i18n="projects.intro">Les pochettes. Puis une salle à part :
+                les mondes, des projets audiovisuels vus depuis les coulisses.</p>
+        </section>
+
+        <section id="works" class="reveal" style="--d:4">
+            <div class="head">
+                <h2>Pochettes</h2>
+                <div class="view-switch" role="group" aria-label="Affichage des projets">
+                    <button type="button" data-view="bands" aria-pressed="false">Bandeaux</button>
+                    <button type="button" data-view="grid" aria-pressed="true">Grille</button>
+                </div>
+            </div>
+            <div class="works-stage" data-view="grid">
+                <div class="works-grid" id="worksGrid">
+                    <article class="work" style="--i:0">
+                        <div class="work-image"><img src="assets/covers/web/ronny.jpg" alt="Pochette de Ronny, single de Lancoli" /></div>
+                        <div class="work-title"><strong>Ronny</strong><span>2025</span></div>
+                    </article>
+                    <article class="work" style="--i:1">
+                        <div class="work-image"><img src="assets/covers/web/convalescence.jpg" alt="Pochette de l’album Convalescence de Feather, réalisée par Lancoli" /></div>
+                        <div class="work-title"><strong>Convalescence</strong><span>2025</span></div>
+                    </article>
+                    <article class="work" style="--i:2">
+                        <div class="work-image"><img src="assets/covers/web/full-circle-revolution.jpg" alt="Pochette de l’album Full Circle Revolution de Lancoli" /></div>
+                        <div class="work-title"><strong>Clips</strong><span>2026</span></div>
+                    </article>
+                    <article class="work" style="--i:3">
+                        <div class="work-image"><img src="assets/covers/web/la-fenetre-dans-l-eau.jpg" alt="Pochette de l’album La fenêtre dans l’eau de Lancoli" /></div>
+                        <div class="work-title"><strong>La fenêtre dans l’eau</strong><span>Album</span></div>
+                    </article>
+                    <article class="work" style="--i:4">
+                        <div class="work-image"><img loading="lazy" src="assets/covers/web/tmwtv.jpg" alt="Pochette de l’album TMWTV d’Ibwin, réalisée par Lancoli" /></div>
+                        <div class="work-title"><strong>TMWTV</strong><span>pour Ibwin</span></div>
+                    </article>
+                    <article class="work" style="--i:5">
+                        <div class="work-image"><img loading="lazy" src="assets/covers/web/lls.jpg" alt="Pochette de l’album Lost Last State de Lancoli" /></div>
+                        <div class="work-title"><strong>LLS</strong><span>Album</span></div>
+                    </article>
+                    <article class="work" style="--i:6">
+                        <div class="work-image"><img loading="lazy" src="assets/covers/web/ghostpel.jpg" alt="Pochette de Ghostpel, single de Lancoli" /></div>
+                        <div class="work-title"><strong>Ghostpel</strong><span>Single</span></div>
+                    </article>
+                    <article class="work work--soon" style="--i:7" data-soon>
+                        <div class="work-image"></div>
+                        <div class="work-title"><strong>À venir</strong><span>2026</span></div>
+                    </article>
+                    <article class="work work--soon" style="--i:8" data-soon>
+                        <div class="work-image"></div>
+                        <div class="work-title"><strong>À venir</strong><span>2026</span></div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="films" class="worlds reveal" style="--d:5">
+            <div class="worlds-intro">
+                <div class="slate"><span class="rec" aria-hidden="true"></span>Catégorie spéciale · Cinématique</div>
+                <h2>Contes <em>modernes</em></h2>
+                <p>Ici, on change de salle. Des projets audiovisuels au long cours : chacun a son décor, ses
+                    personnages et sa bande-son. On y entre par les coulisses.</p>
+            </div>
+            <div class="head">
+                <span class="slate">Projets audiovisuels</span>
+                <span class="slate">03 mondes · 01 à venir</span>
+            </div>
+            <div class="projects">
+                <a class="project-card" style="--world:#6fbf9c" href="leaving-home.html" data-transition data-label="Leaving Home">
+                    <div class="project-cover">
+                        <img src="assets/projects/leaving_home/web/lh-016-comp.jpg" alt="Une maison blanche sur un talus, des mélèzes et un ciel de fin de jour">
+                        <span class="project-status slate"><span class="rec" aria-hidden="true"></span>Inachevé</span>
+                    </div>
+                    <div class="project-body">
+                        <div class="slate">Monde 01 · Court métrage</div>
+                        <h3>Leaving <em>home</em></h3>
+                        <p>Après les tempêtes, plus de courant. Un homme parcourt ce qui reste, à la recherche de la
+                            pièce qui manque à son installation.</p>
+                        <dl class="project-meta slate">
+                            <div><dt>Ambiance</dt><dd>Post-apo</dd></div>
+                            <div><dt>Fabrication</dt><dd>3D · Blender</dd></div>
+                            <div><dt>Séquences</dt><dd>06</dd></div>
+                        </dl>
+                        <div class="project-strip" aria-hidden="true">
+                            <img loading="lazy" src="assets/projects/leaving_home/web/greenhouse-s.jpg" alt="">
+                            <img loading="lazy" src="assets/projects/leaving_home/web/lh-018-s.jpg" alt="">
+                            <img loading="lazy" src="assets/projects/leaving_home/web/lh-021-s.jpg" alt="">
+                            <img loading="lazy" src="assets/projects/leaving_home/web/lh-025-s.jpg" alt="">
+                        </div>
+                        <div class="project-more slate"><span>Suivre l’itinéraire</span><i>→</i></div>
+                    </div>
+                </a>
+
+                <a class="project-card project-card--flip" style="--world:#ff9a3d" href="horla.html" data-transition data-label="Horlando Blast">
+                    <div class="project-cover">
+                        <img src="assets/projects/Horla/web/salon-05.jpg" alt="Un boombox posé sur un meuble, une chaise vide, une pièce baignée de lumière orange">
+                        <span class="project-status slate"><span class="rec" aria-hidden="true"></span>Ébauche</span>
+                    </div>
+                    <div class="project-body">
+                        <div class="slate">Monde 02 · Film</div>
+                        <h3>Horlando <em>Blast</em></h3>
+                        <p>Paris, la nuit, un poste sur l’épaule. Depuis l’accident, ce qu’il voit et ce dont il se
+                            souvient ne se séparent plus.</p>
+                        <dl class="project-meta slate">
+                            <div><dt>Ambiance</dt><dd>Urbain · Visions</dd></div>
+                            <div><dt>Fabrication</dt><dd>3D · Blender</dd></div>
+                            <div><dt>Son</dt><dd>Storyboard audio · Bande son</dd></div>
+                        </dl>
+                        <div class="project-strip" aria-hidden="true">
+                            <img loading="lazy" src="assets/projects/Horla/web/room-03-s.jpg" alt="">
+                            <img loading="lazy" src="assets/projects/Horla/web/bars-03-s.jpg" alt="">
+                            <img loading="lazy" src="assets/projects/Horla/web/estate-04-s.jpg" alt="">
+                            <img loading="lazy" src="assets/projects/Horla/web/station-03-s.jpg" alt="">
+                        </div>
+                        <div class="project-more slate"><span>Écouter, puis voir</span><i>→</i></div>
+                    </div>
+                </a>
+                <a class="project-card" style="--world:#ff5fb8" href="lyon.html" data-transition data-label="Lyon">
+                    <div class="project-cover">
+                        <img loading="lazy" src="assets/projects/lyon/web/triptyque.jpg" alt="Trois images de Lyon : un skateur dans un bowl couvert de graffitis la nuit, un skateur sur un pont, un mur de bombes de peinture">
+                        <span class="project-status slate"><span class="rec" aria-hidden="true"></span>Micro edits</span>
+                    </div>
+                    <div class="project-body">
+                        <div class="slate">Monde 03 · Espace urbain</div>
+                        <h3>Ly<em>on</em></h3>
+                        <p>La ville vue depuis la planche : le skatepark la nuit, les dalles le jour, et les murs
+                            de bombes. Trois edits courts, à hauteur de bitume.</p>
+                        <dl class="project-meta slate">
+                            <div><dt>Ambiance</dt><dd>Skate · Graffiti</dd></div>
+                            <div><dt>Format</dt><dd>9:16</dd></div>
+                            <div><dt>Edits</dt><dd>03</dd></div>
+                        </dl>
+                        <div class="project-strip" aria-hidden="true">
+                            <img loading="lazy" src="assets/projects/lyon/web/nuit-graff-s.jpg" alt="">
+                            <img loading="lazy" src="assets/projects/lyon/web/jour-dalles-s.jpg" alt="">
+                            <img loading="lazy" src="assets/projects/lyon/web/jour-opera-s.jpg" alt="">
+                            <img loading="lazy" src="assets/projects/lyon/web/ville-tunnel-s.jpg" alt="">
+                        </div>
+                        <div class="project-more slate"><span>Rouler dans la ville</span><i>→</i></div>
+                    </div>
+                </a>
+                <div class="project-card project-card--soon">
+                    <span class="slate">Monde 04 · Intros</span>
+                    <span class="slate">À venir</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bas de page : la carte d'abonné. L'offre reste à préciser : les trois lignes, le texte et le lien se changent ici -->
+        <section class="pass reveal" style="--d:6" aria-labelledby="pass-title">
+            <div class="pass-card shiny" data-shiny aria-hidden="true">
+                <div class="loyalty">
+                    <span class="slate">Contes modernes · Carte d’abonné</span>
+                    <strong>Les <em>coulisses</em></strong>
+                    <span class="slate loyalty-foot"><span>N° 000</span><span>Lancoli®</span></span>
+                    <span class="shiny-holo"></span>
+                    <span class="shiny-glare"></span>
+                    <span class="shiny-sweep"></span>
+                </div>
+            </div>
+            <div class="pass-body">
+                <div class="slate"><span class="rec" aria-hidden="true"></span>Abonnement · Bientôt</div>
+                <h2 id="pass-title">Suivre les coulisses</h2>
+                <p>Un conte se fabrique lentement. La carte ouvre l’atelier : ce qui se construit entre deux
+                    sorties, avant tout le monde.</p>
+                <ul class="pass-list slate">
+                    <li><span>01</span>Les plans en cours et les essais</li>
+                    <li><span>02</span>Les sons avant leur sortie</li>
+                    <li><span>03</span>Une carte numérotée, à ton nom</li>
+                </ul>
+                <a class="pass-cta slate" href="contact.html" data-transition data-label="Contact"><span>Demander ma carte</span><i>→</i></a>
+            </div>
+        </section>
+
+        <a class="next reveal" style="--d:7" href="contact.html" data-transition data-label="Contact">
+            <span class="tag" data-i18n="projects.next.tag">Chapitre suivant · III</span>
+            <span class="next-title"><span data-i18n="projects.next.title">Contact</span><i>→</i></span>
+        </a>
+    </main>
+
+    <footer class="page">
+        <div data-i18n="footer.credit">© Lancoli · Artiste indépendant · Dijon</div>
+        <div class="foot-links">
+            <a href="./" data-transition data-label="La galerie" data-i18n="nav.gallery">Galerie</a>
+            <a href="demarche.html" data-transition data-label="Démarche" data-i18n="footer.approach">Démarche</a>
+            <a href="projets.html" data-transition data-label="Projets" data-i18n="nav.projects">Projets</a>
+            <a href="contact.html" data-transition data-label="Contact" data-i18n="footer.contact">Contact</a>
+        </div>
+    </footer>
+
+    <script src="js/i18n/fr.js"></script>
+    <script src="js/i18n/en.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/lancoli.js"></script>
+    <script src="js/livre.js"></script>
+    <script src="js/analytics.js" defer></script>
+    <!-- retours:debut --><script src="retours/retours-config.js"></script><script src="retours/retours.js" defer></script><!-- retours:fin -->
+</body>
+
+</html>

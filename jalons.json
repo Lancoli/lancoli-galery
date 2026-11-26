@@ -1,0 +1,193 @@
+{
+  "projet": "Lancoli",
+  "but": "Le site de l'artiste engagé : quatre terrains, le merch fait main, une adresse assumable publiquement.",
+  "cibles": [
+    {
+      "id": "domaine",
+      "niveau": "N2",
+      "texte": "En ligne à une adresse assumable publiquement (nom de domaine)",
+      "decide": "toi"
+    }
+  ],
+  "jalons": [
+    {
+      "niveau": "N0",
+      "horizon": "2026-11-27",
+      "decide": "proposé",
+      "ouvert": true
+    },
+    {
+      "niveau": "N1",
+      "horizon": "2026-12-20",
+      "decide": "proposé",
+      "ouvert": false
+    },
+    {
+      "niveau": "N2",
+      "horizon": "2027-01-31",
+      "decide": "proposé",
+      "ouvert": false
+    }
+  ],
+  "criteres": [],
+  "exceptions": [],
+  "todo": [
+    {
+      "id": "auto-github",
+      "texte": "N0 · sur GitHub, à jour (origin, 0 commit non poussé)",
+      "pour": "github",
+      "preuve": "pas de remote origin",
+      "fait": false,
+      "auto": true
+    },
+    {
+      "id": "auto-readme",
+      "texte": "N0 · README : ce que c'est, comment le lancer (≥ 300 caractères)",
+      "pour": "readme",
+      "preuve": "README.md absent",
+      "fait": true,
+      "auto": true,
+      "fait_le": "2026-11-26T18:18:25.226Z"
+    },
+    {
+      "id": "auto-git",
+      "texte": "N0 · dépôt git propre (rien en attente de commit)",
+      "pour": "git",
+      "preuve": "pas de dépôt git",
+      "fait": false,
+      "auto": true,
+      "fait_le": "2026-11-26T18:19:13.612Z"
+    }
+  ],
+  "etat": {
+    "date": "2026-11-26T22:43:20.992Z",
+    "niveau": null,
+    "prochain": "N0",
+    "bloque": [
+      "git",
+      "github"
+    ],
+    "humain": {},
+    "criteres": {
+      "git": {
+        "ok": false,
+        "preuve": "pas de dépôt git",
+        "niveau": "N0",
+        "texte": "dépôt git propre (rien en attente de commit)",
+        "type": "auto"
+      },
+      "github": {
+        "ok": false,
+        "preuve": "pas de remote origin",
+        "niveau": "N0",
+        "texte": "sur GitHub, à jour (origin, 0 commit non poussé)",
+        "type": "auto"
+      },
+      "readme": {
+        "ok": true,
+        "preuve": "833 caractères",
+        "niveau": "N0",
+        "texte": "README : ce que c'est, comment le lancer (≥ 300 caractères)",
+        "type": "auto"
+      },
+      "conforme": {
+        "ok": true,
+        "preuve": "6 vérifications",
+        "niveau": "N0",
+        "texte": "respecte le contrat de déploiement (tools/conforme.mjs)",
+        "type": "auto"
+      },
+      "liens": {
+        "ok": true,
+        "preuve": "290 références",
+        "niveau": "N1",
+        "texte": "tout ce qui est cité existe (tools/liens.mjs)",
+        "type": "auto"
+      },
+      "console": {
+        "ok": false,
+        "preuve": "9 erreur(s), ex. contact.html : Unexpected identifier 'observation' (dernier passage)",
+        "niveau": "N1",
+        "texte": "chaque page s'ouvre sans erreur JS ni ressource en erreur",
+        "type": "auto"
+      },
+      "mobile": {
+        "ok": false,
+        "preuve": "trop large : contact.html (463 px), demarche.html (454 px), horla.html (458 px) (dernier passage)",
+        "niveau": "N1",
+        "texte": "aucune page plus large que 375 px",
+        "type": "auto"
+      },
+      "remplissage": {
+        "ok": true,
+        "preuve": "9 page(s)",
+        "niveau": "N1",
+        "texte": "pas de texte provisoire visible (lorem, TODO, à compléter)",
+        "type": "auto"
+      },
+      "meta": {
+        "ok": false,
+        "preuve": "5/9 page(s) incomplète(s) — contact.html : title",
+        "niveau": "N2",
+        "texte": "lang, title, description, viewport, favicon, og:image sur chaque page",
+        "type": "auto"
+      },
+      "lighthouse": {
+        "ok": null,
+        "preuve": "outil pas encore installé",
+        "niveau": "N2",
+        "texte": "Lighthouse : perf ≥ 80, bonnes pratiques ≥ 90, SEO ≥ 90",
+        "type": "auto"
+      },
+      "a11y": {
+        "ok": null,
+        "preuve": "outil pas encore installé",
+        "niveau": "N2",
+        "texte": "axe-core : 0 violation serious ou critical",
+        "type": "auto"
+      },
+      "mentions": {
+        "ok": null,
+        "preuve": "à valider par toi",
+        "niveau": "N2",
+        "texte": "mentions légales et contact",
+        "type": "humain"
+      },
+      "en-ligne": {
+        "ok": null,
+        "preuve": "pas encore d'adresse publique",
+        "niveau": "N2",
+        "texte": "accessible à son adresse publique (HTTP 200)",
+        "type": "auto"
+      },
+      "e2e": {
+        "ok": null,
+        "preuve": "scénario à écrire (champ « test » de jalons.json)",
+        "niveau": "N3",
+        "texte": "le parcours critique passe de bout en bout",
+        "type": "auto"
+      },
+      "audience": {
+        "ok": null,
+        "preuve": "à valider par toi",
+        "niveau": "N3",
+        "texte": "mesure d'audience respectueuse branchée",
+        "type": "humain"
+      },
+      "surveillance": {
+        "ok": null,
+        "preuve": "à valider par toi",
+        "niveau": "N3",
+        "texte": "on est prévenu si le site tombe",
+        "type": "humain"
+      },
+      "sauvegarde": {
+        "ok": null,
+        "preuve": "à valider par toi",
+        "niveau": "N3",
+        "texte": "données sauvegardées, restauration testée",
+        "type": "humain"
+      }
+    }
+  }
+}

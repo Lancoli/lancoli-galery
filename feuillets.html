@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lancoli — Atelier · Feuillets</title>
+    <!-- page d'atelier : on y règle la transition, elle ne fait pas partie de la visite -->
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="css/lancoli.css">
+    <link rel="stylesheet" href="css/feuillets.css">
+    <style>
+        .lab {
+            display: grid;
+            align-content: center;
+            min-height: 100vh;
+            min-height: 100svh;
+            padding-bottom: 30vh
+        }
+
+        .lab h1 {
+            font: 400 clamp(64px, 12vw, 180px) / .85 Georgia, serif;
+            letter-spacing: -.07em;
+            margin: 18px 0 0
+        }
+
+        .lab h1 em {
+            font-style: italic
+        }
+
+        /* Pupitre de réglage */
+        .desk {
+            position: fixed;
+            left: 16px;
+            bottom: 16px;
+            z-index: 200;
+            width: min(340px, calc(100% - 32px));
+            max-height: calc(100svh - 32px);
+            overflow: auto;
+            padding: 14px 16px 16px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: color-mix(in srgb, var(--paper) 88%, transparent);
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+            color: var(--ink)
+        }
+
+        .desk summary {
+            cursor: pointer;
+            list-style: none
+        }
+
+        .desk-row {
+            display: grid;
+            grid-template-columns: 96px 1fr 44px;
+            gap: 10px;
+            align-items: center;
+            margin-top: 9px
+        }
+
+        .desk-row output {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            color: var(--muted)
+        }
+
+        .desk input[type="range"] {
+            width: 100%;
+            min-width: 0;
+            accent-color: var(--ink)
+        }
+
+        .desk select,
+        .desk input[type="file"] {
+            grid-column: 2 / -1;
+            min-width: 0;
+            font: inherit;
+            color: inherit
+        }
+
+        .desk-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px
+        }
+
+        .desk button {
+            font: inherit;
+            color: var(--ink);
+            background: none;
+            cursor: pointer
+        }
+
+        .desk select {
+            color: var(--ink);
+            background: var(--paper);
+            border: 1px solid var(--line)
+        }
+
+        .desk-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 9px
+        }
+    </style>
+</head>
+
+<body data-chapter="1">
+    <div class="aura" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+
+    <main class="page lab">
+        <div class="kicker" id="kicker">Chapitre I · Atelier</div>
+        <h1 id="title">La <em>galerie</em></h1>
+    </main>
+
+    <details class="desk" open>
+        <summary class="slate">Feuillets · Réglages</summary>
+        <div id="rows"></div>
+        <label class="desk-check"><input type="checkbox" id="boil" checked> Redécouper la déchirure à chaque pose</label>
+        <label class="desk-check"><input type="checkbox" id="loop"> Jouer en boucle</label>
+        <div class="desk-row">
+            <span class="slate">Sens</span>
+            <select id="direction">
+                <option value="up">Les feuilles montent</option>
+                <option value="down">Les feuilles descendent</option>
+            </select>
+        </div>
+        <div class="desk-row">
+            <span class="slate">Ambiance</span>
+            <select id="mood">
+                <option value="">Claire · teintes du chapitre</option>
+                <option value="film">Sombre · pages film</option>
+            </select>
+        </div>
+        <div class="desk-row">
+            <span class="slate">Texture</span>
+            <input type="file" id="texture" accept="image/*">
+        </div>
+        <div class="desk-row">
+            <span class="slate">Fusion</span>
+            <select id="blend">
+                <option value="multiply">Produit (multiply)</option>
+                <option value="overlay">Incrustation (overlay)</option>
+                <option value="soft-light">Lumière douce (soft-light)</option>
+                <option value="luminosity">Luminosité</option>
+                <option value="normal">Aucune : texture seule, dessous</option>
+            </select>
+        </div>
+        <div class="desk-actions">
+            <button type="button" class="pill" id="play">Jouer ↗</button>
+            <button type="button" class="pill" id="copy">Copier les réglages</button>
+        </div>
+    </details>
+
+    <script src="js/feuillets.js"></script>
+    <script>
+        // Atelier : chaque curseur pilote un réglage de Feuillets ou une variable de feuillets.css.
+        const feuillets = Feuillets();
+        const chapters = [
+            ['Chapitre I · Atelier', 'La <em>galerie</em>', 'La galerie'],
+            ['Chapitre II · Atelier', 'Selected <em>works</em>', 'Projets'],
+            ['Chapitre III · Atelier', 'Something <em>unusual.</em>', 'Contact']
+        ];
+        let current = 0;
+        let busy = false;
+
+        // [clé, intitulé, min, max, pas, unité, variable CSS si ce n'est pas un réglage du moteur]
+        const ranges = [
+            ['count', 'Feuilles', 1, 8, 1, ''],
+            ['fps', 'Cadence', 3, 30, 1, 'p/s'],
+            ['duration', 'Trajet', 150, 1200, 10, 'ms'],
+            ['stagger', 'Décalage', 0, 300, 5, 'ms'],
+            ['tear', 'Déchirure', 0, 40, 1, 'px'],
+            ['wobble', 'Tremblé', 0, 3, .1, ''],
+            ['grid', 'Carreau', 8, 60, 1, 'px', '--leaf-grid'],
+            ['rule', 'Lignes', 0, 40, 1, '%', '--leaf-rule']
+        ];
+        const paper = { grid: 24, rule: 13, blend: 'multiply' };
+        const rows = document.getElementById('rows');
+        ranges.forEach(([key, name, min, max, step, unit, cssVar]) => {
+            const row = document.createElement('label');
+            row.className = 'desk-row';
+            const value = cssVar ? paper[key] : feuillets.settings[key];
+            row.innerHTML = `<span class="slate">${name}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${value}"><output></output>`;
+            const input = row.querySelector('input');
+            const output = row.querySelector('output');
+            const apply = () => {
+                const number = Number(input.value);
+                output.textContent = `${number}${unit ? ' ' + unit : ''}`;
+                if (!cssVar) return feuillets.set({ [key]: number });
+                paper[key] = number;
+                feuillets.root.style.setProperty(cssVar, key === 'rule'
+                    ? `color-mix(in srgb, var(--ink) ${number}%, transparent)`
+                    : `${number}px`);
+            };
+            input.addEventListener('input', apply);
+            apply();
+            rows.appendChild(row);
+        });
+
+        document.getElementById('boil').addEventListener('change', (event) => feuillets.set({ boil: event.target.checked }));
+        document.getElementById('direction').addEventListener('change', (event) => feuillets.set({ direction: event.target.value }));
+        document.getElementById('mood').addEventListener('change', (event) => { document.documentElement.className = event.target.value; });
+        document.getElementById('blend').addEventListener('change', (event) => {
+            paper.blend = event.target.value;
+            feuillets.root.style.setProperty('--leaf-blend', paper.blend);
+        });
+        // La texture de papier : choisie ici, elle se pose sous le quadrillage de chaque feuille
+        document.getElementById('texture').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            feuillets.root.style.setProperty('--leaf-texture', file ? `url("${URL.createObjecturl(file)}")` : 'none');
+        });
+
+        const show = (index) => {
+            current = index;
+            document.body.dataset.chapter = index + 1;
+            document.getElementById('kicker').textContent = chapters[index][0];
+            document.getElementById('title').innerHTML = chapters[index][1];
+        };
+        const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        const play = async () => {
+            if (busy) return;
+            busy = true;
+            do {
+                const next = (current + 1) % chapters.length;
+                await feuillets.cover(chapters[next][2]);
+                show(next);
+                await wait(450);
+                await feuillets.reveal();
+                if (document.getElementById('loop').checked) await wait(700);
+            } while (document.getElementById('loop').checked);
+            busy = false;
+        };
+        document.getElementById('play').addEventListener('click', play);
+        document.addEventListener('keydown', (event) => {
+            if (event.code !== 'Space' || event.target.closest('input, select, button, summary')) return;
+            event.preventDefault();
+            play();
+        });
+
+        document.getElementById('copy').addEventListener('click', async (event) => {
+            const { count, fps, duration, stagger, tear, wobble, boil, direction } = feuillets.settings;
+            const text = JSON.stringify({ count, fps, duration, stagger, tear, wobble, boil, direction, ...paper }, null, 2);
+            try { await navigator.clipboard.writeText(text); event.target.textContent = 'Copié ✓'; }
+            catch { prompt('Réglages à copier :', text); }
+        });
+
+        // Pose figée depuis l'adresse, pour régler à l'arrêt : feuillets.html#cover:300, #reveal:250, #cover:300:film
+        const frozen = location.hash.slice(1).split(':');
+        if (frozen.length >= 2) {
+            if (frozen[2]) document.documentElement.className = frozen[2];
+            if (frozen[0] === 'reveal') show(1);
+            feuillets.still(frozen[0], Number(frozen[1]), chapters[1][2]);
+        }
+    </script>
+    <!-- retours:debut --><script src="retours/retours-config.js"></script><script src="retours/retours.js" defer></script><!-- retours:fin -->
+</body>
+
+</html>

@@ -1,0 +1,316 @@
+/* ---------- Les retours (retours.js) : le bouton « Dire à Claude » et son panneau ----------
+   Seulement dans un navigateur activé (?retours=<jeton>). En bas à droite, au-dessus de tout ; sombre de jour
+   comme de nuit, l'orange couchant pour l'action. Rien ne bouge au survol : couleur et bordure seulement. */
+.retours {
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    z-index: 2147483000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    /* le thème : chaque app règle ces variables (window.RETOURS.theme) ; les défauts sont ceux de Lancoli Studio */
+    --r-accent: var(--retours-accent, var(--hit, #f58a2e));
+    --r-sur-accent: var(--retours-sur-accent, #160c06);
+    --r-fond: var(--retours-fond, #141210);
+    --r-encre: var(--retours-encre, #ece7df);
+    --r-doux: var(--retours-doux, #a29a8f);
+    --r-titre: var(--retours-police-titre, var(--f-titre, "Anton", sans-serif));
+    --r-rayon: var(--retours-rayon, 0px);
+    font: 14px/1.45 var(--retours-police, var(--f-texte, "Archivo", system-ui, sans-serif));
+    color: var(--r-encre);
+    text-align: left
+}
+
+.retours button {
+    font: inherit;
+    cursor: pointer
+}
+
+.retours-ouvrir {
+    padding: 10px 16px;
+    border: 1px solid var(--r-accent);
+    border-radius: var(--r-rayon);
+    background: var(--r-sur-accent);
+    color: var(--r-accent);
+    font-weight: 800 !important;
+    letter-spacing: .03em;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .45);
+    transition: background .2s ease, color .2s ease
+}
+
+.retours-ouvrir:hover,
+.retours-ouvrir:focus-visible,
+.retours-ouvrir[aria-expanded="true"] {
+    outline: none;
+    background: var(--r-accent);
+    color: var(--r-sur-accent)
+}
+
+.retours-panneau {
+    width: min(420px, calc(100vw - 28px));
+    max-height: min(640px, calc(100vh - 90px));
+    overflow: auto;
+    padding: 14px;
+    border: 1px solid rgba(236, 231, 223, .16);
+    background: var(--r-fond);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, .6)
+}
+
+.retours-tete {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px
+}
+
+.retours-titre {
+    font: 400 22px/1 var(--r-titre);
+    letter-spacing: .02em;
+    text-transform: uppercase
+}
+
+.retours-onglets {
+    display: flex;
+    gap: 4px;
+    margin-left: auto
+}
+
+.retours-onglet,
+.retours-petit,
+.retours-micro,
+.retours-pointer {
+    padding: 6px 10px;
+    border: 1px solid rgba(236, 231, 223, .2);
+    border-radius: var(--r-rayon);
+    background: transparent;
+    color: var(--r-encre);
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    transition: border-color .2s ease, background .2s ease, color .2s ease
+}
+
+:is(.retours-onglet, .retours-petit, .retours-micro, .retours-pointer):hover:not(:disabled) {
+    border-color: var(--r-accent)
+}
+
+.retours-onglet.is-actif,
+.retours-micro.is-actif {
+    border-color: var(--r-accent);
+    background: var(--r-accent);
+    color: var(--r-sur-accent)
+}
+
+.retours-micro:disabled {
+    opacity: .45;
+    cursor: help
+}
+
+.retours-petit.is-ok {
+    border-color: #6fbf7a;
+    color: #9fd8a8
+}
+
+.retours-fermer {
+    width: 30px;
+    height: 30px;
+    border: 0;
+    background: transparent;
+    color: var(--r-doux);
+    font-size: 22px !important;
+    line-height: 1
+}
+
+.retours-fermer:hover {
+    color: var(--r-accent)
+}
+
+.retours-texte {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 130px;
+    padding: 10px 12px;
+    border: 1px solid rgba(236, 231, 223, .16);
+    border-radius: var(--r-rayon);
+    background: rgba(255, 255, 255, .05);
+    color: var(--r-encre);
+    font: inherit;
+    resize: vertical
+}
+
+.retours-texte:focus-visible {
+    outline: none;
+    border-color: var(--r-accent)
+}
+
+.retours-outils {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 10px 0
+}
+
+.retours-urgent {
+    margin-left: auto;
+    color: var(--r-doux);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer
+}
+
+.retours-urgent input {
+    accent-color: var(--r-accent)
+}
+
+.retours-vise {
+    margin: 0 0 10px;
+    padding: 6px 8px;
+    border-left: 2px solid var(--r-accent);
+    color: var(--r-doux);
+    font-size: 12px;
+    word-break: break-word
+}
+
+.retours-pied {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px
+}
+
+.retours-envoyer {
+    padding: 10px 22px;
+    border: 0;
+    border-radius: var(--r-rayon);
+    background: var(--retours-degrade, var(--hit-degrade, var(--r-accent)));
+    color: var(--r-sur-accent);
+    font-weight: 900 !important;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    transition: filter .2s ease
+}
+
+.retours-envoyer:hover,
+.retours-envoyer:focus-visible {
+    outline: none;
+    filter: brightness(1.12)
+}
+
+.retours-envoyer:disabled {
+    filter: grayscale(.6) brightness(.8);
+    cursor: progress
+}
+
+.retours-etat {
+    margin: 0;
+    color: var(--r-doux);
+    font-size: 13px
+}
+
+.retours-etat.is-ok {
+    color: #9fd8a8
+}
+
+.retours-etat.is-erreur {
+    color: #ff9a85
+}
+
+.retours-liste {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none
+}
+
+.retours-vide {
+    color: var(--r-doux)
+}
+
+.retours-ticket {
+    padding: 10px;
+    border: 1px solid rgba(236, 231, 223, .12);
+    border-left: 3px solid var(--r-doux)
+}
+
+.retours-ticket.is-nouveau { border-left-color: var(--r-accent) }
+.retours-ticket.is-en_cours { border-left-color: #f2c12e }
+.retours-ticket.is-a_verifier,
+.retours-ticket.is-question { border-left-color: #6aa9ff }
+.retours-ticket.is-fait { border-left-color: #6fbf7a; opacity: .7 }
+.retours-ticket.is-refuse { opacity: .55 }
+
+.retours-ticket-haut {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 8px;
+    margin-bottom: 4px
+}
+
+.retours-statut {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase
+}
+
+.retours-meta {
+    color: var(--r-doux);
+    font-size: 12px
+}
+
+.retours-ticket-texte,
+.retours-reponse {
+    margin: 0 0 6px;
+    white-space: pre-wrap;
+    word-break: break-word
+}
+
+.retours-reponse {
+    padding: 6px 8px;
+    background: rgba(106, 169, 255, .08);
+    color: #d7e6ff
+}
+
+.retours-actions {
+    display: flex;
+    gap: 6px
+}
+
+/* « Pointer » : la page entière vise ; l'élément choisi garde un liseré */
+html.retours-visee,
+html.retours-visee * {
+    cursor: crosshair !important
+}
+
+.retours-marque {
+    outline: 2px dashed var(--r-accent) !important;
+    outline-offset: 2px
+}
+
+@supports (corner-shape: bevel) {
+    :is(.retours-ouvrir, .retours-envoyer, .retours-onglet, .retours-petit, .retours-micro, .retours-pointer) {
+        border-radius: var(--biseau, 7px);
+        corner-shape: bevel
+    }
+
+    .retours-panneau {
+        border-radius: 14px 0;
+        corner-shape: bevel
+    }
+}
+
+@media (max-width: 760px) {
+    /* le bouton flottant Réglages est en bas à gauche ; le lecteur en haut */
+    .retours {
+        right: 10px;
+        bottom: 10px
+    }
+
+    .retours-ouvrir {
+        padding: 9px 12px
+    }
+}

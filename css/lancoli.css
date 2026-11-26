@@ -1,0 +1,4765 @@
+:root {
+    --paper: #fbfaf7;
+    --ink: #171717;
+    --muted: #6f6a63;
+    --line: rgba(23, 23, 23, .12);
+    --glass: rgba(255, 255, 255, .42);
+
+    /* Foyers du fond pastel — redéfinis par chapitre */
+    --aura-1: #ffd9c7;
+    --aura-2: #e3d7ff;
+    --aura-3: #cdeee0;
+    --aura-4: #cfe3ff;
+    --aura-5: #ffd6e5;
+
+    --ease: cubic-bezier(.77, 0, .18, 1);
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+}
+
+body[data-chapter="2"] {
+    --aura-1: #ffe2c2;
+    --aura-2: #d8e9ff;
+    --aura-3: #f6d5ef;
+    --aura-4: #d4f1e4;
+    --aura-5: #fff0bd;
+}
+
+body[data-chapter="3"] {
+    --aura-1: #d9f0e7;
+    --aura-2: #ffd8cc;
+    --aura-3: #e6dcff;
+    --aura-4: #fde7c4;
+    --aura-5: #cfe6f7;
+}
+
+body[data-chapter="4"] {
+    --aura-1: #f0dcff;
+    --aura-2: #ffe0d1;
+    --aura-3: #d2ecf7;
+    --aura-4: #ffd3e1;
+    --aura-5: #e0f3d6;
+}
+
+/* Accueil : les foyers reprennent les teintes des pochettes, adoucies vers le papier
+   (orange Full Circle Revolution, bleu La fenêtre dans l'eau, rouge Ghostpel, magenta TMWTV, jaune Ronny) */
+body.seuil {
+    --aura-1: color-mix(in srgb, #f58a2e 60%, var(--paper));
+    --aura-2: color-mix(in srgb, #2f9fd4 55%, var(--paper));
+    --aura-3: color-mix(in srgb, #e5432b 50%, var(--paper));
+    --aura-4: color-mix(in srgb, #c63f9c 50%, var(--paper));
+    --aura-5: color-mix(in srgb, #f2c12e 55%, var(--paper));
+}
+
+* {
+    box-sizing: border-box
+}
+
+html {
+    background: var(--paper)
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    color: var(--ink);
+    font: 12px Arial, sans-serif;
+    overflow-x: hidden
+}
+
+a {
+    color: inherit;
+    text-decoration: none
+}
+
+.page {
+    width: min(1220px, calc(100% - 40px));
+    margin-inline: auto
+}
+
+main.page {
+    flex: 1
+}
+
+/* ---------- Fond : gradient pastel multi-foyers ---------- */
+
+.aura {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    overflow: hidden;
+    pointer-events: none;
+    background: var(--paper)
+}
+
+.aura span {
+    position: absolute;
+    width: 62vmax;
+    height: 62vmax;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, var(--c) 0%, transparent 68%);
+    opacity: .85;
+    transition: background 1.2s ease;
+    animation: drift var(--t, 26s) ease-in-out infinite alternate;
+    will-change: transform
+}
+
+.aura span:nth-child(1) { --c: var(--aura-1); left: -18vmax; top: -22vmax; --t: 24s }
+.aura span:nth-child(2) { --c: var(--aura-2); right: -20vmax; top: -16vmax; --t: 30s; animation-delay: -6s }
+.aura span:nth-child(3) { --c: var(--aura-3); right: -14vmax; bottom: -26vmax; --t: 27s; animation-delay: -12s }
+.aura span:nth-child(4) { --c: var(--aura-4); left: -22vmax; bottom: -20vmax; --t: 33s; animation-delay: -3s }
+.aura span:nth-child(5) { --c: var(--aura-5); left: 30%; top: 28%; width: 44vmax; height: 44vmax; opacity: .6; --t: 38s; animation-delay: -18s }
+
+@keyframes drift {
+    0% { transform: translate3d(0, 0, 0) scale(1) }
+    50% { transform: translate3d(6vmax, 4vmax, 0) scale(1.08) }
+    100% { transform: translate3d(-4vmax, 7vmax, 0) scale(.94) }
+}
+
+/* Nuée de lignes (canvas injecté par lancoli.js) */
+.flock {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none
+}
+
+/* grain léger pour éviter l'effet « numérique » des dégradés : une image pré-calculée,
+   pas un feTurbulence que le navigateur recalcule (et affiche à moitié rendu) à chaque page */
+.aura::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: .22;
+    mix-blend-mode: multiply;
+    background-image: url("../assets/textures/grain.png")
+}
+
+/* ---------- Rideau de transition entre chapitres ---------- */
+
+.curtain {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    background: var(--ink);
+    color: var(--paper);
+    transform: scaleY(0);
+    transform-origin: top;
+    pointer-events: none
+}
+
+.curtain-label {
+    font: italic 400 clamp(32px, 6vw, 72px) Georgia, serif;
+    letter-spacing: -.05em;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .4s ease, transform .6s var(--ease-out)
+}
+
+.js .curtain {
+    transform: scaleY(1)
+}
+
+/* Second plan, derrière le rideau : même geste, légèrement décalé dans le temps.
+   Il part devant à la sortie et traîne à l'entrée, d'où la profondeur. */
+html::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    background: var(--muted);
+    transform: scaleY(0);
+    transform-origin: top;
+    pointer-events: none
+}
+
+.js::after {
+    transform: scaleY(1)
+}
+
+.js.is-ready::after {
+    transform: scaleY(0);
+    transition: transform .9s var(--ease) .27s
+}
+
+.js.is-leaving::after {
+    transform: scaleY(1);
+    transform-origin: bottom;
+    transition: transform .55s var(--ease)
+}
+
+.js.is-ready .curtain {
+    transform: scaleY(0);
+    transition: transform .9s var(--ease) .15s
+}
+
+.js.is-leaving .curtain {
+    transform: scaleY(1);
+    transform-origin: bottom;
+    transition: transform .6s var(--ease) .1s
+}
+
+.js.is-leaving .curtain-label {
+    opacity: 1;
+    transform: none;
+    transition-delay: .3s
+}
+
+/* ---------- Apparitions ---------- */
+
+.reveal {
+    opacity: 1
+}
+
+/* `translate` (et non `transform`) pour ne pas bloquer les effets de survol */
+.js .reveal {
+    opacity: 0
+}
+
+.js.is-ready .reveal {
+    animation: rise 1.2s var(--ease-out) calc(.45s + var(--d, 0) * .09s) both
+}
+
+@keyframes rise {
+    from { opacity: 0; translate: 0 28px }
+    to { opacity: 1; translate: none }
+}
+
+/* ---------- En-tête ---------- */
+
+/* barre de verre : floute le fond et le remonte légèrement en luminance */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding: 24px 0 16px;
+    background: var(--nav-glass, rgba(255, 255, 255, .16));
+    -webkit-backdrop-filter: blur(18px) saturate(1.35) brightness(var(--nav-lift, 1.03));
+    backdrop-filter: blur(18px) saturate(1.35) brightness(var(--nav-lift, 1.03));
+    border-bottom: 1px solid var(--nav-edge, rgba(255, 255, 255, .7));
+    box-shadow: inset 0 1px 0 var(--nav-edge, rgba(255, 255, 255, .7)), 0 12px 30px -20px rgba(23, 23, 23, .3);
+    transition: padding .5s var(--ease-out), background .5s ease;
+    overflow-anchor: none
+}
+
+header .logo {
+    transition: font-size .5s var(--ease-out)
+}
+
+/* une fois la page défilée, la barre se resserre */
+header.is-stuck {
+    padding: 12px 0 10px
+}
+
+header.is-stuck .logo {
+    font-size: clamp(26px, 3vw, 34px)
+}
+
+html.film header {
+    --nav-glass: rgba(255, 255, 255, .07);
+    --nav-edge: rgba(255, 255, 255, .14);
+    --nav-lift: 1.35
+}
+
+.nav,
+footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px
+}
+
+.logo {
+    font-size: clamp(36px, 5vw, 62px);
+    font-weight: 900;
+    letter-spacing: -.09em;
+    line-height: .8
+}
+
+.logo sup {
+    font-size: 10px;
+    letter-spacing: 0
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: 10px
+}
+
+nav a:not(.pill) {
+    position: relative;
+    padding: 4px 0
+}
+
+nav a:not(.pill)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform .5s var(--ease)
+}
+
+nav a:not(.pill):hover::after,
+nav a[aria-current="page"]::after {
+    transform: scaleX(1);
+    transform-origin: left
+}
+
+.pill {
+    display: inline-block;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    padding: 10px 15px;
+    white-space: nowrap;
+    transition: background .3s ease, color .3s ease
+}
+
+.pill:hover {
+    background: var(--ink);
+    color: var(--paper)
+}
+
+.kicker,
+.tag {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .14em
+}
+
+/* Indicateur de chapitre */
+.chapter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted)
+}
+
+.chapter-bar {
+    position: relative;
+    width: 72px;
+    height: 1px;
+    background: var(--line)
+}
+
+.chapter-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    transform: scaleX(calc(var(--step) / 3));
+    transform-origin: left;
+    transition: transform 1.2s var(--ease-out) .6s
+}
+
+.js:not(.is-ready) .chapter-bar::after {
+    transform: scaleX(calc((var(--step) - 1) / 3))
+}
+
+/* ---------- Chapitre I : seuil + galerie ---------- */
+
+.threshold {
+    flex: 1;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto auto;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 28px 0
+}
+
+.threshold-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px
+}
+
+.threshold-mark {
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: -.04em
+}
+
+/* le titre et le CTA se posent juste au-dessus de la rangée de tuiles */
+.threshold-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 24px;
+    padding: 24px 0 18px
+}
+
+.threshold h1 {
+    font-size: clamp(82px, 13vw, 190px);
+    letter-spacing: -.1em;
+    line-height: .78;
+    margin: 22px 0 0;
+    font-weight: 900
+}
+
+.threshold h1 sup {
+    font-size: .1em;
+    letter-spacing: 0;
+    vertical-align: top;
+    position: relative;
+    top: .4em
+}
+
+.threshold .cta-zone {
+    width: 230px;
+    height: 230px;
+    margin: 0 -10px -24px 0
+}
+
+.threshold .gallery {
+    --tile-gap: 10px
+}
+
+.threshold-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 32px;
+    padding: 26px 0 30px
+}
+
+.threshold-intro p {
+    max-width: 380px;
+    margin: 0;
+    line-height: 1.5;
+    color: #444
+}
+
+.threshold-intro .threshold-lede {
+    font: italic 400 clamp(20px, 2.2vw, 28px) / 1.15 Georgia, serif;
+    letter-spacing: -.03em;
+    max-width: none;
+    color: var(--ink)
+}
+
+/* les ateliers de l'accueil : les éditeurs graphiques ; au survol, la bordure et la couleur changent, rien ne bouge */
+.ateliers {
+    display: flex;
+    align-items: start;
+    gap: 32px;
+    padding: 0 0 26px
+}
+
+.ateliers-titre {
+    flex: none;
+    width: 160px;
+    margin: 4px 0 0;
+    font: 400 10px/1.5 Arial, sans-serif;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted)
+}
+
+.ateliers-liste {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    flex: 1;
+    margin: 0;
+    padding: 0;
+    list-style: none
+}
+
+.atelier {
+    display: grid;
+    gap: 6px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    color: var(--ink);
+    transition: border-color .2s, background-color .2s
+}
+
+a.atelier:hover,
+a.atelier:focus-visible {
+    border-color: var(--ink);
+    background: rgba(255, 255, 255, .45);
+    outline: none
+}
+
+.atelier strong {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -.06em;
+    line-height: 1
+}
+
+a.atelier strong::after {
+    content: " →";
+    letter-spacing: 0
+}
+
+.atelier span {
+    font-size: 13px;
+    line-height: 1.4;
+    color: #444
+}
+
+.atelier-tech {
+    font: 400 10px/1.4 Arial, sans-serif;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted)
+}
+
+.atelier.is-bientot {
+    border-style: dashed;
+    color: var(--muted)
+}
+
+.atelier.is-bientot span {
+    color: var(--muted)
+}
+
+@media (max-width: 720px) {
+    .ateliers {
+        flex-direction: column;
+        gap: 10px
+    }
+}
+
+.threshold-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 16px;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--line);
+    padding-top: 16px
+}
+
+/* ---------- CTA d'entrée ---------- */
+
+.cta-zone {
+    display: grid;
+    place-items: center;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%
+}
+
+.cta {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 210px;
+    height: 210px;
+    border-radius: 50%;
+    transition: transform .6s var(--ease-out)
+}
+
+.cta:focus-visible {
+    outline: none
+}
+
+.cta:focus-visible .cta-core {
+    box-shadow: 0 0 0 3px var(--paper), 0 0 0 4px var(--ink)
+}
+
+.cta-ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    animation: spin 22s linear infinite
+}
+
+.cta-ring text {
+    font: 400 10.5px Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .46em;
+    fill: var(--ink)
+}
+
+.cta-ring g text {
+    letter-spacing: 0
+}
+
+.cta-ring circle {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: .6;
+    stroke-dasharray: 1 5;
+    opacity: .5
+}
+
+.cta-halo {
+    position: absolute;
+    inset: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--ink);
+    opacity: 0;
+    animation: halo 3.2s var(--ease-out) infinite
+}
+
+.cta-core {
+    position: relative;
+    display: grid;
+    place-items: center;
+    gap: 2px;
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    overflow: hidden;
+    isolation: isolate;
+    background: rgba(255, 255, 255, .55);
+    border: 1px solid var(--ink);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 40px -18px rgba(23, 23, 23, .35);
+    transition: transform .6s var(--ease-out), color .45s ease .05s, box-shadow .6s ease
+}
+
+.cta-core::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: 50%;
+    background: var(--ink);
+    transform: scale(0);
+    transition: transform .6s var(--ease)
+}
+
+.cta-label {
+    font: italic 400 22px/1 Georgia, serif;
+    letter-spacing: -.03em
+}
+
+.cta-sub {
+    font-size: 8px;
+    letter-spacing: .24em;
+    text-transform: uppercase
+}
+
+.cta-arrow {
+    position: relative;
+    display: block;
+    width: 34px;
+    height: 12px;
+    overflow: hidden
+}
+
+.cta-arrow::before,
+.cta-arrow::after {
+    content: "→";
+    position: absolute;
+    inset: 0;
+    text-align: center;
+    font-size: 13px;
+    line-height: 12px;
+    transition: transform .55s var(--ease)
+}
+
+.cta-arrow::after {
+    transform: translateX(-120%)
+}
+
+.cta:hover .cta-core,
+.cta:focus-visible .cta-core {
+    color: var(--paper);
+    transform: scale(1.06);
+    box-shadow: 0 26px 50px -18px rgba(23, 23, 23, .5)
+}
+
+.cta:hover .cta-core::before,
+.cta:focus-visible .cta-core::before {
+    transform: scale(1)
+}
+
+.cta:hover .cta-arrow::before,
+.cta:focus-visible .cta-arrow::before {
+    transform: translateX(120%)
+}
+
+.cta:hover .cta-arrow::after,
+.cta:focus-visible .cta-arrow::after {
+    transform: none
+}
+
+.cta:hover .cta-ring,
+.cta:focus-visible .cta-ring {
+    animation-duration: 8s
+}
+
+.cta:active .cta-core {
+    transform: scale(.97)
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg) }
+}
+
+@keyframes halo {
+    0% { transform: scale(.9); opacity: 0 }
+    25% { opacity: .35 }
+    100% { transform: scale(1.35); opacity: 0 }
+}
+
+/* ---------- En-têtes de chapitre ---------- */
+
+.chapter-hero {
+    padding: 56px 0 32px;
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 35px;
+    align-items: end
+}
+
+.chapter-hero h1 {
+    font: 400 clamp(64px, 10vw, 150px) / .85 Georgia, serif;
+    letter-spacing: -.07em;
+    margin: 18px 0 0
+}
+
+.chapter-hero h1 em {
+    font-style: italic
+}
+
+.chapter-hero p {
+    max-width: 320px;
+    margin: 0 0 8px auto;
+    line-height: 1.5;
+    color: #444
+}
+
+/* ---------- Tuiles de la galerie (chapitre I) ---------- */
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: var(--tile-gap, 7px)
+}
+
+.tile {
+    position: relative;
+    overflow: hidden;
+    /* plus fine que sa colonne : la rangée respire */
+    justify-self: center;
+    width: 70%;
+    aspect-ratio: .44/1;
+    background: linear-gradient(145deg, var(--a), var(--b));
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transition: transform .6s var(--ease-out)
+}
+
+/* une pochette floutée jusqu'à n'être plus qu'un dégradé, pour les tuiles qui en portent une (--img).
+   Elle déborde de la tuile pour que le flou ne s'éclaircisse pas sur les bords.
+   --tile-blur : baisser pour laisser deviner l'image */
+.tile::before {
+    content: "";
+    position: absolute;
+    inset: -30%;
+    background: var(--img, none) var(--pos, center) / cover no-repeat;
+    filter: blur(var(--tile-blur, 34px)) saturate(1.25);
+    transition: transform .8s var(--ease-out)
+}
+
+.tile:hover::before {
+    transform: scale(1.12)
+}
+
+/* 1 et 6 : pochette floutée ; 2 à 5 : les aplats d'origine */
+.tile:nth-child(1) {
+    --img: url("../assets/covers/web/full-circle-revolution.jpg");
+    --a: #f58a2e;
+    --b: #7f2215;
+    clip-path: polygon(0 0, 72% 0, 100% 12%, 100% 88%, 74% 100%, 0 100%);
+    border-radius: 90px 90px 20px 20px
+}
+
+.tile:nth-child(2) {
+    --a: #c98f70;
+    --b: #f0d9bd;
+    border-radius: 24px 90px 24px 90px
+}
+
+.tile:nth-child(3) {
+    --a: #d7b49f;
+    --b: #925b46;
+    border-radius: 90px 90px 24px 24px
+}
+
+.tile:nth-child(4) {
+    --a: #f2a37e;
+    --b: #ef5c38;
+    border-radius: 25px 90px 25px 90px
+}
+
+.tile:nth-child(5) {
+    --a: #0799ac;
+    --b: #e5ed67;
+    border-radius: 90px 90px 24px 24px
+}
+
+.tile:nth-child(6) {
+    --img: url("../assets/covers/web/convalescence.jpg");
+    --a: #41474d;
+    --b: #b9c6c2;
+    border-radius: 90px 20px 90px 20px
+}
+
+/* sélecteur de langue */
+.lang {
+    display: inline-flex;
+    gap: 2px
+}
+
+.lang button {
+    padding: 4px 6px;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    background: none;
+    color: var(--muted);
+    font: 10px Arial, sans-serif;
+    letter-spacing: .12em;
+    cursor: pointer;
+    transition: color .3s ease, border-color .3s ease
+}
+
+.lang button[aria-pressed="true"] {
+    color: var(--ink);
+    border-color: currentColor
+}
+
+.lang button:hover,
+.lang button:focus-visible {
+    outline: none;
+    color: var(--ink)
+}
+
+/* ---------- Chapitre II : projets ---------- */
+
+.head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    margin-bottom: 20px
+}
+
+.head h2 {
+    font: 400 40px Georgia, serif;
+    letter-spacing: -.07em;
+    margin: 0
+}
+
+.head span {
+    color: var(--muted);
+    font-size: 10px
+}
+
+/* Sélecteur de vue */
+.view-switch {
+    position: relative;
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid var(--ink);
+    border-radius: 999px
+}
+
+.view-switch button {
+    position: relative;
+    z-index: 1;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    padding: 8px 14px;
+    font: 10px Arial, sans-serif;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color .45s ease
+}
+
+.view-switch button[aria-pressed="true"] {
+    color: var(--paper)
+}
+
+.view-switch button:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 2px;
+    border-radius: 999px
+}
+
+/* pastille d'encre qui glisse sous le bouton actif */
+.view-switch::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 0;
+    width: var(--pill-w, 0);
+    border-radius: 999px;
+    background: var(--ink);
+    transform: translateX(var(--pill-x, 0));
+    transition: transform .6s var(--ease), width .6s var(--ease)
+}
+
+.view-switch.is-instant::before {
+    transition: none
+}
+
+.works-stage>* {
+    transition: opacity .45s ease
+}
+
+.works-stage.is-switching>* {
+    opacity: 0
+}
+
+.works-stage[data-view="bands"] .works-grid,
+.works-stage[data-view="grid"] .bands {
+    display: none
+}
+
+/* ----- Vue grille 3×3 ----- */
+
+.works-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 12px 0 8px
+}
+
+.js.is-ready .works-stage[data-view="grid"] .works-grid .work {
+    animation: rise 1s var(--ease-out) calc(var(--i, 0) * .06s) both
+}
+
+/* ----- Vue bandeaux défilants ----- */
+
+.bands {
+    display: grid;
+    gap: 8px;
+    /* fondu sur les bords : les bandeaux entrent et sortent en douceur */
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent)
+}
+
+.band {
+    overflow: hidden;
+    padding: 14px 0 18px
+}
+
+.band-track {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    animation: band var(--dur, 60s) linear infinite
+}
+
+.band:nth-child(even) .band-track {
+    animation-direction: reverse
+}
+
+.band .work {
+    flex: 0 0 clamp(220px, 22vw, 300px)
+}
+
+/* le contenu est dupliqué une fois : -50% (moins un demi-gap) boucle sans couture */
+@keyframes band {
+    to { transform: translateX(calc(-50% - 10px)) }
+}
+
+/* ----- Cartes ----- */
+
+.work {
+    display: block;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, .7);
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    transition: transform .4s var(--ease-out), box-shadow .4s ease
+}
+
+.work:hover {
+    box-shadow: 10px 12px 0 rgba(23, 23, 23, .08)
+}
+
+.work-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(145deg, var(--a, #e8e2da), var(--b, #d9cfc4));
+    border-radius: 8px
+}
+
+.work-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: relative;
+    z-index: 1;
+    user-select: none;
+    -webkit-user-drag: none;
+    transition: transform 1s var(--ease-out)
+}
+
+.work:hover .work-image img {
+    transform: scale(1.05)
+}
+
+.work:nth-child(3n+2) .work-image {
+    border-radius: 18px 42px 18px 42px
+}
+
+.work:nth-child(3n) .work-image {
+    border-radius: 42px 18px 42px 18px
+}
+
+/* cases « à venir » qui complètent la grille */
+.work--soon .work-image {
+    --a: #f3d9e8;
+    --b: #d6e4fb
+}
+
+.work--soon:last-child .work-image {
+    --a: #dff1e6;
+    --b: #f8e2cf
+}
+
+.work--soon .work-image::after {
+    content: "";
+    position: absolute;
+    width: 56%;
+    height: 56%;
+    left: 22%;
+    top: 22%;
+    border-radius: 50%;
+    border: 1px dashed rgba(23, 23, 23, .35);
+    animation: spin 40s linear infinite
+}
+
+.work-title {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 12px
+}
+
+.work-title span {
+    color: var(--muted);
+    font-size: 10px
+}
+
+/* ---------- Chapitre III : contact ---------- */
+
+.contact {
+    text-align: center;
+    margin: 12vh auto 10vh;
+    max-width: 560px
+}
+
+.contact h1 {
+    font: 400 clamp(46px, 7vw, 88px) / .95 Georgia, serif;
+    letter-spacing: -.06em;
+    margin: 22px 0
+}
+
+.contact h1 em {
+    font-style: italic
+}
+
+.contact p {
+    color: var(--muted);
+    line-height: 1.5;
+    max-width: 380px;
+    margin: 0 auto 28px
+}
+
+/* ---------- Chapitre suivant ---------- */
+
+.next {
+    display: block;
+    margin-top: 80px;
+    padding: 28px 0 8px;
+    border-top: 1px solid var(--line)
+}
+
+.next .tag {
+    color: var(--muted)
+}
+
+.next-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    margin-top: 10px;
+    font: 400 clamp(44px, 8vw, 120px) / .95 Georgia, serif;
+    letter-spacing: -.07em
+}
+
+.next-title span {
+    background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat;
+    transition: background-size .8s var(--ease)
+}
+
+.next-title i {
+    font-style: normal;
+    font-size: .5em;
+    transition: transform .6s var(--ease-out)
+}
+
+.next:hover .next-title span {
+    background-size: 100% 1px
+}
+
+.next:hover .next-title i {
+    transform: translateX(12px)
+}
+
+footer {
+    border-top: 1px solid var(--line);
+    padding: 28px 0;
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 40px
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 760px) {
+    .page {
+        width: calc(100% - 32px)
+    }
+
+    nav a:not(.pill) {
+        display: none
+    }
+
+    .chapter-bar {
+        width: 40px
+    }
+
+    .chapter-hero {
+        grid-template-columns: 1fr;
+        gap: 25px
+    }
+
+    .threshold-hero {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding-bottom: 8px
+    }
+
+    .threshold .cta-zone {
+        width: 190px;
+        height: 190px;
+        margin: 0 0 0 -14px
+    }
+
+    .threshold .cta {
+        transform: scale(.82)
+    }
+
+    .threshold-intro {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px
+    }
+
+    .chapter-hero p {
+        margin: 0
+    }
+
+    .gallery {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px
+    }
+
+    .tile:nth-child(2),
+    .tile:nth-child(4) {
+        border-bottom-left-radius: 24px
+    }
+
+    .works-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px
+    }
+
+    .works-grid .work--soon:last-child {
+        display: none
+    }
+
+    .work {
+        padding: 8px
+    }
+
+    .band .work {
+        flex-basis: 180px
+    }
+
+    .head {
+        flex-wrap: wrap;
+        gap: 14px
+    }
+
+    .nav,
+    footer {
+        align-items: flex-start
+    }
+
+    footer {
+        display: block
+    }
+
+    footer div+div {
+        margin-top: 10px
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition-duration: .01ms !important;
+        transition-delay: 0s !important
+    }
+
+    .js .reveal {
+        opacity: 1
+    }
+}
+
+/* ---------- Projets : cartes « coulisses » ---------- */
+
+/* étiquette façon clap : codes de plan, fiches, statuts */
+.slate {
+    font: 10px/1.4 ui-monospace, Consolas, "Courier New", monospace;
+    letter-spacing: .1em;
+    text-transform: uppercase
+}
+
+.rec {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 7px;
+    border-radius: 50%;
+    background: #e5412d;
+    vertical-align: 1px;
+    animation: rec 1.6s ease-in-out infinite
+}
+
+@keyframes rec {
+    50% { opacity: .25 }
+}
+
+.projects {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 64px
+}
+
+.project-card {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 28px;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, .7);
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    transition: transform .4s var(--ease-out), box-shadow .4s ease
+}
+
+a.project-card:hover,
+a.project-card:focus-visible {
+    box-shadow: 10px 12px 0 rgba(23, 23, 23, .08)
+}
+
+a.project-card:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 3px
+}
+
+.project-cover {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 18px 42px 18px 42px;
+    background: #171717
+}
+
+.project-cover img,
+.project-strip img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover
+}
+
+/* zoom de base 1.35 : sort du cadre les bandes noires de l'image composée */
+.project-cover img {
+    transform: scale(1.35);
+    transition: transform 1.2s var(--ease-out)
+}
+
+.project-card:hover .project-cover img {
+    transform: scale(1.4)
+}
+
+.project-status {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    color: #fbfaf7;
+    background: rgba(23, 23, 23, .6);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px)
+}
+
+.project-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 8px 8px 4px 0
+}
+
+.project-body>.slate:first-child {
+    color: var(--muted)
+}
+
+.project-body h3 {
+    font: 400 clamp(38px, 4.6vw, 64px) / .9 Georgia, serif;
+    letter-spacing: -.07em;
+    margin: 12px 0 16px
+}
+
+.project-body p {
+    max-width: 360px;
+    margin: 0;
+    line-height: 1.5;
+    color: #444
+}
+
+.project-meta {
+    margin: 20px 0;
+    border-top: 1px solid var(--line)
+}
+
+.project-meta div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line)
+}
+
+.project-meta dt {
+    color: var(--muted)
+}
+
+.project-meta dd {
+    margin: 0
+}
+
+/* planche contact : quatre plans du film */
+.project-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-top: auto
+}
+
+.project-strip img {
+    aspect-ratio: 16 / 9;
+    border-radius: 3px
+}
+
+.project-more {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px
+}
+
+.project-more i {
+    font-style: normal;
+    transition: transform .6s var(--ease-out)
+}
+
+.project-card--soon {
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 14px;
+    border: 1px dashed rgba(23, 23, 23, .3);
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    color: var(--muted)
+}
+
+/* une carte sur deux : image à droite */
+@media (min-width: 761px) {
+    .project-card--flip {
+        grid-template-columns: 1fr 1.4fr
+    }
+
+    .project-card--flip .project-cover {
+        order: 1;
+        border-radius: 42px 18px 42px 18px
+    }
+
+    .project-card--flip .project-body {
+        padding: 8px 0 4px 8px
+    }
+}
+
+/* ---------- Page projet : salle obscure ---------- */
+
+html.film {
+    --paper: #100f0d;
+    --ink: #ece7df;
+    --muted: #9b948a;
+    --line: rgba(236, 231, 223, .16);
+    --glass: rgba(255, 255, 255, .05)
+}
+
+html.film body {
+    --aura-1: #3b2a1b;
+    --aura-2: #1b2b30;
+    --aura-3: #2a301c;
+    --aura-4: #33211b;
+    --aura-5: #1c2130
+}
+
+html.film .aura span {
+    opacity: .7
+}
+
+/* le rideau reste sombre : pas de flash clair entre deux pages */
+html.film .curtain {
+    background: #171717;
+    color: #fbfaf7
+}
+
+html.film::after {
+    background: #2c2a27
+}
+
+html.film .chapter-hero p {
+    color: var(--muted)
+}
+
+/* Horla : béton la nuit, un accent par lieu (--accent posé sur chaque élément) */
+html.film--horla {
+    --paper: #121314;
+    --accent: #ff8a2a
+}
+
+html.film--horla body {
+    /* gris béton, à peine teintés du bleu et du rouge de la gare routière */
+    --aura-1: #3d4044;
+    --aura-2: #4a2c28;
+    --aura-3: #2f3236;
+    --aura-4: #27344a;
+    --aura-5: #45433f
+}
+
+html.film--horla .aura span {
+    opacity: .8
+}
+
+/* ---------- Horla : une scène plein écran, deux temps (entrée, puis ville) ---------- */
+
+html.stage body {
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden
+}
+
+/* la scène three.js passe sous l'interface et reçoit les clics là où il n'y a rien */
+.world-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 0
+}
+
+.world-stage canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    outline: none
+}
+
+html.stage header {
+    position: relative;
+    z-index: 2
+}
+
+main.horla {
+    position: relative;
+    z-index: 1;
+    min-height: 0;
+    pointer-events: none
+}
+
+main.horla a,
+main.horla button,
+main.horla input,
+.timeline {
+    pointer-events: auto
+}
+
+/* Temps 1 : l'entrée */
+.horla-intro {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: 46%;
+    padding-bottom: 4vh;
+    transition: opacity .7s ease, translate 1s var(--ease-out), visibility 0s .7s
+}
+
+.horla-intro h1 {
+    font: 400 clamp(88px, 13.5vw, 220px) / .78 Georgia, serif;
+    letter-spacing: -.07em;
+    margin: 20px 0 30px
+}
+
+.horla-intro h1 em {
+    display: block;
+    color: var(--accent)
+}
+
+.horla-intro p {
+    max-width: 380px;
+    margin: 0;
+    line-height: 1.55;
+    color: var(--muted)
+}
+
+.horla-intro .horla-lead {
+    max-width: none;
+    margin-bottom: 14px;
+    font: italic 400 clamp(20px, 2.2vw, 30px) / 1.15 Georgia, serif;
+    letter-spacing: -.03em;
+    color: var(--ink)
+}
+
+.horla-start {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 30px;
+    padding: 10px 22px 10px 10px;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    background: rgba(18, 19, 20, .6);
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+    transition: background .35s ease, color .35s ease
+}
+
+.horla-start small {
+    display: block;
+    margin-top: 3px;
+    font-size: 9px;
+    color: var(--muted);
+    transition: color .35s ease
+}
+
+.horla-start-icon {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--accent)
+}
+
+.horla-start-icon::before,
+.timeline-play::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 12px;
+    border-left: 11px solid #121314;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent
+}
+
+.horla-start-icon::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    opacity: 0;
+    animation: halo 2.4s var(--ease-out) infinite
+}
+
+.horla-start:hover,
+.horla-start:focus-visible {
+    outline: none;
+    background: var(--accent);
+    color: #121314
+}
+
+.horla-start:hover small,
+.horla-start:focus-visible small {
+    color: #121314
+}
+
+.horla-start:hover .horla-start-icon,
+.horla-start:focus-visible .horla-start-icon {
+    background: #121314
+}
+
+.horla-start:hover .horla-start-icon::before,
+.horla-start:focus-visible .horla-start-icon::before {
+    border-left-color: var(--accent)
+}
+
+.horla-who {
+    margin-top: 16px;
+    padding: 4px 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color .3s ease, border-color .3s ease
+}
+
+.horla-who:hover,
+.horla-who:focus-visible {
+    outline: none;
+    color: var(--ink);
+    border-color: var(--ink)
+}
+
+/* étiquette accrochée à la cassette 3D (placée par horla.js) */
+.tape-cue {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px 6px 8px;
+    border-radius: 999px;
+    background: rgba(18, 19, 20, .78);
+    color: var(--accent);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .6s ease
+}
+
+.tape-cue.is-on {
+    opacity: 1
+}
+
+.tape-cue span {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent)
+}
+
+.tape-cue span::after {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    animation: halo 2s var(--ease-out) infinite
+}
+
+html.horla-live .horla-intro {
+    opacity: 0;
+    translate: -60px 0;
+    visibility: hidden
+}
+
+html.horla-live .tape-cue {
+    opacity: 0
+}
+
+/* Temps 2 : la ville */
+.horla-world {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1.2s ease 2s, visibility 0s 2s
+}
+
+html.horla-live .horla-world {
+    opacity: 1;
+    visibility: visible
+}
+
+.world-legend {
+    position: absolute;
+    left: 0;
+    top: 18px;
+    color: var(--muted)
+}
+
+.world-legend b {
+    display: inline-block;
+    margin-right: 8px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: #ff4d3d;
+    color: #121314;
+    font-weight: 700
+}
+
+.world-tabs {
+    position: absolute;
+    right: 0;
+    top: 12px;
+    display: flex;
+    gap: 6px
+}
+
+.world-tab {
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--ink);
+    background: rgba(18, 19, 20, .82);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background .3s ease, color .3s ease
+}
+
+.world-tab:hover,
+.world-tab:focus-visible {
+    outline: none;
+    background: var(--ink);
+    color: #121314
+}
+
+/* arrêts : posés sur la ville par horla.js, ils ouvrent les dossiers */
+.stops {
+    position: fixed;
+    inset: 0;
+    pointer-events: none
+}
+
+.stop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    cursor: pointer
+}
+
+.stop.is-active {
+    z-index: 1
+}
+
+.stop-pin {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    background: #121314;
+    box-shadow: 0 0 0 4px rgba(18, 19, 20, .7);
+    transition: transform .4s var(--ease-out), background .3s ease
+}
+
+.stop-name {
+    position: absolute;
+    left: 28px;
+    top: 50%;
+    padding: 4px 7px;
+    border-radius: 3px;
+    background: rgba(18, 19, 20, .78);
+    white-space: nowrap;
+    translate: 0 -50%;
+    opacity: .7;
+    transition: opacity .3s ease
+}
+
+.stop-name i {
+    margin-right: 7px;
+    font-style: normal;
+    color: var(--accent)
+}
+
+.stop-card {
+    position: absolute;
+    left: 28px;
+    top: 20px;
+    width: 150px;
+    padding: 5px 5px 7px;
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--accent);
+    background: rgba(18, 19, 20, .9);
+    text-align: left;
+    /* toujours visible : une miniature par lieu, qui grandit quand le lieu est actif */
+    transform: scale(.62);
+    transform-origin: 0 0;
+    filter: saturate(.7);
+    transition: transform .5s var(--ease-out), filter .5s ease, box-shadow .4s ease
+}
+
+/* trois rendus par lieu : celui du dessus, deux autres glissés derrière */
+.stop-stack {
+    position: relative;
+    display: block
+}
+
+.stop-stack img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover
+}
+
+.stop-stack img+img {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    height: 100%;
+    outline: 1px solid rgba(18, 19, 20, .9);
+    transition: transform .6s var(--ease-out)
+}
+
+.stop-card .slate {
+    display: none;
+    margin-top: 6px;
+    color: var(--accent)
+}
+
+.stop.is-active .stop-pin,
+.stop:hover .stop-pin,
+.stop:focus-visible .stop-pin {
+    transform: scale(1.25);
+    background: var(--accent)
+}
+
+.stop.is-active .stop-name,
+.stop:hover .stop-name,
+.stop:focus-visible .stop-name {
+    opacity: 1
+}
+
+.stop.is-active .stop-card,
+.stop:hover .stop-card,
+.stop:focus-visible .stop-card {
+    transform: none;
+    filter: none;
+    box-shadow: 8px 10px 0 rgba(0, 0, 0, .35)
+}
+
+.stop:hover,
+.stop:focus-visible {
+    z-index: 2
+}
+
+.stop.is-active .stop-card .slate,
+.stop:hover .stop-card .slate,
+.stop:focus-visible .stop-card .slate {
+    display: block
+}
+
+/* l'éventail s'ouvre sur le lieu actif ou survolé */
+.stop.is-active .stop-stack img:nth-child(2),
+.stop:hover .stop-stack img:nth-child(2),
+.stop:focus-visible .stop-stack img:nth-child(2) {
+    transform: translate(26px, -12px) rotate(5deg)
+}
+
+.stop.is-active .stop-stack img:nth-child(3),
+.stop:hover .stop-stack img:nth-child(3),
+.stop:focus-visible .stop-stack img:nth-child(3) {
+    transform: translate(50px, -4px) rotate(11deg)
+}
+
+.stop:focus-visible {
+    outline: none
+}
+
+.stop:focus-visible .stop-name {
+    outline: 1px solid var(--ink)
+}
+
+/* la timeline : le son du storyboard, découpé par lieu */
+.timeline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 18px;
+    padding: 14px 16px 10px;
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--accent);
+    background: rgba(18, 19, 20, .84);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition: border-color .6s ease
+}
+
+.timeline-now {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 10px
+}
+
+.timeline-num {
+    color: var(--accent);
+    transition: color .6s ease
+}
+
+.timeline-title {
+    font: 400 clamp(26px, 3vw, 40px) / 1 Georgia, serif;
+    letter-spacing: -.05em
+}
+
+.timeline-open {
+    margin-left: auto;
+    padding: 7px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background .3s ease, color .3s ease
+}
+
+.timeline-open:hover,
+.timeline-open:focus-visible {
+    outline: none;
+    background: var(--ink);
+    color: #121314
+}
+
+.timeline-bar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 14px
+}
+
+.timeline-play {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    margin-top: 6px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    transition: transform .4s var(--ease-out), background .6s ease
+}
+
+.timeline-play::before {
+    left: 16px;
+    top: 13px
+}
+
+.timeline.is-playing .timeline-play::before {
+    left: 14px;
+    top: 13px;
+    width: 12px;
+    height: 14px;
+    box-sizing: border-box;
+    border: 0 solid #121314;
+    border-width: 0 4px
+}
+
+.timeline-play:hover {
+    transform: scale(1.08)
+}
+
+.timeline-play:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 3px
+}
+
+.timeline-track {
+    position: relative;
+    height: 52px
+}
+
+.timeline-track canvas {
+    display: block;
+    width: 100%;
+    height: 100%
+}
+
+.timeline-seek {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize
+}
+
+.timeline-track:focus-within {
+    outline: 1px solid var(--line);
+    outline-offset: 3px
+}
+
+.timeline-chapters {
+    position: relative;
+    height: 24px;
+    margin-top: 5px
+}
+
+.timeline-chapter {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    padding: 5px 4px 0 0;
+    overflow: hidden;
+    border: 0;
+    border-top: 2px solid var(--accent);
+    border-right: 3px solid transparent;
+    background: none;
+    background-clip: padding-box;
+    color: var(--muted);
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+    opacity: .5;
+    transition: opacity .3s ease, color .3s ease
+}
+
+.timeline-chapter i {
+    margin-right: 6px;
+    font-style: normal;
+    color: var(--accent)
+}
+
+.timeline-chapter:hover,
+.timeline-chapter:focus-visible,
+.timeline-chapter.is-active {
+    outline: none;
+    opacity: 1;
+    color: var(--ink)
+}
+
+.timeline-time {
+    margin-top: 20px;
+    color: var(--muted);
+    white-space: nowrap
+}
+
+/* sans WebGL : pas de ville, les arrêts s'alignent au-dessus de la timeline */
+html.no-gl .tape-cue {
+    display: none
+}
+
+html.no-gl .stops {
+    position: absolute;
+    inset: 60px 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 34px 190px;
+    pointer-events: auto
+}
+
+html.no-gl .stop {
+    position: relative;
+    margin: 0
+}
+
+/* lecteur de la face B, rangé dans le dossier Coulisses */
+.tape {
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--accent);
+    background: rgba(18, 19, 20, .88)
+}
+
+.tape audio {
+    display: block;
+    width: 100%;
+    height: 32px
+}
+
+.tape-ui {
+    display: grid;
+    grid-template-columns: auto 128px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px
+}
+
+.tape-ui[hidden] {
+    display: none
+}
+
+.tape-label .slate {
+    display: block;
+    color: var(--accent)
+}
+
+.tape-label strong {
+    font: 400 16px/1.2 Georgia, serif;
+    letter-spacing: -.03em
+}
+
+.tape-play {
+    position: relative;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    transition: transform .4s var(--ease-out)
+}
+
+.tape-play:hover {
+    transform: scale(1.1)
+}
+
+.tape-play:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 3px
+}
+
+.tape-play::before {
+    content: "";
+    position: absolute;
+    left: 13px;
+    top: 11px;
+    border-left: 10px solid #121314;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent
+}
+
+.tape.is-playing .tape-play::before {
+    left: 12px;
+    top: 11px;
+    width: 10px;
+    height: 12px;
+    box-sizing: border-box;
+    border: 0 solid #121314;
+    border-width: 0 3px
+}
+
+.tape-seek {
+    width: 100%;
+    margin: 0;
+    accent-color: var(--accent);
+    cursor: pointer
+}
+
+.tape-time {
+    color: var(--muted);
+    white-space: nowrap
+}
+
+/* dossiers : un tiroir par lieu, le défilement reste à l'intérieur */
+.file {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: min(780px, 94vw);
+    height: 100vh;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-left: 2px solid var(--accent);
+    background: #161718;
+    color: var(--ink)
+}
+
+.file::backdrop {
+    background: rgba(8, 9, 10, .62);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px)
+}
+
+.file[open] {
+    animation: file-in .55s var(--ease-out)
+}
+
+@keyframes file-in {
+    from { opacity: 0; translate: 48px 0 }
+}
+
+.file-body {
+    height: 100%;
+    overflow-y: auto;
+    padding: 22px 28px 40px
+}
+
+.file-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+    color: var(--accent)
+}
+
+.file-close {
+    padding: 7px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background .3s ease, color .3s ease
+}
+
+.file-close:hover,
+.file-close:focus-visible {
+    outline: none;
+    background: var(--ink);
+    color: #121314
+}
+
+.file h2 {
+    font: 400 clamp(44px, 6vw, 68px) / .9 Georgia, serif;
+    letter-spacing: -.07em;
+    margin: 28px 0 16px
+}
+
+.file h2 em {
+    color: var(--accent)
+}
+
+.file h3 {
+    font: 400 26px/1 Georgia, serif;
+    letter-spacing: -.05em;
+    margin: 36px 0 10px
+}
+
+/* fiche personnage : photo d'identité à gauche, présentation à droite */
+.file-intro {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 24px;
+    align-items: end;
+    margin-bottom: 8px
+}
+
+.mugshot {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: repeating-linear-gradient(-45deg, #1d1e20 0 8px, #222426 8px 16px)
+}
+
+.mugshot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover
+}
+
+.mugshot figcaption {
+    position: absolute;
+    left: 6px;
+    bottom: 6px;
+    padding: 3px 6px;
+    background: rgba(18, 19, 20, .8);
+    color: var(--accent)
+}
+
+/* tant que le fichier n'existe pas, le cadre l'annonce */
+.mugshot:not(:has(img))::before {
+    content: "Photo à venir";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font: 10px ui-monospace, Consolas, "Courier New", monospace;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted)
+}
+
+@media (max-width: 760px) {
+    .file-intro {
+        grid-template-columns: 120px minmax(0, 1fr);
+        gap: 14px
+    }
+}
+
+/* fiche personnage : un document administratif, tapé à la machine, posé dans le tiroir */
+.paper {
+    /* la feuille réécrit les couleurs du thème : tout ce qu'elle contient passe à l'encre */
+    --ink: #1b1a18;
+    --muted: #6d665b;
+    --line: rgba(27, 26, 24, .3);
+    --accent: #9c2b1c;
+    position: relative;
+    margin-top: 22px;
+    padding: 26px 30px 24px;
+    color: var(--ink);
+    background-color: #e4dccb;
+    background-image:
+        radial-gradient(ellipse at 25% 12%, rgba(255, 255, 255, .4), transparent 62%),
+        radial-gradient(ellipse at 90% 100%, rgba(120, 96, 60, .18), transparent 55%),
+        url("../assets/textures/grain-paper.png");
+    box-shadow: 0 22px 44px -20px rgba(0, 0, 0, .8)
+}
+
+.paper-head,
+.paper-foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-weight: 700
+}
+
+.paper-head {
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--ink)
+}
+
+.paper-foot {
+    margin-top: 28px;
+    padding-top: 10px;
+    border-top: 2px solid var(--ink);
+    font-weight: 400;
+    color: var(--muted)
+}
+
+/* case du visa, vide */
+.paper-foot i {
+    display: inline-block;
+    width: 96px;
+    height: 34px;
+    margin-left: 10px;
+    border: 1px solid var(--line);
+    vertical-align: middle
+}
+
+.paper-stamp {
+    position: absolute;
+    right: 28px;
+    top: 58px;
+    padding: 5px 12px 4px;
+    border: 3px double #b3261e;
+    color: #b3261e;
+    font: 700 17px "Courier New", Courier, monospace;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    rotate: -9deg;
+    opacity: .72;
+    mix-blend-mode: multiply
+}
+
+.paper h2 {
+    font-size: clamp(40px, 5vw, 56px);
+    margin: 22px 0 18px
+}
+
+/* rubriques numérotées, comme sur un formulaire */
+.paper {
+    counter-reset: rubrique
+}
+
+.paper h3 {
+    counter-increment: rubrique;
+    margin: 26px 0 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--ink);
+    font: 700 11px ui-monospace, Consolas, "Courier New", monospace;
+    letter-spacing: .14em;
+    text-transform: uppercase
+}
+
+.paper h3::before {
+    content: counter(rubrique) ". "
+}
+
+.file .paper p {
+    color: var(--ink);
+    margin-bottom: 0
+}
+
+.paper .sheet-list {
+    border-top: 0
+}
+
+.paper .sheet-list div {
+    border-bottom: 1px dotted var(--line)
+}
+
+.paper .sheet-list dd,
+.file .paper p {
+    font: 13px/1.5 "Courier New", Courier, monospace
+}
+
+.paper .redacted {
+    opacity: .92
+}
+
+/* photo d'identité : bord blanc, posée un peu de travers */
+.paper .mugshot {
+    border: 5px solid #f3efe5;
+    background: repeating-linear-gradient(-45deg, #cfc7b6 0 8px, #d8d1c1 8px 16px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .35);
+    rotate: -2deg
+}
+
+.paper .mugshot figcaption {
+    background: #f3efe5;
+    color: var(--ink)
+}
+
+@media (max-width: 760px) {
+    .paper {
+        padding: 18px 16px
+    }
+
+    .paper-stamp {
+        right: 12px;
+        font-size: 13px
+    }
+}
+
+/* fiche personnage : une ligne par trait, les inconnues sont noircies */
+.sheet-list {
+    margin: 0 0 8px;
+    border-top: 1px solid var(--line)
+}
+
+.sheet-list div {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 16px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line)
+}
+
+.sheet-list dt {
+    padding-top: 2px;
+    color: var(--muted)
+}
+
+.sheet-list dd {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5
+}
+
+.redacted {
+    display: inline-block;
+    width: 84px;
+    height: .95em;
+    vertical-align: -.12em;
+    background: var(--ink);
+    opacity: .82
+}
+
+.file p {
+    max-width: 480px;
+    margin: 0 0 22px;
+    line-height: 1.6;
+    color: var(--muted)
+}
+
+@media (max-width: 760px) {
+    /* le poste passe sous le texte */
+    .horla-intro {
+        justify-content: flex-start;
+        max-width: none;
+        padding-top: 22px
+    }
+
+    .horla-intro h1 {
+        font-size: clamp(64px, 21vw, 110px);
+        margin: 12px 0 16px
+    }
+
+    .horla-intro h1 em {
+        display: inline
+    }
+
+    .horla-start {
+        margin-top: 18px
+    }
+
+    .world-legend {
+        top: 12px
+    }
+
+    .timeline {
+        bottom: 10px;
+        padding: 10px 10px 8px
+    }
+
+    .timeline-open {
+        padding: 6px 9px
+    }
+
+    .timeline-chapter span,
+    .stop:not(.is-active) .stop-name {
+        display: none
+    }
+
+    .timeline-time {
+        display: none
+    }
+
+    .timeline-bar {
+        grid-template-columns: auto minmax(0, 1fr)
+    }
+
+    .stop-card {
+        width: 120px
+    }
+
+    .tape-ui {
+        grid-template-columns: auto minmax(0, 1fr) auto
+    }
+
+    .tape-seek {
+        grid-column: 1 / -1;
+        order: 1
+    }
+
+    .file-body {
+        padding: 18px 16px 32px
+    }
+
+    .sheet-list div {
+        grid-template-columns: 104px minmax(0, 1fr);
+        gap: 10px
+    }
+}
+
+.kicker a {
+    border-bottom: 1px solid var(--line)
+}
+
+.film-hero {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 6px;
+    background: #000
+}
+
+/* 2.39:1 : recadre les bandes noires incluses dans les images composées */
+.film-hero img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 2.39 / 1;
+    object-fit: cover
+}
+
+.sheet {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 20px 0 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line)
+}
+
+.sheet div {
+    padding: 16px 16px 18px 0
+}
+
+.sheet div+div {
+    padding-left: 16px;
+    border-left: 1px solid var(--line)
+}
+
+.sheet dt {
+    color: var(--muted)
+}
+
+.sheet dd {
+    margin: 8px 0 0;
+    font: 400 22px/1.1 Georgia, serif;
+    letter-spacing: -.04em
+}
+
+.sheet .rec {
+    vertical-align: 4px
+}
+
+/* Séquences : le texte reste en place pendant que les plans défilent */
+.act {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 48px;
+    margin-top: 96px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line)
+}
+
+.act-head {
+    position: sticky;
+    top: 24px;
+    align-self: start
+}
+
+.act-head .slate,
+.backstage-text .slate {
+    color: var(--muted)
+}
+
+.act-head h2 {
+    font: 400 clamp(40px, 4.4vw, 60px) / .9 Georgia, serif;
+    letter-spacing: -.07em;
+    margin: 14px 0 18px
+}
+
+.act-head p,
+.backstage-text p {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--muted)
+}
+
+.shots {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px
+}
+
+.shot {
+    position: relative;
+    grid-column: span 2;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 4px;
+    background: #000
+}
+
+.shot--half {
+    grid-column: span 3
+}
+
+.shot--wide {
+    grid-column: span 6
+}
+
+.shot a,
+.film-hero a {
+    display: block;
+    cursor: zoom-in
+}
+
+.shot a:focus-visible,
+.film-hero a:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: -3px
+}
+
+.shot img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out)
+}
+
+.shot--scope img {
+    aspect-ratio: 2.39 / 1
+}
+
+.shot--square img {
+    aspect-ratio: 1 / 1
+}
+
+.shot:hover img {
+    transform: scale(1.03)
+}
+
+.shot figcaption,
+.film-hero figcaption,
+.compare-tag {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    padding: 4px 7px;
+    border-radius: 3px;
+    color: #ece7df;
+    background: rgba(16, 15, 13, .62);
+    pointer-events: none
+}
+
+.act-head p+p {
+    margin-top: 12px
+}
+
+/* Préambule : des plans dessinés, pas encore fabriqués */
+.beats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none
+}
+
+.beats li {
+    padding: 18px 18px 22px;
+    border: 1px dashed var(--line);
+    border-radius: 4px
+}
+
+.beats .slate {
+    color: var(--muted)
+}
+
+.beats h3 {
+    font: 400 26px/1 Georgia, serif;
+    letter-spacing: -.05em;
+    margin: 28px 0 10px
+}
+
+.beats p {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--muted)
+}
+
+/* Épilogue : le film s'arrête, la page le dit */
+.epilogue {
+    margin-top: 120px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line)
+}
+
+.epilogue .slate {
+    color: var(--muted)
+}
+
+.epilogue p {
+    max-width: 18em;
+    margin: 28px 0 0;
+    font: 400 clamp(34px, 4.6vw, 64px) / 1 Georgia, serif;
+    letter-spacing: -.06em
+}
+
+.epilogue .epilogue-note {
+    max-width: 460px;
+    margin-top: 24px;
+    font: inherit;
+    letter-spacing: normal;
+    line-height: 1.6;
+    color: var(--muted)
+}
+
+/* Itinéraire : les étapes sont des lieux, un tracé les relie (dessiné par lancoli.js).
+   --route-x : abscisse du tracé, dans la gouttière entre le texte et les plans */
+.journey {
+    --route-x: 304px;
+    --route: #e8a25a;
+    position: relative;
+    margin-top: 96px
+}
+
+.journey .act,
+.journey .epilogue {
+    margin-top: 0
+}
+
+.journey-map {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none
+}
+
+.journey-map path {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round
+}
+
+.journey-track {
+    stroke: var(--muted);
+    stroke-dasharray: 1 7;
+    opacity: .8
+}
+
+.journey-done {
+    stroke: var(--route)
+}
+
+.journey-pins circle {
+    fill: var(--paper);
+    stroke: var(--muted);
+    stroke-width: 1.5;
+    transition: fill .5s ease, stroke .5s ease
+}
+
+.journey-pins .is-passed {
+    fill: var(--route);
+    stroke: var(--route)
+}
+
+.journey-walker {
+    fill: var(--ink)
+}
+
+.journey-halo {
+    fill: var(--route);
+    opacity: .28;
+    transform-box: fill-box;
+    transform-origin: center
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .journey-halo {
+        animation: journey-pulse 2.4s ease-in-out infinite
+    }
+}
+
+@keyframes journey-pulse {
+    50% {
+        opacity: .08;
+        scale: 1.7
+    }
+}
+
+/* trajet : le blanc de la carte entre deux lieux, avec ses courbes de niveau */
+.leg {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: clamp(200px, 26vw, 320px)
+}
+
+.leg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-radial-gradient(ellipse 60% 90% at 72% 40%, transparent 0 25px, var(--line) 25px 26px);
+    -webkit-mask-image: radial-gradient(ellipse 50% 60% at 68% 50%, #000, transparent);
+    mask-image: radial-gradient(ellipse 50% 60% at 68% 50%, #000, transparent);
+    opacity: .7
+}
+
+.leg:nth-of-type(even)::before {
+    background: repeating-radial-gradient(ellipse 80% 60% at 48% 62%, transparent 0 21px, var(--line) 21px 22px);
+    -webkit-mask-image: radial-gradient(ellipse 45% 65% at 52% 50%, #000, transparent);
+    mask-image: radial-gradient(ellipse 45% 65% at 52% 50%, #000, transparent)
+}
+
+.leg-label {
+    position: relative;
+    max-width: 250px;
+    margin: 0;
+    font: italic 400 24px/1.1 Georgia, serif;
+    letter-spacing: -.04em
+}
+
+.leg-label .slate {
+    display: block;
+    margin-bottom: 10px;
+    font-style: normal;
+    color: var(--route)
+}
+
+.leg-label small {
+    display: block;
+    margin-top: 10px;
+    font: 14px/1.5 Arial, Helvetica, sans-serif;
+    letter-spacing: 0;
+    color: var(--muted)
+}
+
+/* Coulisses */
+.backstage {
+    margin-top: 120px
+}
+
+.backstage-block {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 48px;
+    padding: 28px 0 44px
+}
+
+.backstage-block+.backstage-block {
+    border-top: 1px solid var(--line)
+}
+
+.backstage-text h3 {
+    font: 400 28px/1 Georgia, serif;
+    letter-spacing: -.05em;
+    margin: 12px 0 14px
+}
+
+.compares {
+    display: grid;
+    gap: 8px
+}
+
+/* avant / après : le rendu brut est rogné à --pos */
+.compare {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 4px;
+    background: #000
+}
+
+.compare img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    user-select: none;
+    -webkit-user-drag: none
+}
+
+.compare-before {
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0)
+}
+
+.compare::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    width: 1px;
+    background: #ece7df;
+    box-shadow: 0 0 0 1px rgba(16, 15, 13, .3);
+    pointer-events: none
+}
+
+.compare-tag--after {
+    left: auto;
+    right: 8px
+}
+
+.compare input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize
+}
+
+.compare:focus-within {
+    outline: 1px solid var(--ink);
+    outline-offset: 2px
+}
+
+/* Apparition au défilement (pages longues) */
+.js .scroll-reveal {
+    opacity: 0;
+    translate: 0 28px;
+    transition: opacity 1s ease, translate 1.2s var(--ease-out)
+}
+
+.js .scroll-reveal.is-in {
+    opacity: 1;
+    translate: none
+}
+
+/* Visionneuse */
+.lightbox {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #ece7df
+}
+
+.lightbox::backdrop {
+    background: rgba(8, 8, 7, .95)
+}
+
+.lightbox[open] {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    place-items: center;
+    gap: 14px;
+    padding: 56px 64px 24px
+}
+
+.lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain
+}
+
+.lightbox button {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid rgba(236, 231, 223, .35);
+    border-radius: 50%;
+    background: none;
+    color: inherit;
+    font: 16px Arial, sans-serif;
+    cursor: pointer;
+    transition: background .3s ease, color .3s ease
+}
+
+.lightbox button:hover,
+.lightbox button:focus-visible {
+    outline: none;
+    background: #ece7df;
+    color: #100f0d
+}
+
+.lightbox-close { top: 12px; right: 12px }
+.lightbox-prev { left: 12px; top: calc(50% - 20px) }
+.lightbox-next { right: 12px; top: calc(50% - 20px) }
+
+@media (max-width: 760px) {
+    .project-card {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 8px
+    }
+
+    .project-body {
+        padding: 0 4px 6px
+    }
+
+    .sheet {
+        grid-template-columns: repeat(2, 1fr)
+    }
+
+    .sheet div:nth-child(3) {
+        padding-left: 0;
+        border-left: 0
+    }
+
+    .sheet div:nth-child(n+3) {
+        border-top: 1px solid var(--line)
+    }
+
+    .act,
+    .backstage-block {
+        grid-template-columns: 1fr;
+        gap: 22px
+    }
+
+    .act {
+        margin-top: 64px
+    }
+
+    .act-head {
+        position: static
+    }
+
+    /* une seule colonne : le tracé descend dans la marge de la page */
+    .journey {
+        --route-x: -10px;
+        margin-top: 64px
+    }
+
+    .leg {
+        height: 190px
+    }
+
+    .leg-label {
+        max-width: 60%
+    }
+
+    .shots {
+        gap: 5px
+    }
+
+    .shot--half,
+    .shot--wide {
+        grid-column: span 6
+    }
+
+    .backstage {
+        margin-top: 80px
+    }
+
+    .lightbox[open] {
+        padding: 60px 8px 64px
+    }
+
+    .lightbox-prev,
+    .lightbox-next {
+        top: auto;
+        bottom: 12px
+    }
+}
+
+/* ---------- Micro edits : trois diapositives verticales ---------- */
+
+.micros {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 320px));
+    justify-content: center;
+    gap: 28px;
+    position: relative;
+    margin-bottom: 64px
+}
+
+/* bandeau arc-en-ciel très estompé derrière les diapositives : trois boules floues qui dérivent,
+   et qui remontent un peu sur les basses (--beat, posé par lancoli.js) */
+.micros::before {
+    content: "";
+    position: absolute;
+    inset: 12% -6%;
+    z-index: -1;
+    background:
+        radial-gradient(closest-side at 18% 50%, #ffd43b, transparent),
+        radial-gradient(closest-side at 50% 50%, #3fd0e6, transparent),
+        radial-gradient(closest-side at 82% 50%, #ff4fb0, transparent);
+    background-size: 200% 100%;
+    filter: blur(70px);
+    opacity: calc(.2 + var(--beat, 0) * .22);
+    pointer-events: none;
+    transition: opacity .12s linear;
+    animation: micro-flow 16s ease-in-out infinite alternate
+}
+
+@keyframes micro-flow {
+    0% { background-position: 0% 50%; transform: scale(1) }
+    100% { background-position: 100% 50%; transform: scale(1.06, .92) }
+}
+
+/* un cache teinté par diapositive : jaune, cyan, magenta */
+.micro:nth-child(3n + 1) { --tint-a: #fff3a6; --tint-b: #ffd43b }
+.micro:nth-child(3n + 2) { --tint-a: #b9f3fb; --tint-b: #3fd0e6 }
+.micro:nth-child(3n) { --tint-a: #ffc2e6; --tint-b: #ff4fb0 }
+
+/* la figure reste à plat et porte la perspective : la zone de survol ne bouge pas avec l'inclinaison */
+.micro {
+    margin: 0;
+    perspective: 900px
+}
+
+/* le cache de la diapositive : carton teinté, fenêtre 9:16, marge d'étiquette en bas */
+.micro-mount {
+    position: relative;
+    padding: 16px 16px 0;
+    border-radius: 12px;
+    background: linear-gradient(145deg, var(--tint-a, #fffefb), var(--tint-b, #ece8df));
+    /* --bass (0 → 1) : énergie des basses de la vidéo en cours, posée par lancoli.js */
+    box-shadow: 0 0 0 1px rgba(23, 23, 23, .08), 0 30px 50px -30px rgba(23, 23, 23, .5);
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(calc(1 + var(--bass, 0) * .045));
+    transform-style: preserve-3d;
+    transition: transform .7s var(--ease-out), box-shadow .5s ease;
+    will-change: transform
+}
+
+.micro.is-tilting .micro-mount {
+    transition-duration: .12s, .5s;
+    box-shadow: 0 0 0 1px rgba(23, 23, 23, .08), 0 50px 60px -34px rgba(23, 23, 23, .6)
+}
+
+/* feuille holo et reflet (.shiny-*), posés sur le cache : la teinte reste dominante */
+.micro .shiny-holo,
+.micro .shiny-glare {
+    border-radius: inherit
+}
+
+.micro .shiny-holo {
+    opacity: .5
+}
+
+/* en lecture : transitions courtes, sinon elles lisseraient les coups de basse */
+.micro.is-playing .micro-mount {
+    transition-duration: .09s, .09s
+}
+
+.micro-window {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    border-radius: 5px;
+    background: #0b0b0e;
+    box-shadow: 0 0 0 1px rgba(23, 23, 23, .35), 0 1px 0 2px rgba(255, 255, 255, .55);
+    transform: translateZ(calc(26px + var(--bass, 0) * 34px))
+}
+
+.micro-window video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer
+}
+
+/* reflet qui suit le curseur */
+.micro-window::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, .34), transparent 55%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .5s ease
+}
+
+.micro.is-tilting .micro-window::after {
+    opacity: 1
+}
+
+.micro-play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 64px;
+    height: 64px;
+    margin: -32px 0 0 -32px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, .7);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .14);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: transform .5s var(--ease-out), opacity .4s ease, background .3s ease
+}
+
+.micro-play[hidden] {
+    display: none
+}
+
+.micro-play::before {
+    content: "";
+    position: absolute;
+    left: 26px;
+    top: 21px;
+    border-left: 16px solid #fff;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent
+}
+
+.micro-play:hover {
+    transform: scale(1.08);
+    background: rgba(255, 255, 255, .26)
+}
+
+.micro-play:focus-visible {
+    outline: 1px solid #fff;
+    outline-offset: 4px
+}
+
+.micro.is-playing .micro-play {
+    opacity: 0;
+    transform: scale(1.3);
+    pointer-events: none
+}
+
+.micro.is-playing .micro-play:focus-visible {
+    opacity: 1;
+    pointer-events: auto
+}
+
+.micro figcaption {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 10px;
+    padding: 14px 2px 16px;
+    color: rgba(23, 23, 23, .7);
+    transform: translateZ(12px)
+}
+
+.micro figcaption strong {
+    color: var(--ink);
+    font-weight: 400
+}
+
+.micro .rec {
+    display: none
+}
+
+.micro.is-playing .rec {
+    display: inline-block
+}
+
+/* Intros : mêmes diapositives, en 16:9 et en carton neutre, rangées en grille */
+.intros {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+    margin-bottom: 64px
+}
+
+.micro.micro--wide {
+    --tint-a: #fffefb;
+    --tint-b: #e9e4da
+}
+
+.micro--wide .micro-window {
+    aspect-ratio: 16 / 9
+}
+
+.intro-soon {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 18px 16px;
+    border: 1px dashed rgba(23, 23, 23, .3);
+    border-radius: 12px;
+    color: var(--muted)
+}
+
+/* Intro en lecture : voile noir sur toute la page, et dessus la vidéo agrandie et floutée
+   (canvas alimenté par lancoli.js) pour que la salle prenne ses couleurs */
+.ambient {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    overflow: hidden;
+    background: #060608;
+    opacity: 0;
+    visibility: hidden;
+    cursor: pointer;
+    transition: opacity .9s ease, visibility 0s .9s
+}
+
+html.is-ambient .ambient {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s
+}
+
+.ambient canvas {
+    position: absolute;
+    left: -15%;
+    top: -15%;
+    width: 130%;
+    height: 130%;
+    filter: blur(90px) saturate(1.7);
+    opacity: .6
+}
+
+/* la section des intros passe au-dessus du voile, en thème sombre */
+.is-ambient-stage {
+    position: relative;
+    z-index: 41
+}
+
+.is-ambient-stage .head,
+.is-ambient-stage .micro,
+.is-ambient-stage .intro-soon {
+    transition: opacity .9s ease, color .9s ease, border-color .9s ease
+}
+
+html.is-ambient .is-ambient-stage .head {
+    color: #ece7df;
+    border-color: rgba(236, 231, 223, .16)
+}
+
+html.is-ambient .is-ambient-stage .head span {
+    color: rgba(236, 231, 223, .6)
+}
+
+html.is-ambient .is-ambient-stage .micro:not(.is-playing),
+html.is-ambient .is-ambient-stage .intro-soon {
+    opacity: .18
+}
+
+@media (max-width: 760px) {
+    /* en colonne, comme une bande de photomaton */
+    .micros {
+        grid-template-columns: minmax(0, 300px);
+        justify-content: center;
+        gap: 14px
+    }
+
+    .intros {
+        grid-template-columns: 1fr;
+        gap: 14px
+    }
+}
+
+/* ---------- Mondes : la page reste sur le papier, seules les cartes des films sont sombres ---------- */
+
+.worlds {
+    margin: 150px 0 64px
+}
+
+.worlds-intro {
+    display: grid;
+    gap: 22px;
+    margin-bottom: 72px
+}
+
+.worlds-intro .slate {
+    color: var(--muted)
+}
+
+.worlds-intro h2 {
+    font: 400 clamp(56px, 10vw, 136px) / .86 Georgia, serif;
+    letter-spacing: -.07em;
+    margin: 0
+}
+
+/* les titres de la salle reprennent la typo du logo : Arial très gras, lettres serrées */
+.worlds-intro h2,
+.worlds .project-body h3 {
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+    letter-spacing: -.09em
+}
+
+.worlds-intro h2 em,
+.worlds .project-body h3 em {
+    font-style: normal
+}
+
+.worlds .project-body h3 {
+    font-size: clamp(34px, 4vw, 56px)
+}
+
+.worlds-intro p {
+    max-width: 420px;
+    margin: 0;
+    line-height: 1.5;
+    color: #444
+}
+
+/* les films sont parsemés : de l'air entre chaque bloc */
+.worlds .projects {
+    gap: clamp(90px, 13vw, 180px);
+    margin-bottom: 0
+}
+
+/* Cartes claires : une feuille blanche à bord net, décollée du fond par une ombre franche, sans flou.
+   --world (posée sur chaque carte, projets.html) n'apparaît qu'au survol : l'ombre et le bouton */
+.worlds .project-card:not(.project-card--soon) {
+    --world: #e8a25a;
+    gap: 34px;
+    padding: 14px;
+    position: relative;
+    border: 1px solid var(--ink);
+    border-radius: 4px;
+    /* papier froissé, fondu dans le blanc de la carte */
+    background: #fffdf9 url("../assets/textures/papier-blanc.jpg") center / cover;
+    background-blend-mode: multiply;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+    transition: transform .5s var(--ease-out)
+}
+
+.worlds a.project-card:hover,
+.worlds a.project-card:focus-visible {
+    box-shadow: none
+}
+
+/* Cadre en trois couches : le filet plein de la carte, puis deux rangs de tirets qui tournent
+   en sens contraires. Chaque rang est fait de quatre bandes (haut, bas, gauche, droite) que l'on fait glisser.
+   --dash : longueur d'un tiret et de son vide · --ring : couleur du rang */
+.worlds .project-card:not(.project-card--soon)::before,
+.worlds .project-card:not(.project-card--soon)::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--gap) * -1);
+    border-radius: 6px;
+    pointer-events: none;
+    background-image:
+        linear-gradient(90deg, var(--ring) 50%, transparent 0),
+        linear-gradient(90deg, var(--ring) 50%, transparent 0),
+        linear-gradient(0deg, var(--ring) 50%, transparent 0),
+        linear-gradient(0deg, var(--ring) 50%, transparent 0);
+    background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+    background-size: var(--dash) var(--thick), var(--dash) var(--thick), var(--thick) var(--dash), var(--thick) var(--dash);
+    background-position: 0 0, 0 100%, 0 0, 100% 0;
+    transition: inset .5s var(--ease-out)
+}
+
+.worlds .project-card:not(.project-card--soon)::before {
+    --gap: 9px;
+    --dash: 14px;
+    --thick: 1px;
+    --ring: var(--ink);
+    animation: ring-turn 1.4s linear infinite
+}
+
+.worlds .project-card:not(.project-card--soon)::after {
+    --gap: 18px;
+    --dash: 34px;
+    --thick: 2px;
+    --ring: color-mix(in srgb, var(--ink) 28%, transparent);
+    animation: ring-turn 5s linear infinite reverse
+}
+
+/* au survol, le cadre s'écarte et le rang extérieur prend la couleur du monde */
+.worlds a.project-card:hover::before,
+.worlds a.project-card:focus-visible::before {
+    --gap: 12px
+}
+
+.worlds a.project-card:hover::after,
+.worlds a.project-card:focus-visible::after {
+    --gap: 26px;
+    --ring: var(--world)
+}
+
+/* un tour d'horloge : le haut file à droite, la droite descend, le bas revient, la gauche remonte */
+@keyframes ring-turn {
+    to {
+        background-position: var(--dash) 0, calc(var(--dash) * -1) 100%, 0 calc(var(--dash) * -1), 100% var(--dash)
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .worlds .project-card::before,
+    .worlds .project-card::after {
+        animation: none !important
+    }
+}
+
+.worlds .project-cover {
+    border-radius: 2px
+}
+
+.worlds .project-body {
+    padding: 12px 12px 6px 0
+}
+
+/* l'invitation à entrer : un bouton plein, à angles droits */
+.worlds .project-more {
+    align-items: center;
+    margin-top: 16px;
+    padding: 13px 16px;
+    border-radius: 2px;
+    background: var(--ink);
+    color: var(--paper);
+    transition: background .4s ease, color .4s ease
+}
+
+.worlds .project-card:hover .project-more,
+.worlds .project-card:focus-visible .project-more {
+    background: var(--world);
+    color: #171717
+}
+
+.worlds .project-strip img {
+    border-radius: 2px
+}
+
+@media (min-width: 761px) {
+    .worlds .project-card--flip .project-cover {
+        border-radius: 2px
+    }
+
+    .worlds .project-card--flip .project-body {
+        padding: 12px 0 6px 12px
+    }
+}
+
+.loyalty {
+    --ink: #ece7df;
+    --muted: #9b948a;
+    --line: rgba(236, 231, 223, .16);
+    color: var(--ink);
+    background: #151412
+}
+
+/* le produit du film : posé juste sous sa carte, décalé vers la droite */
+.support {
+    display: grid;
+    grid-template-columns: minmax(0, 300px) minmax(0, 440px);
+    gap: 48px;
+    align-items: start;
+    justify-content: end;
+    margin-top: calc(clamp(90px, 13vw, 180px) * -.55)
+}
+
+/* carte de résilience au format carte bancaire, posée un peu de travers */
+.loyalty {
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 1.586;
+    padding: 16px 18px;
+    border-radius: 12px;
+    background:
+        radial-gradient(120% 90% at 100% 0%, rgba(232, 162, 90, .5), transparent 60%),
+        #151412;
+    box-shadow: 0 30px 50px -30px rgba(23, 23, 23, .6);
+    rotate: -4deg;
+    transition: rotate .8s var(--ease-out), translate .8s var(--ease-out)
+}
+
+.loyalty strong {
+    margin-top: auto;
+    font: 400 34px/.9 Georgia, serif;
+    letter-spacing: -.06em
+}
+
+.loyalty-foot {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    color: var(--muted)
+}
+
+.support-body>.slate {
+    color: var(--muted)
+}
+
+.support-body h3 {
+    font: 400 clamp(32px, 3.4vw, 44px) / .95 Georgia, serif;
+    letter-spacing: -.06em;
+    margin: 12px 0 14px
+}
+
+.support-body p {
+    margin: 0;
+    line-height: 1.5;
+    color: #444
+}
+
+.support-list {
+    margin: 20px 0 24px;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line)
+}
+
+.support-list li {
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    line-height: 1.45
+}
+
+.support-list .slate {
+    padding-top: 3px;
+    color: var(--muted)
+}
+
+/* citation : le financement de la culture, et les partenaires espérés */
+.manifesto {
+    margin: 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--line)
+}
+
+.manifesto>.slate,
+.manifesto figcaption>.slate {
+    color: var(--muted)
+}
+
+.manifesto blockquote {
+    max-width: 21em;
+    margin: 36px 0 48px;
+    font: 400 clamp(30px, 4.4vw, 60px) / 1 Georgia, serif;
+    letter-spacing: -.06em
+}
+
+.manifesto figcaption {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px;
+    align-items: center
+}
+
+.partners {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none
+}
+
+.partners li {
+    display: grid;
+    place-items: center;
+    min-height: 64px;
+    border: 1px dashed rgba(23, 23, 23, .3);
+    color: var(--muted)
+}
+
+@media (max-width: 760px) {
+    .worlds {
+        margin-top: 96px
+    }
+
+    .worlds-intro {
+        margin-bottom: 48px
+    }
+
+    .support {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        margin-top: -40px
+    }
+
+    .loyalty {
+        width: min(280px, 80%)
+    }
+
+    .manifesto figcaption {
+        grid-template-columns: 1fr
+    }
+
+    .partners {
+        grid-template-columns: repeat(2, 1fr)
+    }
+}
+
+/* ---------- Intros : lecteur vidéo ---------- */
+
+.reel {
+    display: grid;
+    grid-template-columns: minmax(0, 2.4fr) minmax(220px, 1fr);
+    gap: 12px;
+    margin-bottom: 64px
+}
+
+.reel-screen {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #0b0b0e;
+    color: #fff;
+    box-shadow: 0 30px 60px -30px rgba(23, 23, 23, .45)
+}
+
+.reel-screen:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 4px
+}
+
+.reel-screen video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    cursor: pointer
+}
+
+.reel-screen:fullscreen {
+    border-radius: 0
+}
+
+/* grand bouton central, visible tant que la vidéo est en pause */
+.reel-big {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 92px;
+    height: 92px;
+    margin: -46px 0 0 -46px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, .7);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .14);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: transform .5s var(--ease-out), opacity .4s ease, background .3s ease
+}
+
+.reel-big[hidden],
+.reel-ui[hidden],
+.reel-nav[hidden] {
+    display: none
+}
+
+.reel-big::before {
+    content: "";
+    position: absolute;
+    left: 38px;
+    top: 31px;
+    border-left: 22px solid #fff;
+    border-top: 14px solid transparent;
+    border-bottom: 14px solid transparent
+}
+
+.reel-big:hover {
+    transform: scale(1.08);
+    background: rgba(255, 255, 255, .26)
+}
+
+.reel.is-playing .reel-big {
+    opacity: 0;
+    transform: scale(1.3);
+    pointer-events: none
+}
+
+/* barre de commandes : s'efface pendant la lecture, revient au survol ou au clavier */
+.reel-ui {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: auto 1fr auto auto auto;
+    align-items: center;
+    gap: 14px;
+    padding: 40px 16px 14px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, .72));
+    transition: opacity .4s ease
+}
+
+.reel.is-playing .reel-ui {
+    opacity: 0
+}
+
+.reel.is-playing .reel-screen:hover .reel-ui,
+.reel.is-playing .reel-screen:focus-within .reel-ui {
+    opacity: 1
+}
+
+.reel-ui button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer
+}
+
+.reel-ui button:focus-visible,
+.reel-big:focus-visible {
+    outline: 1px solid #fff;
+    outline-offset: 4px
+}
+
+.reel-ui .slate {
+    opacity: .8;
+    transition: opacity .2s ease
+}
+
+.reel-ui button.slate:hover {
+    opacity: 1
+}
+
+.reel-play {
+    position: relative;
+    width: 22px;
+    height: 22px
+}
+
+.reel-play::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 3px;
+    border-left: 13px solid #fff;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent
+}
+
+.reel.is-playing .reel-play::before {
+    left: 4px;
+    top: 4px;
+    width: 13px;
+    height: 14px;
+    box-sizing: border-box;
+    border: 0 solid #fff;
+    border-width: 0 4px
+}
+
+.reel-seek {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 14px;
+    margin: 0;
+    background: linear-gradient(#fff, #fff) left center / var(--done, 0%) 2px no-repeat,
+        linear-gradient(rgba(255, 255, 255, .3), rgba(255, 255, 255, .3)) left center / 100% 2px no-repeat;
+    cursor: pointer
+}
+
+.reel-seek::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff
+}
+
+.reel-seek::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff
+}
+
+.reel-time {
+    min-width: 11ch;
+    text-align: right
+}
+
+/* panneau latéral : intro en cours + liste de lecture */
+.reel-side {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 18px;
+    min-height: 0;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, .7);
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px)
+}
+
+.reel-now .rec {
+    animation-play-state: paused;
+    opacity: .3
+}
+
+.reel.is-playing .reel-now .rec {
+    animation-play-state: running;
+    opacity: 1
+}
+
+.reel-title {
+    font: 400 32px/1 Georgia, serif;
+    letter-spacing: -.05em;
+    margin: 10px 0 0
+}
+
+.reel-list {
+    position: relative;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-y: auto;
+    border-top: 1px solid var(--line)
+}
+
+.reel-list button {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    align-items: baseline;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: none;
+    color: var(--muted);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: color .3s ease, padding .4s var(--ease-out)
+}
+
+.reel-list button:hover,
+.reel-list button[aria-current="true"] {
+    color: var(--ink);
+    padding-left: 6px
+}
+
+.reel-list button:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: -1px
+}
+
+.reel-list strong {
+    font-weight: 400
+}
+
+.reel-list button[aria-current="true"] strong {
+    font-weight: 700
+}
+
+.reel-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px
+}
+
+.reel-nav button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color .3s ease
+}
+
+.reel-nav button:hover {
+    color: var(--ink)
+}
+
+@media (max-width: 760px) {
+    .reel {
+        grid-template-columns: 1fr
+    }
+
+    .reel-list {
+        max-height: 240px
+    }
+
+    .reel-ui {
+        grid-template-columns: auto 1fr auto auto;
+        gap: 10px;
+        padding: 30px 12px 10px
+    }
+
+    .reel-time {
+        display: none
+    }
+
+    .reel-big {
+        width: 68px;
+        height: 68px;
+        margin: -34px 0 0 -34px
+    }
+
+    .reel-big::before {
+        left: 27px;
+        top: 21px;
+        border-left-width: 18px;
+        border-top-width: 12px;
+        border-bottom-width: 12px
+    }
+}
+
+/* ---------- Objets « shiny » : inclinaison et reflet suivent le pointeur ---------- */
+.shiny {
+    perspective: 1000px
+}
+
+.shiny-holo,
+.shiny-glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none
+}
+
+/* feuille holographique : un arc-en-ciel qui glisse avec le pointeur */
+.shiny-holo {
+    background: repeating-linear-gradient(112deg, #ff5ea8 0%, #ffe45e 9%, #6dff9c 18%, #5ecbff 27%, #b98cff 36%, #ff5ea8 45%);
+    background-size: 280% 280%;
+    background-position: var(--mx, 30%) var(--my, 40%);
+    mix-blend-mode: overlay;
+    opacity: .95;
+    animation: holo 6s ease-in-out infinite alternate
+}
+
+.shiny.is-live .shiny-holo {
+    animation: none
+}
+
+@keyframes holo {
+    to { background-position: 80% 70% }
+}
+
+.shiny-glare {
+    background: radial-gradient(circle at var(--mx, 28%) var(--my, 18%), rgba(255, 255, 255, .7), transparent 42%);
+    mix-blend-mode: overlay
+}
+
+/* ---------- Pied de page : liens ---------- */
+
+.foot-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px
+}
+
+.foot-links a {
+    transition: color .3s ease
+}
+
+.foot-links a:hover {
+    color: var(--ink)
+}
+
+/* ---------- Démarche : les terrains, le fait main, les repères ---------- */
+
+.stance {
+    margin-top: 72px
+}
+
+.stance-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+    margin: 0;
+    padding: 0;
+    list-style: none
+}
+
+.stance-list li {
+    display: flex;
+    flex-direction: column;
+    padding-top: 14px;
+    border-top: 1px solid var(--ink)
+}
+
+.stance-list h3 {
+    font: 400 clamp(26px, 2.6vw, 34px) / .95 Georgia, serif;
+    letter-spacing: -.06em;
+    margin: 0 0 14px
+}
+
+.stance p {
+    margin: 0;
+    line-height: 1.5;
+    color: #444
+}
+
+.stance-list a {
+    margin-top: auto;
+    padding-top: 18px;
+    color: var(--muted);
+    transition: color .3s ease
+}
+
+.stance-list a:hover {
+    color: var(--ink)
+}
+
+.stance-split {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 35px;
+    align-items: start
+}
+
+.stance .stance-lede {
+    max-width: 16em;
+    font: italic 400 clamp(22px, 2.6vw, 34px) / 1.1 Georgia, serif;
+    letter-spacing: -.04em;
+    color: var(--ink)
+}
+
+.stance-split>div {
+    max-width: 440px
+}
+
+.stance-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 22px
+}
+
+.stance+.manifesto {
+    margin-top: 96px
+}
+
+.stance-call {
+    max-width: 440px;
+    margin: 0;
+    line-height: 1.5;
+    color: #444
+}
+
+.stance-call a {
+    color: var(--ink);
+    border-bottom: 1px solid currentColor;
+    white-space: nowrap
+}
+
+@media (max-width: 900px) {
+    .stance-list {
+        grid-template-columns: repeat(2, 1fr)
+    }
+}
+
+@media (max-width: 760px) {
+    .stance {
+        margin-top: 56px
+    }
+
+    .stance-list,
+    .stance-split {
+        grid-template-columns: 1fr
+    }
+
+    .stance-split {
+        gap: 16px
+    }
+}
+
+/* ---------- Lyon : bitume, marquage au sol, trois couleurs de bombe ---------- */
+
+html.film--lyon {
+    --paper: #141516
+}
+
+html.film--lyon body {
+    /* gris bitume, à peine relevés de jaune, de cyan et de magenta */
+    --aura-1: #2b2d30;
+    --aura-2: #3a3320;
+    --aura-3: #1d3338;
+    --aura-4: #3a1f31;
+    --aura-5: #26282b
+}
+
+html.film--lyon .aura span {
+    opacity: .8
+}
+
+/* titres au pochoir : gras, penchés, en capitales */
+html.film--lyon .chapter-hero h1,
+html.film--lyon .act-head h2,
+html.film--lyon .leg-label {
+    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase
+}
+
+html.film--lyon .chapter-hero h1 em {
+    color: #ffd43b
+}
+
+/* un edit, une couleur (--tint, posée sur chaque <section class="act">) : le titre penche comme un tag,
+   souligné d'un trait de bombe */
+html.film--lyon .act-head h2 {
+    font-size: clamp(32px, 3.4vw, 46px);
+    letter-spacing: -.06em;
+    color: var(--tint);
+    rotate: -3deg;
+    transform-origin: left
+}
+
+html.film--lyon .act-head h2::after {
+    content: "";
+    display: block;
+    width: 62%;
+    height: 6px;
+    margin-top: 10px;
+    background: var(--tint);
+    transform: skewX(-24deg)
+}
+
+html.film--lyon .act-head .slate {
+    color: var(--tint)
+}
+
+/* l'itinéraire devient une ligne de chaussée : pointillés larges, jaune une fois parcourue */
+html.film--lyon .journey {
+    --route: #ffd43b
+}
+
+html.film--lyon .journey-map path {
+    stroke-width: 3;
+    stroke-linecap: butt
+}
+
+html.film--lyon .journey-track {
+    stroke: var(--ink);
+    stroke-dasharray: 16 14;
+    opacity: .3
+}
+
+/* entre deux edits : un passage piéton */
+html.film--lyon .leg::before,
+html.film--lyon .leg:nth-of-type(even)::before {
+    inset: 32% 0 32% 36%;
+    background: repeating-linear-gradient(90deg, var(--ink) 0 34px, transparent 34px 68px);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent);
+    opacity: .12
+}
+
+html.film--lyon .leg-label {
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: -.05em
+}
+
+html.film--lyon .leg-label small {
+    text-transform: none;
+    font-style: normal;
+    font-weight: 400
+}
+
+/* Le mur : la vidéo d'abord, puis trois images collées comme des stickers, un peu de travers */
+.wall {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    align-items: end
+}
+
+.wall .shot {
+    grid-column: auto;
+    border-radius: 3px;
+    box-shadow: 0 0 0 3px var(--tint), 0 18px 30px -18px #000;
+    transition: rotate .6s var(--ease-out)
+}
+
+.wall .shot:nth-child(2) { rotate: -1.6deg }
+.wall .shot:nth-child(3) { rotate: 1.1deg }
+.wall .shot:nth-child(4) { rotate: -.8deg }
+
+.shot--tall img {
+    aspect-ratio: 9 / 16
+}
+
+/* le carton de la diapositive est clair : son étiquette reste sombre, même sur une page film */
+html.film .micro figcaption strong {
+    color: #171717
+}
+
+@media (max-width: 760px) {
+    .wall {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px
+    }
+
+    .wall .micro {
+        grid-column: 1 / -1;
+        width: min(320px, 100%);
+        margin-bottom: 8px
+    }
+}
+
+/* ---------- Bas de Projets : la carte d'abonné, sur une plaque coupée en deux ----------
+   à gauche le discours, blanc sur noir rayé ; à droite la carte, seule sur une feuille blanche */
+
+.pass {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: clamp(90px, 13vw, 180px) 0 64px;
+    overflow: hidden;
+    border: 1px solid var(--ink);
+    border-radius: 4px
+}
+
+.pass-body {
+    --ink: #ece7df;
+    --muted: #9b948a;
+    --line: rgba(236, 231, 223, .16);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(28px, 5vw, 72px);
+    color: var(--ink);
+    background: #151412
+}
+
+/* les rayures : blanches sur noir dans l'image, donc fondues en éclaircissement.
+   opacity règle leur force */
+.pass-body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("../assets/textures/rayures.jpg") center / cover;
+    mix-blend-mode: screen;
+    opacity: .36;
+    pointer-events: none
+}
+
+.pass-body>* {
+    position: relative
+}
+
+/* le présentoir : papier blanc, la carte posée au milieu */
+.pass-card {
+    order: 1;
+    display: grid;
+    place-items: center;
+    min-height: 420px;
+    padding: clamp(28px, 5vw, 72px);
+    background: #fffdf9 url("../assets/textures/papier-blanc.jpg") center / cover;
+    background-blend-mode: multiply
+}
+
+.pass .loyalty {
+    position: relative;
+    overflow: hidden;
+    width: min(380px, 100%)
+}
+
+.pass-body>.slate:first-child {
+    color: var(--muted)
+}
+
+/* même typo que le logo et les titres des contes */
+.pass-body h2 {
+    font: 900 clamp(40px, 6vw, 84px) / .88 Arial, sans-serif;
+    letter-spacing: -.09em;
+    margin: 16px 0 20px
+}
+
+.pass-body p {
+    max-width: 420px;
+    margin: 0;
+    line-height: 1.5;
+    color: #b9b2a7
+}
+
+.pass-list {
+    max-width: 420px;
+    margin: 24px 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line)
+}
+
+.pass-list li {
+    display: flex;
+    gap: 14px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line)
+}
+
+.pass-list span {
+    color: var(--muted)
+}
+
+.pass-cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 420px;
+    padding: 14px 16px;
+    border-radius: 2px;
+    background: var(--ink);
+    color: #171717;
+    transition: background .4s ease
+}
+
+.pass-cta:hover,
+.pass-cta:focus-visible {
+    background: #e8a25a
+}
+
+.pass-cta i {
+    font-style: normal;
+    transition: transform .6s var(--ease-out)
+}
+
+.pass-cta:hover i {
+    transform: translateX(8px)
+}
+
+@media (max-width: 760px) {
+    .pass {
+        grid-template-columns: 1fr
+    }
+
+    .pass-card {
+        order: -1;
+        min-height: 300px
+    }
+
+    .pass .loyalty {
+        width: min(300px, 86%)
+    }
+}
+
+/* la carte d'abonné, version holographique : fond irisé, feuille arc-en-ciel qui brûle les couleurs,
+   reflet qui balaie, liseré lumineux. Elle s'incline vers le pointeur (lancoli.js, [data-shiny]) */
+.pass .loyalty {
+    background:
+        radial-gradient(90% 120% at 100% 0%, rgba(255, 138, 60, .85), transparent 55%),
+        radial-gradient(80% 110% at 0% 100%, rgba(90, 120, 255, .7), transparent 60%),
+        radial-gradient(70% 90% at 0% 0%, rgba(40, 220, 190, .55), transparent 60%),
+        radial-gradient(60% 80% at 100% 100%, rgba(255, 70, 170, .6), transparent 60%),
+        #17141c;
+    box-shadow:
+        0 0 0 1px rgba(23, 23, 23, .18),
+        0 0 46px -6px rgba(255, 120, 200, .6),
+        0 0 90px -20px rgba(90, 200, 255, .55),
+        0 46px 50px -30px rgba(23, 23, 23, .6);
+    transition: rotate .8s var(--ease-out), translate .8s var(--ease-out), transform .25s ease-out
+}
+
+.pass .loyalty>.slate,
+.pass .loyalty>strong {
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, .45)
+}
+
+.pass .loyalty .shiny-holo {
+    background-size: 220% 220%;
+    mix-blend-mode: color-dodge;
+    opacity: .6
+}
+
+.pass .loyalty .shiny-glare {
+    background: radial-gradient(circle at var(--mx, 24%) var(--my, 16%), rgba(255, 255, 255, .95), transparent 46%);
+    mix-blend-mode: soft-light
+}
+
+/* le reflet qui traverse la carte, comme sous une lampe */
+.shiny-sweep {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(112deg, transparent 38%, rgba(255, 255, 255, .7) 49%, rgba(255, 255, 255, .15) 54%, transparent 62%);
+    background-size: 300% 100%;
+    mix-blend-mode: screen;
+    animation: sweep 4.2s ease-in-out infinite
+}
+
+@keyframes sweep {
+    0%, 35% { background-position: 130% 0 }
+    75%, 100% { background-position: -40% 0 }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .shiny-sweep {
+        animation: none;
+        background-position: 45% 0
+    }
+}
+
+/* ---------- Le livre des contes (livre.js) : les cartes projet en doubles pages three.js ---------- */
+
+.book {
+    margin-bottom: 40px
+}
+
+.worlds[data-view="book"] .projects,
+.worlds[data-view="cards"] .book {
+    display: none
+}
+
+.book-stage {
+    aspect-ratio: 16 / 9;
+    max-height: 78vh;
+    margin-inline: auto
+}
+
+.book-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    touch-action: pan-y;
+    outline-offset: -6px
+}
+
+.book-canvas.is-over {
+    cursor: pointer
+}
+
+.book-canvas:focus-visible {
+    outline: 1px dashed var(--ink)
+}
+
+.book-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    margin-top: 4px
+}
+
+.book-bar button {
+    height: 46px;
+    min-width: 46px;
+    border: 1px solid var(--ink);
+    border-radius: 2px;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+    transition: background .3s ease, color .3s ease, opacity .3s ease
+}
+
+.book-prev,
+.book-next {
+    font-size: 15px !important
+}
+
+.book-bar button:hover:not(:disabled) {
+    background: var(--ink);
+    color: var(--paper)
+}
+
+.book-bar button:disabled {
+    opacity: .25;
+    cursor: default
+}
+
+.book-count {
+    min-width: 70px;
+    text-align: center;
+    color: var(--muted)
+}
+
+/* l'invitation : ouvrir le livre, puis entrer dans le conte (elle prend alors la couleur du monde au survol) */
+.book-bar .book-enter {
+    min-width: 260px;
+    padding: 0 20px;
+    background: var(--ink);
+    color: var(--paper)
+}
+
+.book-bar .book-enter:hover:not(:disabled) {
+    background: var(--world, var(--ink));
+    color: #171717
+}
+
+.book-hint {
+    margin: 12px 0 0;
+    text-align: center;
+    color: var(--muted)
+}
+
+.book-close {
+    display: none
+}
+
+.book-toggle {
+    border: 0;
+    border-bottom: 1px solid currentColor;
+    padding: 0 0 2px;
+    background: none;
+    color: var(--ink);
+    cursor: pointer
+}
+
+/* Plein écran : le livre devient une application. Plus de défilement derrière, la scène prend toute la fenêtre */
+html.is-booked {
+    overflow: hidden
+}
+
+.book.is-immersive {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto auto;
+    margin: 0;
+    padding: 0 20px 18px;
+    background: color-mix(in srgb, var(--paper) 93%, transparent);
+    -webkit-backdrop-filter: blur(40px);
+    backdrop-filter: blur(40px);
+    animation: book-in .5s var(--ease-out)
+}
+
+@keyframes book-in {
+    from { opacity: 0 }
+}
+
+.book.is-immersive .book-stage {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto
+}
+
+.book.is-immersive .book-canvas {
+    touch-action: none;
+    outline: none
+}
+
+.book.is-immersive .book-close {
+    display: block;
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    z-index: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--ink);
+    border-radius: 2px;
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer
+}
+
+/* pendant le travelling, il ne reste que l'image */
+.book.is-diving .book-bar,
+.book.is-diving .book-hint,
+.book.is-diving .book-close {
+    opacity: 0;
+    transition: opacity .3s ease
+}
+
+.book-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 95;
+    background: #100f0d;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .55s ease
+}
+
+.book-veil.is-on {
+    opacity: 1
+}
+
+@media (max-width: 760px) {
+    .book-bar {
+        flex-wrap: wrap;
+        gap: 10px
+    }
+
+    .book-bar .book-enter {
+        order: 3;
+        flex-basis: 100%
+    }
+}
+
+/* sur la feuille irisée, le pied de carte passe en blanc pour rester lisible */
+.pass .loyalty-foot {
+    color: #fff
+}

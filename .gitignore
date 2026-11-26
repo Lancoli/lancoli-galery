@@ -1,0 +1,63 @@
+# Écrit par tools/versionner.mjs : à compléter à la main si besoin.
+
+# secrets et réglages locaux
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*secret*
+*credential*
+.claude/settings.local.json
+
+# dépendances, journaux, fichiers générés
+node_modules/
+*.log
+logs/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# médias lourds : ils restent dans le dossier, hors dépôt
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.avi
+*.exr
+*.psd
+*.blend
+*.wav
+*.flac
+*.mp3
+*.aiff
+*.zip
+*.7z
+*.rar
+_archive/
+
+# fichiers de plus de 4 Mo
+/assets/covers/lancoli_self_album_cover_la_fenetre_dans_l_eau.jpg
+/assets/projects/Horla/Estate/estate_04.png
+/assets/projects/Horla/Estate/lotissement_07.png
+/assets/projects/Horla/Room/room_03.png
+/assets/projects/Horla/Room/room_05.png
+/assets/projects/Horla/Room/room_06.png
+/assets/projects/Horla/Room/room_07.png
+/assets/projects/Horla/Station/station_03.png
+/assets/projects/leaving_home/LH_013.png
+/assets/projects/leaving_home/LH_014.png
+/assets/projects/leaving_home/LH_016.png
+/assets/projects/leaving_home/LH_027.png
+/assets/projects/leaving_home/LH_028.png
+/assets/projects/leaving_home/LH_029.png
+/assets/projects/leaving_home/perso_1.png
+/assets/projects/leaving_home/perso_2.png
+/assets/textures/dirtypaper2.jpg
+
+# secrets : jamais dans un dépôt (docs/COMMITS.md, règle 4)
+*.p12
+*.pfx
+id_rsa*
+retours-config.js
+supabase.json

@@ -1,0 +1,72 @@
+/* ---------- Feuillets : transition verticale en feuilles quadrillées (feuillets.js) ---------- */
+
+/* Réglages de papier : tout se pilote d'ici (ou depuis feuillets.html)
+   --leaf-grid     taille d'un carreau
+   --leaf-rule     couleur des lignes du quadrillage
+   --leaf-edge     tranche claire de la déchirure
+   --leaf-texture  image de papier : url("…"), ou none pour une feuille lisse
+   --leaf-blend    fusion de la texture avec la couleur de la feuille ; normal = texture seule, dessous */
+.leaves {
+    --leaf-grid: 24px;
+    --leaf-rule: color-mix(in srgb, var(--ink) 13%, transparent);
+    --leaf-edge: var(--paper);
+    --leaf-texture: url("../assets/textures/papier-blanc.jpg");
+    --leaf-blend: multiply;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    overflow: hidden;
+    pointer-events: none;
+    visibility: hidden
+}
+
+.leaves.is-on {
+    visibility: visible
+}
+
+/* la feuille déborde sur les côtés : le tremblé ne découvre jamais un coin */
+.leaf {
+    position: absolute;
+    left: -3%;
+    width: 106%;
+    will-change: transform;
+    filter:
+        drop-shadow(0 -2px 0 var(--leaf-edge))
+        drop-shadow(0 2px 0 var(--leaf-edge))
+        drop-shadow(0 0 16px rgba(23, 23, 23, .2))
+}
+
+/* de haut en bas : quadrillage, texture de papier, couleur */
+.leaf-paper {
+    position: absolute;
+    inset: 0;
+    background-color: var(--leaf-color);
+    background-image:
+        linear-gradient(var(--leaf-rule) 1px, transparent 1px),
+        linear-gradient(90deg, var(--leaf-rule) 1px, transparent 1px),
+        var(--leaf-texture);
+    background-size: var(--leaf-grid) var(--leaf-grid), var(--leaf-grid) var(--leaf-grid), cover;
+    background-position: var(--leaf-ox, 0) var(--leaf-oy, 0), var(--leaf-ox, 0) var(--leaf-oy, 0), center;
+    background-blend-mode: normal, normal, var(--leaf-blend)
+}
+
+/* le titre du chapitre, posé sur la dernière feuille : il apparaît d'un coup, sans fondu */
+.leaf-label {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font: italic 400 clamp(32px, 6vw, 72px) Georgia, serif;
+    letter-spacing: -.05em;
+    color: var(--ink);
+    visibility: hidden
+}
+
+.leaves.is-held .leaf-label {
+    visibility: visible
+}
+
+/* pages film : la tranche de la déchirure reste claire sur fond sombre */
+html.film .leaves {
+    --leaf-edge: var(--ink)
+}
