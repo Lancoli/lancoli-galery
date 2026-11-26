@@ -54,24 +54,23 @@
       "texte": "N0 · dépôt git propre (rien en attente de commit)",
       "pour": "git",
       "preuve": "pas de dépôt git",
-      "fait": false,
+      "fait": true,
       "auto": true,
-      "fait_le": "2026-11-26T18:19:13.612Z"
+      "fait_le": "2026-11-26T22:58:37.265Z"
     }
   ],
   "etat": {
-    "date": "2026-11-26T22:43:20.992Z",
+    "date": "2026-11-26T22:58:37.265Z",
     "niveau": null,
     "prochain": "N0",
     "bloque": [
-      "git",
       "github"
     ],
     "humain": {},
     "criteres": {
       "git": {
-        "ok": false,
-        "preuve": "pas de dépôt git",
+        "ok": true,
+        "preuve": "propre",
         "niveau": "N0",
         "texte": "dépôt git propre (rien en attente de commit)",
         "type": "auto"
@@ -125,11 +124,46 @@
         "texte": "pas de texte provisoire visible (lorem, TODO, à compléter)",
         "type": "auto"
       },
+      "licence": {
+        "ok": false,
+        "preuve": "LICENSE absent",
+        "niveau": "N1",
+        "texte": "licence déclarée (fichier LICENSE)",
+        "type": "auto"
+      },
+      "changelog": {
+        "ok": false,
+        "preuve": "CHANGELOG.md absent",
+        "niveau": "N1",
+        "texte": "journal des versions (CHANGELOG.md)",
+        "type": "auto"
+      },
       "meta": {
         "ok": false,
         "preuve": "5/9 page(s) incomplète(s) — contact.html : title",
         "niveau": "N2",
         "texte": "lang, title, description, viewport, favicon, og:image sur chaque page",
+        "type": "auto"
+      },
+      "robots": {
+        "ok": true,
+        "preuve": "robots.txt, sitemap.xml",
+        "niveau": "N2",
+        "texte": "SEO technique : robots.txt et sitemap.xml",
+        "type": "auto"
+      },
+      "page404": {
+        "ok": false,
+        "preuve": "404.html absent",
+        "niveau": "N2",
+        "texte": "page d’erreur 404 soignée (404.html)",
+        "type": "auto"
+      },
+      "donnees-structurees": {
+        "ok": true,
+        "preuve": "JSON-LD dans index.html",
+        "niveau": "N2",
+        "texte": "données structurées schema.org (JSON-LD) sur l’accueil",
         "type": "auto"
       },
       "lighthouse": {
@@ -179,6 +213,20 @@
         "preuve": "à valider par toi",
         "niveau": "N3",
         "texte": "on est prévenu si le site tombe",
+        "type": "humain"
+      },
+      "securite": {
+        "ok": null,
+        "preuve": "à valider par toi",
+        "niveau": "N3",
+        "texte": "en-têtes de sécurité (CSP, HSTS), dépendances sans faille connue",
+        "type": "humain"
+      },
+      "rgpd": {
+        "ok": null,
+        "preuve": "à valider par toi",
+        "niveau": "N3",
+        "texte": "RGPD : consentement, données personnelles listées, droit d’effacement",
         "type": "humain"
       },
       "sauvegarde": {
