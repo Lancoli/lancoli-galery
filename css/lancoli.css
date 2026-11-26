@@ -687,7 +687,7 @@ a.atelier strong::after {
 .cta:hover .cta-core,
 .cta:focus-visible .cta-core {
     color: var(--paper);
-    transform: scale(1.06);
+    filter: brightness(1.15);
     box-shadow: 0 26px 50px -18px rgba(23, 23, 23, .5)
 }
 
@@ -698,13 +698,9 @@ a.atelier strong::after {
 
 .cta:hover .cta-arrow::before,
 .cta:focus-visible .cta-arrow::before {
-    transform: translateX(120%)
+    filter: brightness(1.15)
 }
 
-.cta:hover .cta-arrow::after,
-.cta:focus-visible .cta-arrow::after {
-    transform: none
-}
 
 .cta:hover .cta-ring,
 .cta:focus-visible .cta-ring {
@@ -785,7 +781,7 @@ a.atelier strong::after {
 }
 
 .tile:hover::before {
-    transform: scale(1.12)
+    filter: brightness(1.15)
 }
 
 /* 1 et 6 : pochette floutée ; 2 à 5 : les aplats d'origine */
@@ -1029,7 +1025,7 @@ a.atelier strong::after {
 }
 
 .work:hover .work-image img {
-    transform: scale(1.05)
+    filter: brightness(1.15)
 }
 
 .work:nth-child(3n+2) .work-image {
@@ -1139,7 +1135,7 @@ a.atelier strong::after {
 }
 
 .next:hover .next-title i {
-    transform: translateX(12px)
+    filter: brightness(1.15)
 }
 
 footer {
@@ -1332,7 +1328,7 @@ a.project-card:focus-visible {
 }
 
 .project-card:hover .project-cover img {
-    transform: scale(1.4)
+    filter: brightness(1.15)
 }
 
 .project-status {
@@ -1875,9 +1871,7 @@ html.horla-live .horla-world {
     color: var(--accent)
 }
 
-.stop.is-active .stop-pin,
-.stop:hover .stop-pin,
-.stop:focus-visible .stop-pin {
+.stop.is-active .stop-pin {
     transform: scale(1.25);
     background: var(--accent)
 }
@@ -1908,15 +1902,11 @@ html.horla-live .horla-world {
 }
 
 /* l'éventail s'ouvre sur le lieu actif ou survolé */
-.stop.is-active .stop-stack img:nth-child(2),
-.stop:hover .stop-stack img:nth-child(2),
-.stop:focus-visible .stop-stack img:nth-child(2) {
+.stop.is-active .stop-stack img:nth-child(2) {
     transform: translate(26px, -12px) rotate(5deg)
 }
 
-.stop.is-active .stop-stack img:nth-child(3),
-.stop:hover .stop-stack img:nth-child(3),
-.stop:focus-visible .stop-stack img:nth-child(3) {
+.stop.is-active .stop-stack img:nth-child(3) {
     transform: translate(50px, -4px) rotate(11deg)
 }
 
@@ -2014,7 +2004,7 @@ html.horla-live .horla-world {
 }
 
 .timeline-play:hover {
-    transform: scale(1.08)
+    filter: brightness(1.15)
 }
 
 .timeline-play:focus-visible {
@@ -2160,7 +2150,7 @@ html.no-gl .stop {
 }
 
 .tape-play:hover {
-    transform: scale(1.1)
+    filter: brightness(1.15)
 }
 
 .tape-play:focus-visible {
@@ -2717,7 +2707,7 @@ html.no-gl .stop {
 }
 
 .shot:hover img {
-    transform: scale(1.03)
+    filter: brightness(1.15)
 }
 
 .shot figcaption,
@@ -3293,7 +3283,7 @@ html.no-gl .stop {
 }
 
 .micro-play:hover {
-    transform: scale(1.08);
+    filter: brightness(1.15);
     background: rgba(255, 255, 255, .26)
 }
 
@@ -3835,7 +3825,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
 }
 
 .reel-big:hover {
-    transform: scale(1.08);
+    filter: brightness(1.15);
     background: rgba(255, 255, 255, .26)
 }
 
@@ -4491,7 +4481,7 @@ html.film .micro figcaption strong {
 }
 
 .pass-cta:hover i {
-    transform: translateX(8px)
+    filter: brightness(1.15)
 }
 
 @media (max-width: 760px) {
