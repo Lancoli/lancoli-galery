@@ -39,15 +39,16 @@
     });
 
     // ---------- The lectern: the stage, the bar, and a way out of full screen ----------
+    const t = window.lancoliT || ((k) => k);
     const book = document.createElement('div');
     book.className = 'book';
     book.innerHTML = '<div class="book-stage"><canvas class="book-canvas" tabindex="0" role="img"></canvas></div>'
-        + '<button type="button" class="book-close slate" aria-label="Refermer le livre">Refermer ✕</button>'
+        + `<button type="button" class="book-close slate" aria-label="${t('ui.close')}">${t('ui.close')} ✕</button>`
         + '<div class="book-bar slate">'
-        + '<button type="button" class="book-prev" aria-label="Page précédente">←</button>'
+        + `<button type="button" class="book-prev" aria-label="${t('ui.previous')}">←</button>`
         + '<span class="book-count"></span>'
         + '<button type="button" class="book-enter"></button>'
-        + '<button type="button" class="book-next" aria-label="Page suivante">→</button>'
+        + `<button type="button" class="book-next" aria-label="${t('ui.next')}">→</button>`
         + '</div>'
         + '<p class="book-hint slate"></p>';
     const canvas = book.querySelector('canvas');

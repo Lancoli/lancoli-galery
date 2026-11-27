@@ -419,12 +419,13 @@
     // Viewer: the shots open large, arrows to move from one to the next
     const zooms = [...document.querySelectorAll('a[data-zoom]')];
     if (zooms.length && window.HTMLDialogElement) {
+        const t = window.lancoliT || ((k) => k);
         const box = document.createElement('dialog');
         box.className = 'lightbox';
         box.innerHTML = '<img alt=""><div class="slate" aria-live="polite"></div>'
-            + '<button type="button" class="lightbox-close" aria-label="Fermer">✕</button>'
-            + '<button type="button" class="lightbox-prev" aria-label="Plan précédent">←</button>'
-            + '<button type="button" class="lightbox-next" aria-label="Plan suivant">→</button>';
+            + `<button type="button" class="lightbox-close" aria-label="${t('ui.close')}">✕</button>`
+            + `<button type="button" class="lightbox-prev" aria-label="${t('ui.previous')}">←</button>`
+            + `<button type="button" class="lightbox-next" aria-label="${t('ui.next')}">→</button>`;
         document.body.appendChild(box);
         const image = box.querySelector('img');
         const caption = box.querySelector('.slate');
@@ -477,9 +478,10 @@
             time.textContent = `${clock(audio.currentTime)} / ${clock(audio.duration)}`;
             if (audio.duration) seek.value = (audio.currentTime / audio.duration) * 1000;
         };
+        const t = window.lancoliT || ((k) => k);
         const setPlaying = (playing) => {
             tape.classList.toggle('is-playing', playing);
-            button.setAttribute('aria-label', playing ? 'Pause' : label);
+            button.setAttribute('aria-label', playing ? t('ui.pause') : label);
         };
 
         button.addEventListener('click', () => {
@@ -509,7 +511,7 @@
         if (file && file.showModal) trigger.addEventListener('click', () => file.showModal());
     });
     document.querySelectorAll('dialog.file').forEach((file) => {
-        // click on the backdrop or on "Fermer": close
+        // click on the backdrop or the close button: dismiss
         file.addEventListener('click', (event) => {
             if (event.target === file || event.target.closest('[data-close]')) file.close();
         });
@@ -544,10 +546,11 @@
             seek.value = done * 1000;
             seek.style.setProperty('--done', `${done * 100}%`);
         };
+        const t = window.lancoliT || ((k) => k);
         const setPlaying = (playing) => {
             reel.classList.toggle('is-playing', playing);
-            play.setAttribute('aria-label', playing ? 'Pause' : 'Lire');
-            big.setAttribute('aria-label', playing ? 'Pause' : 'Lire');
+            play.setAttribute('aria-label', playing ? t('ui.pause') : t('ui.play'));
+            big.setAttribute('aria-label', playing ? t('ui.pause') : t('ui.play'));
         };
         const load = (index, autoplay) => {
             current = (index + items.length) % items.length;
@@ -570,7 +573,7 @@
         mute.addEventListener('click', () => {
             video.muted = !video.muted;
             mute.setAttribute('aria-pressed', String(video.muted));
-            mute.textContent = video.muted ? 'Muet' : 'Son';
+            mute.textContent = video.muted ? t('ui.mute') : t('ui.sound');
         });
         full.addEventListener('click', () => {
             if (document.fullscreenElement) document.exitFullscreen();
@@ -629,13 +632,14 @@
         video.removeAttribute('controls');
         button.hidden = false;
 
+        const t = window.lancoliT || ((k) => k);
         const toggle = () => {
             if (video.paused) video.play().catch(() => { /* playback refused by the browser */ });
             else video.pause();
         };
         const setPlaying = (playing) => {
             micro.classList.toggle('is-playing', playing);
-            button.setAttribute('aria-label', playing ? 'Pause' : label);
+            button.setAttribute('aria-label', playing ? t('ui.pause') : label);
         };
         video.addEventListener('click', toggle);
         button.addEventListener('click', toggle);

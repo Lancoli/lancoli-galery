@@ -1,4 +1,4 @@
-// Le Horla: a cassette at the entrance, then a relief map led by the sound.
+// Le Horla (The Horla): a cassette at the entrance, then a relief map led by the sound.
 // Classic script (not a module) so it also works when the file is opened directly;
 // three.js is imported on the fly from the importmap of horla.html.
 (async () => {
@@ -83,8 +83,9 @@
         button.style.setProperty('--accent', chapter.color);
         button.style.left = `${(chapter.start / envelope.duration) * 100}%`;
         button.style.width = `${((end - chapter.start) / envelope.duration) * 100}%`;
+        const t = window.lancoliT || ((k) => k);
         button.innerHTML = `<i>0${i + 1}</i><span>${chapter.title}</span>`;
-        button.setAttribute('aria-label', `Aller à : ${chapter.title}`);
+        button.setAttribute('aria-label', `${t('ui.goTo')}: ${chapter.title}`);
         button.addEventListener('click', () => {
             audio.currentTime = chapter.start;
             pendingTime = chapter.start;

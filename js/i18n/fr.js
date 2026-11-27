@@ -106,5 +106,15 @@ window.LANCOLI_I18N.fr = {
     'mur.msg.copied': 'Image copiée, prête à coller.',
     'mur.msg.copyFail': 'Copie impossible ici : passe par un export.',
     'mur.msg.no3d': 'La vue 3D ne se charge pas (connexion ?). L’atelier reste disponible.',
-    'mur.msg.confirmClear': 'Effacer toute la peinture ?'
+    'mur.msg.confirmClear': 'Effacer toute la peinture ?',
+
+    // --- UI controls (lancoli.js, book.js, horla.js) ---
+    'ui.close': 'Fermer',
+    'ui.previous': 'Précédent',
+    'ui.next': 'Suivant',
+    'ui.pause': 'Pause',
+    'ui.play': 'Lire',
+    'ui.mute': 'Muet',
+    'ui.sound': 'Son',
+    'ui.goTo': 'Aller à'
 };

@@ -105,5 +105,15 @@ window.LANCOLI_I18N.en = {
     'mur.msg.copied': 'Image copied, ready to paste.',
     'mur.msg.copyFail': 'Copying is not possible here: use an export.',
     'mur.msg.no3d': 'The 3D view could not load (connection?). The studio still works.',
-    'mur.msg.confirmClear': 'Clear all the paint?'
+    'mur.msg.confirmClear': 'Clear all the paint?',
+
+    // --- UI controls (lancoli.js, book.js, horla.js) ---
+    'ui.close': 'Close',
+    'ui.previous': 'Previous',
+    'ui.next': 'Next',
+    'ui.pause': 'Pause',
+    'ui.play': 'Play',
+    'ui.mute': 'Mute',
+    'ui.sound': 'Sound',
+    'ui.goTo': 'Go to'
 };
