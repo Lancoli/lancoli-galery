@@ -159,7 +159,7 @@
     <script src="js/leaflets.js"></script>
     <script>
         // Atelier : chaque curseur pilote un réglage de Feuillets ou une variable de feuillets.css.
-        const feuillets = Feuillets();
+        const leaflets = Leaflets();
         const chapters = [
             ['Chapitre I · Atelier', 'La <em>galerie</em>', 'La galerie'],
             ['Chapitre II · Atelier', 'Selected <em>works</em>', 'Projets'],
@@ -184,16 +184,16 @@
         ranges.forEach(([key, name, min, max, step, unit, cssVar]) => {
             const row = document.createElement('label');
             row.className = 'desk-row';
-            const value = cssVar ? paper[key] : feuillets.settings[key];
+            const value = cssVar ? paper[key] : leaflets.settings[key];
             row.innerHTML = `<span class="slate">${name}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${value}"><output></output>`;
             const input = row.querySelector('input');
             const output = row.querySelector('output');
             const apply = () => {
                 const number = Number(input.value);
                 output.textContent = `${number}${unit ? ' ' + unit : ''}`;
-                if (!cssVar) return feuillets.set({ [key]: number });
+                if (!cssVar) return leaflets.set({ [key]: number });
                 paper[key] = number;
-                feuillets.root.style.setProperty(cssVar, key === 'rule'
+                leaflets.root.style.setProperty(cssVar, key === 'rule'
                     ? `color-mix(in srgb, var(--ink) ${number}%, transparent)`
                     : `${number}px`);
             };
@@ -202,17 +202,17 @@
             rows.appendChild(row);
         });
 
-        document.getElementById('boil').addEventListener('change', (event) => feuillets.set({ boil: event.target.checked }));
-        document.getElementById('direction').addEventListener('change', (event) => feuillets.set({ direction: event.target.value }));
+        document.getElementById('boil').addEventListener('change', (event) => leaflets.set({ boil: event.target.checked }));
+        document.getElementById('direction').addEventListener('change', (event) => leaflets.set({ direction: event.target.value }));
         document.getElementById('mood').addEventListener('change', (event) => { document.documentElement.className = event.target.value; });
         document.getElementById('blend').addEventListener('change', (event) => {
             paper.blend = event.target.value;
-            feuillets.root.style.setProperty('--leaf-blend', paper.blend);
+            leaflets.root.style.setProperty('--leaf-blend', paper.blend);
         });
         // La texture de papier : choisie ici, elle se pose sous le quadrillage de chaque feuille
         document.getElementById('texture').addEventListener('change', (event) => {
             const file = event.target.files[0];
-            feuillets.root.style.setProperty('--leaf-texture', file ? `url("${URL.createObjecturl(file)}")` : 'none');
+            leaflets.root.style.setProperty('--leaf-texture', file ? `url("${URL.createObjecturl(file)}")` : 'none');
         });
 
         const show = (index) => {
@@ -227,10 +227,10 @@
             busy = true;
             do {
                 const next = (current + 1) % chapters.length;
-                await feuillets.cover(chapters[next][2]);
+                await leaflets.cover(chapters[next][2]);
                 show(next);
                 await wait(450);
-                await feuillets.reveal();
+                await leaflets.reveal();
                 if (document.getElementById('loop').checked) await wait(700);
             } while (document.getElementById('loop').checked);
             busy = false;
@@ -243,7 +243,7 @@
         });
 
         document.getElementById('copy').addEventListener('click', async (event) => {
-            const { count, fps, duration, stagger, tear, wobble, boil, direction } = feuillets.settings;
+            const { count, fps, duration, stagger, tear, wobble, boil, direction } = leaflets.settings;
             const text = JSON.stringify({ count, fps, duration, stagger, tear, wobble, boil, direction, ...paper }, null, 2);
             try { await navigator.clipboard.writeText(text); event.target.textContent = 'Copié ✓'; }
             catch { prompt('Réglages à copier :', text); }
@@ -254,7 +254,7 @@
         if (frozen.length >= 2) {
             if (frozen[2]) document.documentElement.className = frozen[2];
             if (frozen[0] === 'reveal') show(1);
-            feuillets.still(frozen[0], Number(frozen[1]), chapters[1][2]);
+            leaflets.still(frozen[0], Number(frozen[1]), chapters[1][2]);
         }
     </script>
     <!-- retours:debut --><script src="retours/retours-config.js"></script><script src="retours/retours.js" defer></script><!-- retours:fin -->

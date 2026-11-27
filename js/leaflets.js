@@ -3,7 +3,7 @@
 //   const feuillets = Feuillets({ fps: 8 });
 //   await feuillets.cover('Projets');   // la page est couverte
 //   await feuillets.reveal();           // la page est découverte
-window.Feuillets = (options = {}) => {
+window.Leaflets = (options = {}) => {
     const settings = {
         count: 5,        // nombre de feuilles
         fps: 8,          // poses par seconde : plus c'est bas, plus ça « fige »

@@ -27,7 +27,7 @@ const state = {
 
 // ───────── l'atelier : la peinture posée sur le mur, à plat ─────────
 
-const atelier = $('#atelier');
+const workshopEl = $('#atelier');
 const stage = $('#stage');
 const ring = $('#ring');
 const wallCanvas = document.createElement('canvas');
@@ -43,7 +43,7 @@ function applyView() {
     sizeRing();
 }
 function fit() {
-    const r = atelier.getBoundingClientRect();
+    const r = workshopEl.getBoundingClientRect();
     const pad = r.width < 600 ? 8 : 28;
     view.fit = view.scale = Math.min((r.width - pad * 2) / W, (r.height - pad * 2) / H);
     view.x = (r.width - W * view.scale) / 2;
@@ -51,7 +51,7 @@ function fit() {
     applyView();
 }
 function zoomAt(clientX, clientY, factor) {
-    const r = atelier.getBoundingClientRect();
+    const r = workshopEl.getBoundingClientRect();
     const next = Math.min(8, Math.max(view.fit * 0.6, view.scale * factor));
     const px = clientX - r.left, py = clientY - r.top;
     view.x = px - (px - view.x) * (next / view.scale);
@@ -60,7 +60,7 @@ function zoomAt(clientX, clientY, factor) {
     applyView();
 }
 const toCanvas = (e) => {
-    const r = atelier.getBoundingClientRect();
+    const r = workshopEl.getBoundingClientRect();
     return { x: (e.clientX - r.left - view.x) / view.scale, y: (e.clientY - r.top - view.y) / view.scale };
 };
 
@@ -70,7 +70,7 @@ function sizeRing() {
     ring.style.marginLeft = ring.style.marginTop = -d / 2 + 'px';
 }
 function moveRing(e) {
-    const r = atelier.getBoundingClientRect();
+    const r = workshopEl.getBoundingClientRect();
     ring.style.transform = `translate(${e.clientX - r.left}px, ${e.clientY - r.top}px)`;
 }
 
@@ -78,8 +78,8 @@ function moveRing(e) {
 const pointers = new Map();
 let painting = null, panning = null, pinch = null, spaceHeld = false;
 
-atelier.addEventListener('pointerdown', (e) => {
-    atelier.setPointerCapture(e.pointerId);
+workshopEl.addEventListener('pointerdown', (e) => {
+    workshopEl.setPointerCapture(e.pointerId);
     pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointers.size === 2) {
         if (painting !== null) { stroke('cancel'); painting = null; }
@@ -89,14 +89,14 @@ atelier.addEventListener('pointerdown', (e) => {
     }
     if (e.button === 1 || e.button === 2 || spaceHeld) {
         panning = { id: e.pointerId, x: e.clientX, y: e.clientY };
-        atelier.classList.add('panning');
+        workshopEl.classList.add('panning');
         return;
     }
     if (e.button !== 0) return;
     painting = e.pointerId;
     stroke('begin', toCanvas(e), e);
 });
-atelier.addEventListener('pointermove', (e) => {
+workshopEl.addEventListener('pointermove', (e) => {
     moveRing(e);
     ring.classList.add('on');
     if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -124,18 +124,18 @@ atelier.addEventListener('pointermove', (e) => {
 function release(e) {
     pointers.delete(e.pointerId);
     if (pointers.size < 2) pinch = null;
-    if (panning && panning.id === e.pointerId) { panning = null; atelier.classList.remove('panning'); }
+    if (panning && panning.id === e.pointerId) { panning = null; workshopEl.classList.remove('panning'); }
     if (painting === e.pointerId) { painting = null; stroke('end'); }
 }
-atelier.addEventListener('pointerup', release);
-atelier.addEventListener('pointercancel', release);
-atelier.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') ring.classList.remove('on'); });
-atelier.addEventListener('contextmenu', (e) => e.preventDefault());
-atelier.addEventListener('wheel', (e) => {
+workshopEl.addEventListener('pointerup', release);
+workshopEl.addEventListener('pointercancel', release);
+workshopEl.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') ring.classList.remove('on'); });
+workshopEl.addEventListener('contextmenu', (e) => e.preventDefault());
+workshopEl.addEventListener('wheel', (e) => {
     e.preventDefault();
     zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0015));
 }, { passive: false });
-new ResizeObserver(() => { if (state.view === 'atelier') fit(); }).observe(atelier);
+new ResizeObserver(() => { if (state.view === 'atelier') fit(); }).observe(workshopEl);
 
 // ───────── un geste, d'où qu'il vienne (atelier ou mur 3D) ─────────
 
@@ -383,7 +383,7 @@ document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && k === 'z') { e.preventDefault(); (e.shiftKey ? engine.redo() : engine.undo()); refreshHistory(); return; }
     if ((e.ctrlKey || e.metaKey) && k === 'y') { e.preventDefault(); engine.redo(); refreshHistory(); return; }
     if (e.ctrlKey || e.metaKey || e.altKey) return;
-    if (e.code === 'Space') { e.preventDefault(); spaceHeld = true; atelier.classList.add('panning'); return; }
+    if (e.code === 'Space') { e.preventDefault(); spaceHeld = true; workshopEl.classList.add('panning'); return; }
     if (KEYS[k]) setTool(KEYS[k]);
     else if (k === '[') setSize(state.size / 1.15);
     else if (k === ']') setSize(state.size * 1.15);
@@ -393,7 +393,7 @@ document.addEventListener('keydown', (e) => {
     else if (k === 'escape') setPicking(false);
 });
 document.addEventListener('keyup', (e) => {
-    if (e.code === 'Space') { spaceHeld = false; if (!panning) atelier.classList.remove('panning'); }
+    if (e.code === 'Space') { spaceHeld = false; if (!panning) workshopEl.classList.remove('panning'); }
 });
 
 // Une peinture non exportée ne part pas sans prévenir.
