@@ -1,9 +1,9 @@
 {
  "app": "Lancoli",
- "date": "2026-11-26",
+ "date": "2026-11-27",
  "mesures": {
   "fichiers": 4,
-  "lignes": 5156,
+  "lignes": 5169,
   "hexHorsRoot": 145,
   "couleursDistinctes": 81,
   "rgbaEnDur": 86,
