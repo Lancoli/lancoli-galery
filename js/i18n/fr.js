@@ -29,7 +29,7 @@ window.LANCOLI_I18N.fr = {
     'home.room.5': 'Couleurs',
     'home.room.6': 'Signes',
     'home.lede': 'Une pratique née de la curiosité.',
-    'home.intro': 'Une pratique libre, nourrie par le dessin, l'observation et les croisements entre disciplines, tournée vers l'action : santé mentale, alternatives, agronomie, reforestation. Six salles, six manières de regarder : chaque porte mène à la démarche.',
+    'home.intro': "Une pratique libre, nourrie par le dessin, l'observation et les croisements entre disciplines, tournée vers l'action : santé mentale, alternatives, agronomie, reforestation. Six salles, six manières de regarder : chaque porte mène à la démarche.",
     'home.tools.title': 'Les ateliers · à toi de jouer',
     'home.tools.wall': 'Mur libre',
     'home.tools.wall.text': 'Bombe, marqueur, lettrage : peins un mur, exporte-le.',
