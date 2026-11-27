@@ -1,10 +1,10 @@
-// Le livre des contes : les cartes projet de projets.html deviennent les doubles pages d'un livre three.js.
-// À gauche l'image du conte, à droite son texte. Trois couches, dans lesquelles on s'enfonce et on recule :
-//   0 · le livre posé sur la table      1 · une page vue de près      2 · le travelling avant, puis le conte
-// Dans la page, le livre se feuillette (flèches, glisser). Un clic l'ouvre en plein écran : plus de défilement,
-// la molette avance et recule dans les couches, et les éléments en relief (la photo, le bouton) mènent au conte.
-// Les cartes restent la source : pour ajouter un conte, ajouter une carte dans projets.html, le livre suit.
-// three.js est importé à la volée depuis l'importmap de projets.html.
+// The book of tales: the project cards of projets.html become the spreads of a three.js book.
+// On the left the tale's image, on the right its text. Three layers, to dive into and back out of:
+//   0 · the book on the table      1 · a page seen up close      2 · the dolly-in, then the tale
+// In the page, the book is leafed through (arrows, drag). A click opens it full screen: no more scrolling,
+// the wheel moves in and out of the layers, and the raised elements (the photo, the button) lead to the tale.
+// The cards stay the source: to add a tale, add a card in projets.html, the book follows.
+// three.js is imported on the fly from the importmap of projets.html.
 (() => {
     const section = document.querySelector('.worlds');
     const list = section && section.querySelector('.projects');
@@ -17,7 +17,7 @@
     const text = (node) => (node ? node.textContent.replace(/\s+/g, ' ').trim() : '');
     const two = (n) => String(n).padStart(2, '0');
 
-    // ---------- Ce que chaque carte raconte ----------
+    // ---------- What each card tells ----------
     const tales = cards.map((card) => {
         const soon = card.classList.contains('project-card--soon');
         const slates = card.querySelectorAll(':scope > .slate');
@@ -38,7 +38,7 @@
         };
     });
 
-    // ---------- Le lutrin : la scène, la barre, et de quoi sortir du plein écran ----------
+    // ---------- The lectern: the stage, the bar, and a way out of full screen ----------
     const book = document.createElement('div');
     book.className = 'book';
     book.innerHTML = '<div class="book-stage"><canvas class="book-canvas" tabindex="0" role="img"></canvas></div>'
@@ -58,11 +58,11 @@
     const enter = book.querySelector('.book-enter');
     const close = book.querySelector('.book-close');
     const hint = book.querySelector('.book-hint');
-    // le voile qui se referme au bout du travelling : sombre, comme les pages des contes
+    // the veil closing at the end of the dolly shot: dark, like the tale pages
     const veil = document.createElement('div');
     veil.className = 'book-veil';
 
-    // bascule livre / cartes, posée dans l'en-tête de la salle
+    // book / cards toggle, placed in the room header
     const toggle = document.createElement('button');
     toggle.type = 'button';
     toggle.className = 'book-toggle slate';
@@ -73,12 +73,12 @@
     };
     toggle.addEventListener('click', () => setView(section.dataset.view === 'book' ? 'cards' : 'book'));
 
-    // ---------- État : où l'on est dans le livre, et à quelle profondeur ----------
-    let current = 0;        // double page ouverte
-    let level = 0;          // 0 : le livre · 1 : une page de près
-    let side = 1;           // page regardée de près : -1 à gauche, 1 à droite
-    let immersive = false;  // plein écran, défilement bloqué
-    let travelling = false; // travelling avant en cours vers le conte
+    // ---------- State: where we are in the book, and how deep ----------
+    let current = 0;        // open spread
+    let level = 0;          // 0: the book · 1: a page up close
+    let side = 1;           // page looked at up close: -1 left, 1 right
+    let immersive = false;  // full screen, scrolling locked
+    let travelling = false; // dolly-in to the tale in progress
 
     const paint = () => {
         const tale = tales[current];
@@ -106,7 +106,7 @@
         if (toSide) side = toSide;
         paint();
     };
-    // Plein écran : le livre sort de la page (sinon un parent animé le recadrerait) et le défilement s'arrête
+    // Full screen: the book leaves the page (otherwise an animated parent would reframe it) and scrolling stops
     const setImmersive = (value) => {
         if (immersive === value) return;
         immersive = value;
@@ -119,21 +119,21 @@
         if (value) canvas.focus({ preventScroll: true });
         if (value && window.lancoliTrack) window.lancoliTrack('Livre ouvert');
     };
-    // reculer d'une couche : page → livre → sortie
+    // go back one layer: page → book → exit
     const back = () => {
         if (travelling) return;
         if (level === 1) setLevel(0);
         else setImmersive(false);
     };
 
-    // ---------- Les pages, dessinées sur canvas puis posées en texture ----------
+    // ---------- The pages, drawn on canvas then applied as textures ----------
     const PAGE_W = 820;
     const PAGE_H = 1066;
-    const SHARP = 1.5; // finesse des textures : assez pour lire une page vue de près
+    const SHARP = 1.5; // texture resolution: enough to read a page up close
     const INK = '#171717';
     const MUTED = '#6f6a63';
     const MONO = 'ui-monospace, Consolas, "Courier New", monospace';
-    let safeImages = true; // faux en file:// : une image locale « salit » le canvas, WebGL la refuse
+    let safeImages = true; // false over file://: a local image "taints" the canvas, WebGL refuses it
 
     const load = (src) => new Promise((resolve) => {
         if (!src) return resolve(null);
@@ -164,21 +164,21 @@
         if (line) lines.push(line);
         return lines;
     };
-    // zoom > 1 resserre le cadrage (1.35 sort les bandes noires des images composées, comme sur les cartes)
+    // zoom > 1 tightens the framing (1.35 removes the black bars of composite images, as on the cards)
     const coverFit = (ctx, image, x, y, w, h, zoom = 1) => {
         const scale = Math.max(w / image.naturalWidth, h / image.naturalHeight) * zoom;
         const sw = w / scale;
         const sh = h / scale;
         ctx.drawImage(image, (image.naturalWidth - sw) / 2, (image.naturalHeight - sh) / 2, sw, sh, x, y, w, h);
     };
-    // fond commun : papier froissé fondu dans le blanc, et l'ombre de la reliure du côté du dos
+    // shared background: crumpled paper blended into the white, and the binding shadow on the spine side
     const sheet = (paper, spineOnLeft) => {
         const { page, ctx } = board(PAGE_W, PAGE_H);
         ctx.fillStyle = '#fffdf9';
         ctx.fillRect(0, 0, PAGE_W, PAGE_H);
         if (paper && safeImages) {
             ctx.globalCompositeOperation = 'multiply';
-            ctx.globalAlpha = .6; // force des plis du papier
+            ctx.globalAlpha = .6; // strength of the paper creases
             coverFit(ctx, paper, 0, 0, PAGE_W, PAGE_H);
             ctx.globalAlpha = 1;
             ctx.globalCompositeOperation = 'source-over';
@@ -200,15 +200,15 @@
         spaced(ctx, '0px');
     };
 
-    // Les deux éléments en relief d'une double page, en pixels de page : la photo (à gauche), le bouton (à droite)
+    // The two raised elements of a spread, in page pixels: the photo (left), the button (right)
     const PHOTO = { x: 64, y: 84, w: PAGE_W - 64 - 84 };
     const KNOB = { x: 84, y: PAGE_H - 84 - 78, w: PAGE_W - 84 - 64, h: 78 };
     const photoHeight = (tale) => PAGE_H - PHOTO.y - (safeImages && tale.strip.length ? 250 : 150);
 
-    // la photo du conte : imprimée à plat sur la page, et reprise sur la plaque en relief
+    // the tale's photo: printed flat on the page, and repeated on the raised plate
     const drawPhoto = (ctx, tale, index, cover, x, y, w, h) => {
         if (cover && safeImages) return coverFit(ctx, cover, x, y, w, h, 1.35);
-        // pas d'image exploitable : un aplat à la couleur du monde et le numéro du conte
+        // no usable image: a flat fill in the world's colour and the tale number
         const wash = ctx.createLinearGradient(x, y, x + w, y + h);
         wash.addColorStop(0, tale.world);
         wash.addColorStop(1, INK);
@@ -227,7 +227,7 @@
         slate(ctx, '→', x + w - 26, y + h - 31, '#fbfaf7', 'right');
     };
 
-    // page de droite : le texte du conte et son bouton d'entrée
+    // right page: the tale's text and its entry button
     const textPage = (tale, index, paper) => {
         const { page, ctx } = sheet(paper, true);
         const left = KNOB.x;
@@ -276,7 +276,7 @@
         return page;
     };
 
-    // page de gauche : l'image du conte collée sur la feuille, puis sa planche contact
+    // left page: the tale's image glued on the sheet, then its contact sheet
     const imagePage = (tale, index, paper, cover, strip) => {
         const { page, ctx } = sheet(paper, false);
         const { x, y, w } = PHOTO;
@@ -304,11 +304,11 @@
         return page;
     };
 
-    // ---------- La scène ----------
+    // ---------- The stage ----------
     const start = async () => {
-        const paper = await load('assets/textures/papier-blanc.jpg');
+        const paper = await load('assets/textures/paper-white.jpg');
         if (paper) {
-            // sonde : si lire un pixel échoue, les images locales sont refusées (page ouverte en file://)
+            // probe: if reading a pixel fails, local images are refused (page opened over file://)
             const probe = document.createElement('canvas').getContext('2d');
             probe.drawImage(paper, 0, 0, 1, 1);
             try { probe.getImageData(0, 0, 1, 1); } catch { safeImages = false; }
@@ -324,7 +324,7 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(30, 16 / 9, .05, 50);
 
-        // une lampe de bureau en haut à gauche : c'est elle qui porte l'ombre de la page qui tourne
+        // a desk lamp at the top left: it casts the shadow of the turning page
         scene.add(new THREE.AmbientLight(0xffffff, 2));
         const lamp = new THREE.DirectionalLight(0xfff4e6, 1.25);
         lamp.position.set(-1.6, 2.2, 4);
@@ -336,11 +336,11 @@
         lamp.shadow.radius = 5;
         scene.add(lamp);
 
-        const W = 1;        // largeur d'une page
-        const H = 1.3;      // hauteur
-        const SEG = 28;     // tranches d'une feuille : plus il y en a, plus la courbure est douce
-        const EPS = .004;   // épaisseur d'une feuille dans la pile
-        const TOP = (tales.length + 1) * EPS; // juste au-dessus de la plus haute feuille
+        const W = 1;        // page width
+        const H = 1.3;      // height
+        const SEG = 28;     // slices of a sheet: the more there are, the smoother the curve
+        const EPS = .004;   // thickness of a sheet in the stack
+        const TOP = (tales.length + 1) * EPS; // just above the top sheet
         const tome = new THREE.Group();
         scene.add(tome);
 
@@ -350,7 +350,7 @@
             map.colorSpace = THREE.SRGBColorSpace;
             map.anisotropy = anisotropy;
             if (mirrored) {
-                // le verso se lit à l'envers de la feuille : on retourne la texture
+                // the back reads reversed on the sheet: flip the texture
                 map.wrapS = THREE.RepeatWrapping;
                 map.repeat.x = -1;
                 map.offset.x = 1;
@@ -366,7 +366,7 @@
         const texts = tales.map((tale, i) => textPage(tale, i, paper));
         const images = tales.map((tale, i) => imagePage(tale, i, paper, covers[i], strips[i]));
 
-        // le corps du livre : la couverture cartonnée, plus large que les pages, et les deux blocs de feuilles
+        // the book body: the hardcover, wider than the pages, and the two blocks of sheets
         const cover = solid(new THREE.Mesh(new THREE.BoxGeometry(W * 2 + .09, H + .09, .03), paperLike({ color: 0x1c1a18, roughness: .8 })));
         cover.position.z = -.033;
         tome.add(cover);
@@ -375,13 +375,13 @@
             block.position.set(sign * W / 2, 0, -.009);
             tome.add(block);
         });
-        // la table : invisible, elle ne garde que l'ombre
+        // the table: invisible, it only keeps the shadow
         const table = new THREE.Mesh(new THREE.PlaneGeometry(9, 6), new THREE.ShadowMaterial({ opacity: .2 }));
         table.position.z = -.05;
         table.receiveShadow = true;
         tome.add(table);
 
-        // les deux pages fixes : la première image à gauche, le dernier texte à droite
+        // the two fixed pages: the first image on the left, the last text on the right
         const flat = (page, x) => {
             const mesh = solid(new THREE.Mesh(new THREE.PlaneGeometry(W, H), paperLike({ map: texture(page) })), false);
             mesh.position.x = x;
@@ -390,7 +390,7 @@
         flat(images[0], -W / 2);
         flat(texts[tales.length - 1], W / 2);
 
-        // les feuilles qui tournent : au recto le texte du conte, au verso l'image du suivant
+        // the turning sheets: the tale's text on the front, the next one's image on the back
         const leaves = [];
         for (let j = 0; j < tales.length - 1; j++) {
             const geometry = new THREE.BufferGeometry();
@@ -408,8 +408,8 @@
             leaves.push({ geometry, group, p: -1, zRight: (tales.length - j) * EPS, zLeft: (j + 1) * EPS });
         }
 
-        // p = 0 : à plat à droite · p = 1 : à plat à gauche. Entre les deux la feuille se cambre :
-        // le bord libre part devant, le côté reliure traîne.
+        // p = 0: flat on the right · p = 1: flat on the left. In between the sheet arches:
+        // the free edge leads, the binding side lags.
         const bend = (leaf, p) => {
             leaf.p = p;
             const position = leaf.geometry.attributes.position;
@@ -433,8 +433,8 @@
         };
         leaves.forEach((leaf) => bend(leaf, 0));
 
-        // ---------- Les éléments en relief de la double page ouverte : la photo et le bouton ----------
-        // Ils se soulèvent de la feuille une fois la page posée, se lèvent encore sous le pointeur, et mènent au conte.
+        // ---------- The raised elements of the open spread: the photo and the button ----------
+        // They lift off the sheet once the page has landed, rise further under the pointer, and lead to the tale.
         const toWorld = (rect, onLeft) => ({
             x: (onLeft ? -W : 0) + ((rect.x + rect.w / 2) / PAGE_W) * W,
             y: H / 2 - ((rect.y + rect.h / 2) / PAGE_H) * H,
@@ -459,8 +459,8 @@
         const knob = solid(new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), [edge, edge, edge, edge, knobFace, edge]));
         plate.visible = knob.visible = false;
         tome.add(plate, knob);
-        let dressed = -1; // la double page pour laquelle photo et bouton sont habillés
-        let pop = 0;      // 0 : à plat dans la feuille · 1 : sortis
+        let dressed = -1; // the spread the photo and the button are dressed for
+        let pop = 0;      // 0: flat in the sheet · 1: out
         const lift = { plate: 0, knob: 0 };
         let hovered = null;
         const dress = (index) => {
@@ -470,8 +470,8 @@
             plateFace.needsUpdate = knobFace.needsUpdate = true;
         };
 
-        // ---------- Cadrage : trois distances de caméra, une par couche ----------
-        const TILT = -.36; // le livre est couché sur la table, vu d'un peu au-dessus
+        // ---------- Framing: three camera distances, one per layer ----------
+        const TILT = -.36; // the book lies on the table, seen from slightly above
         let half = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
         const fit = (height, width) => Math.max(height / (2 * half), width / (2 * half * camera.aspect));
         const frame = () => {
@@ -485,7 +485,7 @@
         const view = { x: 0, y: 0, z: 4, tilt: TILT };
         const goal = () => {
             if (travelling) {
-                // on plonge dans la photo jusqu'à ce qu'elle déborde de l'écran
+                // dive into the photo until it overflows the screen
                 const place = photos[current].place;
                 return { x: place.x, y: place.y, z: fit(place.h * .42, place.w * .42), tilt: 0 };
             }
@@ -493,7 +493,7 @@
             return { x: 0, y: 0, z: fit(H * 1.22, W * 2.7), tilt: immersive ? TILT * .8 : TILT };
         };
 
-        // ---------- Le travelling avant : la caméra entre dans la photo, le voile se ferme, on change de page ----------
+        // ---------- The dolly-in: the camera enters the photo, the veil closes, the page changes ----------
         const dive = () => {
             const tale = tales[current];
             if (travelling || tale.soon || !tale.href) return;
@@ -505,7 +505,7 @@
             setTimeout(() => veil.classList.add('is-on'), 520);
             setTimeout(() => { location.href = tale.href; }, 1150);
         };
-        // retour arrière du navigateur : on retrouve le livre tel qu'on l'a quitté, voile levé
+        // browser back: the book is found as it was left, veil lifted
         window.addEventListener('pageshow', (event) => {
             if (!event.persisted) return;
             travelling = false;
@@ -514,7 +514,7 @@
             veil.remove();
         });
 
-        // ---------- Pointeur ----------
+        // ---------- Pointer ----------
         const pointer = { x: 0, y: 0, downX: null };
         const ray = new THREE.Raycaster();
         const cursorOn = (event) => {
@@ -523,7 +523,7 @@
         };
         const spread = new THREE.Mesh(new THREE.PlaneGeometry(W * 2, H), new THREE.MeshBasicMaterial({ visible: false }));
         tome.add(spread);
-        // ce qu'il y a sous le pointeur : 'plate', 'knob', -1 (page de gauche), 1 (page de droite) ou 0 (rien)
+        // what is under the pointer: 'plate', 'knob', -1 (left page), 1 (right page) or 0 (nothing)
         const pick = (event) => {
             cursorOn(event);
             if (plate.visible) {
@@ -552,15 +552,15 @@
             if (pointer.downX === null || travelling) return;
             const moved = event.clientX - pointer.downX;
             pointer.downX = null;
-            if (Math.abs(moved) > 40) return turn(moved < 0 ? 1 : -1); // tirer vers la gauche : page suivante
+            if (Math.abs(moved) > 40) return turn(moved < 0 ? 1 : -1); // drag to the left: next page
             const under = pick(event);
             if (!immersive) { if (under !== 0) setImmersive(true); return; }
-            if (typeof under === 'string') dive();           // un élément en relief : on entre dans le conte
-            else if (under === 0) back();                    // à côté du livre : on recule d'une couche
-            else setLevel(1, under);                         // une page : on s'en approche
+            if (typeof under === 'string') dive();           // a raised element: enter the tale
+            else if (under === 0) back();                    // next to the book: go back one layer
+            else setLevel(1, under);                         // a page: move closer to it
         });
-        // Molette, en plein écran seulement : vers l'avant on s'enfonce, vers l'arrière on recule.
-        // Dans la page, la molette fait défiler normalement : on ne retient personne.
+        // Wheel, in full screen only: forward dives in, backward moves out.
+        // In the page, the wheel scrolls normally: nobody is held back.
         let wheeled = 0;
         canvas.addEventListener('wheel', (event) => {
             if (!immersive) return;
@@ -587,7 +587,7 @@
             event.preventDefault();
         });
 
-        // ---------- Boucle : ne tourne que quand le livre est à l'écran ----------
+        // ---------- Loop: only runs while the book is on screen ----------
         let visible = false;
         let last = performance.now();
         const loop = (now) => {
@@ -605,7 +605,7 @@
                 if (leaf.p !== target) settled = false;
             });
 
-            // photo et bouton : rentrés pendant qu'on tourne, rhabillés une fois la page posée, puis ressortis
+            // photo and button: tucked in while turning, re-dressed once the page lands, then out again
             const tale = tales[current];
             if (dressed !== current) {
                 pop += (0 - pop) * glide(14);
@@ -626,7 +626,7 @@
                 knob.position.set(button.x, button.y, TOP + deep / 2 + pop * .004 + lift.knob * .02);
             }
 
-            // la caméra glisse vers la couche demandée ; le livre penche un peu vers le pointeur
+            // the camera glides to the requested layer; the book tilts a little towards the pointer
             const to = goal();
             const rate = travelling ? 2.6 : 3.4;
             view.x += (to.x - view.x) * glide(rate);
@@ -641,7 +641,7 @@
             requestAnimationFrame(loop);
         };
 
-        // ---------- Mise en place ----------
+        // ---------- Setup ----------
         list.before(book);
         if (head) head.append(toggle);
         new ResizeObserver(frame).observe(stage);
@@ -658,8 +658,8 @@
         frame();
         Object.assign(view, goal());
 
-        // pose figée depuis l'adresse, pour régler : projets.html#livre:2 ouvre la troisième double page,
-        // #livre:2:app l'ouvre en plein écran, #livre:2:page de près
+        // frozen pose from the address, for tuning: projets.html#livre:2 opens the third spread,
+        // #livre:2:app opens it full screen, #livre:2:page up close
         const asked = /^#livre:(\d+)(?::(app|page))?$/.exec(location.hash);
         if (asked) {
             current = Math.min(tales.length - 1, Number(asked[1]));
@@ -670,7 +670,7 @@
         }
     };
 
-    // sans three.js (hors ligne, WebGL refusé) : les cartes restent en place, rien ne casse
+    // without three.js (offline, WebGL refused): the cards stay in place, nothing breaks
     start().catch((error) => {
         console.warn('Livre des contes indisponible, affichage en cartes.', error);
         book.remove();

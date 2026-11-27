@@ -1,8 +1,8 @@
-// Les murs de Mur libre, entièrement générés : brique, béton, crépi.
-// Chaque mur donne trois images de même proportion que la peinture (2 × 1) :
-//   albedo  : la couleur du mur
-//   normal  : son relief, pour que la lumière 3D accroche les joints et les grains
-//   preview : la couleur légèrement éclairée par ce relief, pour la vue à plat et l'export à plat
+// Mur libre's walls, fully generated: brick, concrete, render.
+// Each wall gives three images with the same proportion as the paint (2 × 1):
+//   albedo  : the wall colour
+//   normal  : its relief, so the 3D light catches the joints and grains
+//   preview : the colour slightly lit by that relief, for the flat view and flat export
 
 const rand = (a, b) => a + Math.random() * (b - a);
 const pick = (list) => list[(Math.random() * list.length) | 0];
@@ -14,7 +14,7 @@ function makeCanvas(w, h) {
     return c;
 }
 
-// Bruit doux : une petite image aléatoire agrandie avec lissage. Plusieurs couches font des nuages.
+// Soft noise: a small random image enlarged with smoothing. Several layers make clouds.
 function clouds(ctx, w, h, cells, alpha, light, dark) {
     const sw = Math.max(2, cells), sh = Math.max(2, Math.round(cells * h / w));
     const small = makeCanvas(sw, sh);
@@ -34,7 +34,7 @@ function clouds(ctx, w, h, cells, alpha, light, dark) {
     ctx.restore();
 }
 
-// Grain fin, pixel par pixel.
+// Fine grain, pixel by pixel.
 function grain(ctx, w, h, amount) {
     const img = ctx.getImageData(0, 0, w, h);
     const d = img.data;
@@ -47,7 +47,7 @@ function grain(ctx, w, h, amount) {
     ctx.putImageData(img, 0, 0);
 }
 
-// Coulures d'eau et crasse en pied de mur : ce qui rend un mur crédible.
+// Water streaks and grime at the foot of the wall: what makes a wall believable.
 function weather(ctx, w, h, strength) {
     ctx.save();
     for (let k = 0; k < 26; k++) {
@@ -69,7 +69,7 @@ function weather(ctx, w, h, strength) {
 function brick(w, h) {
     const albedo = makeCanvas(w, h), height = makeCanvas(w / 2, h / 2);
     const a = albedo.getContext('2d'), z = height.getContext('2d');
-    const rows = 53;                     // 4 m de haut, des rangs de 7,5 cm
+    const rows = 53;                     // 4 m high, 7.5 cm courses
     const rowH = h / rows, brickW = rowH * 3, mortar = rowH * 0.14;
     a.fillStyle = '#9a9184';
     a.fillRect(0, 0, w, h);
@@ -84,7 +84,7 @@ function brick(w, h) {
             a.fillStyle = pick(reds);
             a.globalAlpha = 1;
             a.fillRect(bx, by, bw, bh);
-            // chaque brique a sa cuisson : un voile plus clair ou plus sombre
+            // each brick has its own firing: a lighter or darker veil
             a.globalAlpha = rand(0, 0.25);
             a.fillStyle = Math.random() < 0.5 ? '#2a120c' : '#e8b190';
             a.fillRect(bx, by, bw, bh);
@@ -92,7 +92,7 @@ function brick(w, h) {
             const shade = (190 + rand(-25, 25)) | 0;
             z.fillStyle = `rgb(${shade},${shade},${shade})`;
             z.fillRect(bx / 2 + 0.5, by / 2 + 0.5, bw / 2 - 1, bh / 2 - 1);
-            // coins ébréchés
+            // chipped corners
             if (Math.random() < 0.18) {
                 const cx = Math.random() < 0.5 ? bx : bx + bw, cy = Math.random() < 0.5 ? by : by + bh, s = rowH * rand(0.2, 0.5);
                 a.fillStyle = '#8f877a';
@@ -125,7 +125,7 @@ function concrete(w, h) {
     z.fillStyle = '#808080';
     z.fillRect(0, 0, w / 2, h / 2);
     clouds(z, w / 2, h / 2, 200, 0.35, [255, 255, 255], [0, 0, 0]);
-    // banches : joints entre les panneaux de coffrage, et trous des tiges d'écartement
+    // formwork: joints between the shuttering panels, and tie-rod holes
     const cols = 4, rowsN = 3, pw = w / cols, ph = h / rowsN;
     a.strokeStyle = 'rgba(50,48,44,.55)';
     a.lineWidth = Math.max(2, w / 900);
@@ -149,7 +149,7 @@ function concrete(w, h) {
             }
         }
     }
-    // bulles d'air du béton
+    // air bubbles in the concrete
     for (let k = 0; k < 2200; k++) {
         const x = rand(0, w), y = rand(0, h), r = rand(0.6, 2.4) * w / 2560;
         a.fillStyle = 'rgba(55,52,48,.55)';
@@ -170,14 +170,14 @@ function plaster(w, h) {
     clouds(a, w, h, 30, 0.35, [236, 230, 218], [170, 160, 145]);
     z.fillStyle = '#808080';
     z.fillRect(0, 0, w / 2, h / 2);
-    // le crépi projeté : des milliers de petits grumeaux
+    // the sprayed render: thousands of small lumps
     for (let k = 0; k < 60000; k++) {
         const x = rand(0, w / 2), y = rand(0, h / 2), r = rand(0.4, 1.8) * w / 2560;
         const v = (rand(90, 230)) | 0;
         z.fillStyle = `rgb(${v},${v},${v})`;
         z.beginPath(); z.arc(x, y, r, 0, Math.PI * 2); z.fill();
     }
-    // quelques fissures
+    // a few cracks
     for (let k = 0; k < 5; k++) {
         let x = rand(0, w), y = rand(0, h * 0.6);
         a.strokeStyle = 'rgba(70,62,52,.6)';
@@ -200,7 +200,7 @@ function plaster(w, h) {
     return { albedo, height, strength: 3, edge: 0xcfc6b6 };
 }
 
-// Relief → normales (filtre de Sobel), puis un éclairage figé pour l'aperçu à plat.
+// Relief → normals (Sobel filter), then a baked lighting for the flat preview.
 function finish({ albedo, height, strength, edge }) {
     const w = height.width, h = height.height;
     const src = height.getContext('2d').getImageData(0, 0, w, h).data;
@@ -208,7 +208,7 @@ function finish({ albedo, height, strength, edge }) {
     const nImg = normal.getContext('2d').createImageData(w, h);
     const sImg = shading.getContext('2d').createImageData(w, h);
     const hgt = (x, y) => src[((Math.min(h - 1, Math.max(0, y)) * w) + Math.min(w - 1, Math.max(0, x))) * 4] / 255;
-    const L = [-0.5, 0.62, 0.6]; // lumière rasante venue d'en haut à gauche
+    const L = [-0.5, 0.62, 0.6]; // grazing light from the top left
     const lLen = Math.hypot(...L);
     for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {

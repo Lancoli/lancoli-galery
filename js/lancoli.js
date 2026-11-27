@@ -3,12 +3,12 @@
     const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const curtainLabel = document.querySelector('.curtain-label');
 
-    // Entrée dans le chapitre : le rideau se lève
+    // Entering the chapter: the curtain rises
     const ready = () => root.classList.add('is-ready');
     requestAnimationFrame(() => requestAnimationFrame(ready));
-    setTimeout(ready, 120); // filet de sécurité si rAF est suspendu (onglet en arrière-plan)
+    setTimeout(ready, 120); // safety net if rAF is suspended (background tab)
 
-    // Texte circulaire du CTA : une lettre par rotation pour boucler exactement le cercle
+    // Circular CTA text: one letter per rotation to close the circle exactly
     document.querySelectorAll('.cta-ring textPath').forEach((textPath) => {
         const svg = textPath.ownerSVGElement;
         const radius = parseFloat(textPath.dataset.radius);
@@ -27,11 +27,11 @@
         svg.appendChild(group);
     });
 
-    // Barre de navigation : elle se resserre dès qu'on défile
+    // Navigation bar: it tightens as soon as the page scrolls
     const bar = document.querySelector('header');
     if (bar) {
-        // deux seuils écartés : se resserrer décale la page de quelques pixels,
-        // avec un seul seuil la barre repasserait dessous et oscillerait
+        // two thresholds apart: tightening shifts the page by a few pixels,
+        // with a single threshold the bar would drop back below and oscillate
         const stick = () => {
             if (window.scrollY > 90) bar.classList.add('is-stuck');
             else if (window.scrollY < 4) bar.classList.remove('is-stuck');
@@ -40,7 +40,7 @@
         stick();
     }
 
-    // Retour arrière (bfcache) : on remet la page dans son état visible
+    // Back navigation (bfcache): restore the page to its visible state
     window.addEventListener('pageshow', (event) => {
         if (event.persisted) {
             root.classList.remove('is-leaving');
@@ -48,7 +48,7 @@
         }
     });
 
-    // Sortie du chapitre : le rideau tombe, puis on navigue
+    // Leaving the chapter: the curtain falls, then navigate
     document.addEventListener('click', (event) => {
         const link = event.target.closest('a[data-transition]');
         if (!link || event.defaultPrevented || event.button !== 0) return;
@@ -60,13 +60,13 @@
             location.href = url;
             return;
         }
-        // le rideau porte toujours le même mot : la marque, pas le nom du lien cliqué
+        // the curtain always carries the same word: the brand, not the name of the clicked link
         if (curtainLabel) curtainLabel.textContent = 'Lancoli®';
         root.classList.add('is-leaving');
         setTimeout(() => { location.href = url; }, 900);
     });
 
-    // CTA magnétique : suit doucement le curseur dans sa zone
+    // Magnetic CTA: gently follows the cursor within its area
     document.querySelectorAll('[data-magnetic]').forEach((zone) => {
         const target = zone.firstElementChild;
         if (!target || reduceMotion || matchMedia('(hover: none)').matches) return;
@@ -82,10 +82,10 @@
         });
     });
 
-    // Écoute : un seul AudioContext pour tout le site ; chaque vidéo ou piste lue s'y branche d'elle-même.
-    // Trois niveaux (0 → 1) lus par qui veut : kick (coups sous ~200 Hz, pour les cadres), houle (mid-bass
-    // ~100–350 Hz, lente et progressive) et grain (aigus ~4–12 kHz, nerveux, sautille à chaque transitoire).
-    // Pas en file:// : le navigateur y coupe le son d'un média branché sur Web Audio.
+    // Listening: a single AudioContext for the whole site; each video or track played plugs into it by itself.
+    // Three levels (0 → 1) for whoever wants them: kick (hits under ~200 Hz, for the frames), swell (mid-bass
+    // ~100–350 Hz, slow and gradual) and grain (highs ~4–12 kHz, nervous, jumping at each transient).
+    // Not over file://: the browser mutes a medium plugged into Web Audio there.
     const ear = (() => {
         const AC = window.AudioContext || window.webkitAudioContext;
         const level = { kick: 0, swell: 0, grain: 0, on: 0 };
@@ -100,7 +100,7 @@
         let frame = 0;
         const wired = new WeakSet();
         const playing = new Set();
-        // moyenne des cases a à b ; fftSize 1024 : ~47 Hz par case à 48 kHz
+        // average of bins a to b; fftSize 1024: ~47 Hz per bin at 48 kHz
         const band = (a, b) => {
             let sum = 0;
             for (let i = a; i <= b; i++) sum += bins[i];
@@ -110,15 +110,15 @@
         const tick = () => {
             if (playing.size) {
                 analyser.getByteFrequencyData(bins);
-                // plancher glissant : on ne garde que ce qui dépasse le niveau moyen, donc les coups
+                // sliding floor: keep only what exceeds the average level, i.e. the hits
                 const low = band(1, 4);
                 kickFloor += (low - kickFloor) * .04;
                 const hit = Math.min(1, Math.max(0, low - kickFloor * .8) * 3);
                 level.kick = hit > level.kick ? hit : level.kick * .86;
-                // la houle monte et retombe lentement, sans à-coups
+                // the swell rises and falls slowly, without jolts
                 const mid = band(2, 7);
                 level.swell += (mid - level.swell) * (mid > level.swell ? .05 : .02);
-                // le grain : le niveau des aigus plus leurs sauts d'une image à l'autre, relâché vite
+                // the grain: the level of the highs plus their jumps from frame to frame, released fast
                 const high = band(85, 255);
                 const grain = Math.min(1, high * 2.4 + Math.max(0, high - prevHigh) * 16);
                 prevHigh = high;
@@ -135,7 +135,7 @@
         const listen = (media) => {
             if (!(media instanceof HTMLMediaElement)) return;
             if (!wired.has(media)) {
-                // sans geste de l'utilisateur, le contexte resterait suspendu et le média muet : on attend
+                // without a user gesture, the context would stay suspended and the medium muted: wait
                 if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
                 if (!context) {
                     context = new AC();
@@ -148,7 +148,7 @@
                 try {
                     context.createMediaElementSource(media).connect(analyser);
                 } catch (error) {
-                    return; // déjà branché ailleurs : on le laisse tel quel
+                    return; // already plugged elsewhere: leave it as is
                 }
                 wired.add(media);
                 const stop = () => playing.delete(media);
@@ -163,10 +163,10 @@
         return { enabled, level, listen };
     })();
 
-    // Champ en vagues : de longues lignes serrées traversent la page comme des tracés de signal — une houle
-    // lente qui s'additionne et se propage, et par-dessus des paquets d'oscillation plus fins. Quand un son
-    // joue, le champ l'écoute à deux niveaux : la mid-bass gonfle la houle, doucement ; les aigus font
-    // frissonner le tracé, comme le grain de la texture. Le curseur ne fait qu'effleurer. Nuances de noir.
+    // Wave field: long tight lines cross the page like signal traces — a slow
+    // swell that adds up and spreads, and on top finer packets of oscillation. When a sound
+    // plays, the field listens at two levels: the mid-bass gently swells the waves; the highs make
+    // the trace shiver, like the texture's grain. The cursor only brushes it. Shades of black.
     (() => {
         const aura = document.querySelector('.aura');
         if (!aura || reduceMotion) return;
@@ -177,24 +177,24 @@
         aura.after(canvas);
         const ctx = canvas.getContext('2d');
 
-        const GAP = 19;             // écart moyen entre deux lignes (px)
-        const STEP = 7;             // pas horizontal du tracé (px)
-        const CHUNK = 5;            // points par morceau dessiné (l'encre varie d'un morceau à l'autre)
-        const SIGMA = 80;           // étendue de l'influence du curseur (gaussienne, px)
-        const PUSH = 11;            // écartement maximal des lignes autour du curseur (px)
-        // les houles : amplitude (px), nombre d'onde, vitesse, déphasage par ligne
+        const GAP = 19;             // average gap between two lines (px)
+        const STEP = 7;             // horizontal step of the trace (px)
+        const CHUNK = 5;            // points per drawn piece (the ink varies from piece to piece)
+        const SIGMA = 80;           // reach of the cursor's influence (Gaussian, px)
+        const PUSH = 11;            // maximum spread of the lines around the cursor (px)
+        // the swells: amplitude (px), wave number, speed, phase shift per line
         const SWELLS = [
             { a: 30, k: .0019, w: .22, d: .16 },
             { a: 14, k: .0047, w: -.48, d: .31 },
             { a: 6, k: .011, w: .9, d: .55 }
         ];
-        // le signal : deux porteuses fines, portées par une enveloppe qui voyage (des paquets, comme une onde sonore)
+        // the signal: two thin carriers, borne by a travelling envelope (packets, like a sound wave)
         const CARRIERS = [
             { a: 4.5, k: .043, w: 2.6, d: .9 },
             { a: 2.5, k: .071, w: -3.4, d: 1.7 }
         ];
         const sound = ear.level;
-        // sx, sy : la position lissée du curseur, pour que la déformation le suive sans à-coups
+        // sx, sy: the smoothed cursor position, so the distortion follows it without jolts
         const mouse = { x: -1e4, y: -1e4, sx: -1e4, sy: -1e4, active: false, pull: 0 };
         let width = 0;
         let height = 0;
@@ -209,11 +209,11 @@
             canvas.width = width * dpr;
             canvas.height = height * dpr;
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            // des lignes jusqu'au-delà des bords, pour que la houle n'y laisse pas de vide
+            // lines beyond the edges, so the swell leaves no gap there
             const n = Math.ceil((height + 160) / GAP);
             lines = Array.from({ length: n }, (_, i) => ({
                 y: -80 + i * GAP,
-                shade: 23 + ((i * 41) % 92),            // de l'encre (#171717) au gris fumée
+                shade: 23 + ((i * 41) % 92),            // from ink (#171717) to smoke grey
                 phase: (i * 2.39) % (Math.PI * 2)
             }));
         };
@@ -228,13 +228,13 @@
             mouse.sy += (mouse.y - mouse.sy) * ease;
 
             ctx.clearRect(0, 0, width, height);
-            ctx.lineCap = 'butt';     // bouts nets : pas de point plus foncé aux raccords entre morceaux
+            ctx.lineCap = 'butt';     // clean ends: no darker dot at the joins between pieces
             ctx.lineJoin = 'round';
             const cols = Math.ceil(width / STEP) + 1;
             const pts = new Float32Array(cols * 2);
             const near = new Float32Array(cols);
             const pack = new Float32Array(cols);
-            const swell = 1 + sound.swell * 1.5;          // la mid-bass gonfle la houle
+            const swell = 1 + sound.swell * 1.5;          // the mid-bass swells the waves
             const grain = sound.grain;
 
             lines.forEach((line, i) => {
@@ -242,14 +242,14 @@
                     const x = c * STEP;
                     let y = line.y;
                     for (const s of SWELLS) y += s.a * swell * Math.sin(x * s.k + t * s.w + i * s.d + line.phase * .2);
-                    // l'enveloppe des paquets : nulle par endroits, pleine ailleurs, elle glisse le long de la ligne
+                    // the packet envelope: zero in places, full elsewhere, it slides along the line
                     const e = .5 + .5 * Math.sin(x * .0034 - t * .55 + i * .43 + line.phase);
                     const env = e * e;
                     for (const s of CARRIERS) y += s.a * env * (1 + sound.swell * .9) * Math.sin(x * s.k + t * s.w + i * s.d);
-                    // les aigus : un frisson erratique, plus fort là où le signal est dense
+                    // the highs: an erratic shiver, stronger where the signal is dense
                     if (grain > .01) y += (Math.random() - .5) * grain * (2 + env * 6);
-                    // le curseur : les lignes s'écartent de part et d'autre, en cloche (gaussienne) — nul au centre
-                    // et au loin, maximal à une distance SIGMA, sans cassure ni changement de signe brutal
+                    // the cursor: the lines move apart on either side, bell-shaped (Gaussian) — zero at the centre
+                    // and far away, maximum at a distance SIGMA, with no break or sudden sign change
                     let n = 0;
                     if (mouse.pull > .01) {
                         const dx = x - mouse.sx, dy = y - mouse.sy;
@@ -265,7 +265,7 @@
                 for (let k = 0; k < cols - 1; k += CHUNK) {
                     const end = Math.min(cols - 1, k + CHUNK);
                     const x = pts[k * 2];
-                    // fondu sur les bords de l'écran, et une pulsation qui voyage avec la houle
+                    // fade at the screen edges, and a pulse travelling with the swell
                     const edge = Math.min(1, x / 120, (width - x) / 120 + .2);
                     const pulse = .5 + .5 * Math.sin(x * .006 - t * .8 + i * .7);
                     const flicker = grain > .01 ? grain * .12 * Math.random() : 0;
@@ -273,7 +273,7 @@
                     const grey = Math.round(line.shade * (1 - near[k] * .5));
                     ctx.strokeStyle = `rgba(${grey}, ${grey}, ${grey}, ${alpha})`;
                     ctx.lineWidth = .6 + near[k] * .3;
-                    // courbe lisse : des quadratiques passant par les milieux, raccordées d'un morceau à l'autre
+                    // smooth curve: quadratics through the midpoints, joined from piece to piece
                     const mid = (j) => [(pts[j * 2] + pts[j * 2 + 2]) / 2, (pts[j * 2 + 1] + pts[j * 2 + 3]) / 2];
                     ctx.beginPath();
                     if (k === 0) ctx.moveTo(pts[0], pts[1]); else ctx.moveTo(...mid(k - 1));
@@ -288,7 +288,7 @@
 
         window.addEventListener('resize', resize);
         window.addEventListener('pointermove', (event) => {
-            // le curseur arrive : la position lissée part de lui, pas du coin de l'écran
+            // the cursor arrives: the smoothed position starts from it, not from the screen corner
             if (mouse.pull < .01) { mouse.sx = event.clientX; mouse.sy = event.clientY; }
             mouse.x = event.clientX;
             mouse.y = event.clientY;
@@ -308,7 +308,7 @@
         frame = requestAnimationFrame(step);
     })();
 
-    // Pages longues : les sections apparaissent à mesure qu'on descend
+    // Long pages: sections appear as the page scrolls down
     const revealed = document.querySelectorAll('.scroll-reveal');
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => {
@@ -323,11 +323,11 @@
         revealed.forEach((el) => el.classList.add('is-in'));
     }
 
-    // Itinéraire : un seul tracé relie les étapes, le voyageur le descend au rythme du défilement
+    // Route: a single line links the stages, the traveller goes down it as the page scrolls
     const journey = document.querySelector('.journey');
     if (journey) {
         const stops = [...journey.querySelectorAll('[data-stop]')];
-        // détours de chaque trajet, en fraction de la largeur libre à droite du tracé
+        // detours of each leg, as a fraction of the free width to the right of the line
         const BENDS = [[.85], [.5, .95], [.95, .6]];
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('class', 'journey-map');
@@ -345,8 +345,8 @@
         let total = 0;
 
         const place = () => {
-            // le voyageur reste à mi-hauteur de l'écran ; le tracé ne remonte jamais,
-            // donc une recherche par dichotomie retrouve le point à cette hauteur
+            // the traveller stays at mid-screen height; the line never goes back up,
+            // so a binary search finds the point at that height
             const y = Math.min(tops[tops.length - 1], Math.max(tops[0], window.innerHeight * .5 - journey.getBoundingClientRect().top));
             let low = 0;
             let high = total;
@@ -370,7 +370,7 @@
             tops = stops.map((stop) => stop.offsetTop);
             let d = `M${x},${tops[0]}`;
             stops.slice(0, -1).forEach((stop, i) => {
-                // le long de l'étape : tout droit ; entre deux étapes : des lacets
+                // along the stage: straight; between two stages: hairpins
                 let fromX = x;
                 let fromY = tops[i] + stop.offsetHeight;
                 d += `V${fromY}`;
@@ -409,14 +409,14 @@
         draw();
     }
 
-    // Avant / après : le curseur déplace la ligne de coupe
+    // Before / after: the slider moves the cut line
     document.querySelectorAll('.compare input').forEach((input) => {
         input.addEventListener('input', () => {
             input.parentNode.style.setProperty('--pos', `${input.value}%`);
         });
     });
 
-    // Visionneuse : les plans s'ouvrent en grand, flèches pour passer de l'un à l'autre
+    // Viewer: the shots open large, arrows to move from one to the next
     const zooms = [...document.querySelectorAll('a[data-zoom]')];
     if (zooms.length && window.HTMLDialogElement) {
         const box = document.createElement('dialog');
@@ -449,7 +449,7 @@
         box.querySelector('.lightbox-close').addEventListener('click', () => box.close());
         box.querySelector('.lightbox-prev').addEventListener('click', () => show(current - 1));
         box.querySelector('.lightbox-next').addEventListener('click', () => show(current + 1));
-        // clic hors de l'image : on referme
+        // click outside the image: close
         box.addEventListener('click', (event) => {
             if (event.target === box) box.close();
         });
@@ -459,7 +459,7 @@
         });
     }
 
-    // Cassettes : lecteur maison à la place des contrôles natifs, une seule piste à la fois
+    // Cassettes: a home-made player instead of the native controls, one track at a time
     const tapes = [...document.querySelectorAll('.tape')];
     const clock = (s) => (Number.isFinite(s) ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}` : '–:––');
     tapes.forEach((tape) => {
@@ -503,19 +503,19 @@
         paint();
     });
 
-    // Dossiers : chaque arrêt de la carte ouvre son tiroir
+    // Files: each stop on the map opens its drawer
     document.querySelectorAll('[data-file]').forEach((trigger) => {
         const file = document.getElementById(`file-${trigger.dataset.file}`);
         if (file && file.showModal) trigger.addEventListener('click', () => file.showModal());
     });
     document.querySelectorAll('dialog.file').forEach((file) => {
-        // clic sur le fond ou sur « Fermer » : on referme
+        // click on the backdrop or on "Fermer": close
         file.addEventListener('click', (event) => {
             if (event.target === file || event.target.closest('[data-close]')) file.close();
         });
     });
 
-    // Intros : lecteur vidéo maison, avec liste de lecture
+    // Intros: home-made video player, with a playlist
     document.querySelectorAll('[data-reel]').forEach((reel) => {
         const screen = reel.querySelector('.reel-screen');
         const video = reel.querySelector('video');
@@ -535,7 +535,7 @@
         reel.querySelector('.reel-nav').hidden = items.length < 2;
 
         const toggle = () => {
-            if (video.paused) video.play().catch(() => { /* lecture refusée par le navigateur */ });
+            if (video.paused) video.play().catch(() => { /* playback refused by the browser */ });
             else video.pause();
         };
         const paint = () => {
@@ -556,9 +556,9 @@
             item.setAttribute('aria-current', 'true');
             reel.querySelector('.reel-index').textContent = `Intro ${String(current + 1).padStart(2, '0')}`;
             reel.querySelector('.reel-title').textContent = item.querySelector('strong').textContent;
-            // #t=0.5 : affiche une image de la vidéo plutôt qu'un écran noir avant la lecture
+            // #t=0.5: shows a frame of the video rather than a black screen before playing
             video.src = autoplay ? item.dataset.src : `${item.dataset.src}#t=0.5`;
-            if (autoplay) video.play().catch(() => { /* lecture refusée par le navigateur */ });
+            if (autoplay) video.play().catch(() => { /* playback refused by the browser */ });
         };
 
         video.addEventListener('click', toggle);
@@ -608,7 +608,7 @@
             items[current].querySelector('.reel-dur').textContent = clock(video.duration);
             paint();
         });
-        // fin d'une intro : on enchaîne sur la suivante, ou on s'arrête s'il n'y en a qu'une
+        // end of an intro: move on to the next one, or stop if there is only one
         video.addEventListener('ended', () => {
             if (items.length > 1) load(current + 1, true);
             else setPlaying(false);
@@ -616,7 +616,7 @@
         paint();
     });
 
-    // Micro edits et intros : diapositives vidéo, lecture au clic, inclinaison 3D sous le curseur
+    // Micro edits and intros: video slides, play on click, 3D tilt under the cursor
     const micros = [...document.querySelectorAll('[data-micro]')];
     const canTilt = !reduceMotion && !matchMedia('(hover: none)').matches;
     let ambient = null;
@@ -630,7 +630,7 @@
         button.hidden = false;
 
         const toggle = () => {
-            if (video.paused) video.play().catch(() => { /* lecture refusée par le navigateur */ });
+            if (video.paused) video.play().catch(() => { /* playback refused by the browser */ });
             else video.pause();
         };
         const setPlaying = (playing) => {
@@ -639,7 +639,7 @@
         };
         video.addEventListener('click', toggle);
         button.addEventListener('click', toggle);
-        // double-clic : plein écran
+        // double-click: full screen
         video.addEventListener('dblclick', () => {
             if (document.fullscreenElement) document.exitFullscreen();
             else if (video.requestFullscreen) video.requestFullscreen();
@@ -651,12 +651,12 @@
             micro.querySelector('.micro-dur').textContent = clock(video.duration);
         });
 
-        // Intros : à la lecture, la page passe dans le noir et un voile flou reprend les couleurs de la vidéo
+        // Intros: when playing, the page goes dark and a blurred veil takes the video's colours
         if (micro.classList.contains('micro--wide')) {
             const section = micro.closest('section');
             const paintAmbient = () => {
                 if (video.paused) return;
-                // 32 × 18 pixels suffisent : le flou CSS fait le reste
+                // 32 × 18 pixels are enough: the CSS blur does the rest
                 ambient.ctx.drawImage(video, 0, 0, 32, 18);
                 requestAnimationFrame(paintAmbient);
             };
@@ -670,10 +670,10 @@
                     canvas.height = 18;
                     veil.appendChild(canvas);
                     document.body.appendChild(veil);
-                    // clic dans le noir : on met en pause, donc on rallume
+                    // click in the dark: pause, so the lights come back on
                     veil.addEventListener('click', () => ambient.video && ambient.video.pause());
                     ambient = { ctx: canvas.getContext('2d'), video: null, timer: 0 };
-                    veil.offsetWidth; // force un premier rendu, sinon le fondu d'entrée saute
+                    veil.offsetWidth; // forces a first render, otherwise the entry fade is skipped
                 }
                 clearTimeout(ambient.timer);
                 ambient.video = video;
@@ -682,19 +682,19 @@
                 requestAnimationFrame(paintAmbient);
             });
             video.addEventListener('pause', () => {
-                if (!ambient || ambient.video !== video) return; // une autre intro a déjà pris le relais
+                if (!ambient || ambient.video !== video) return; // another intro has already taken over
                 root.classList.remove('is-ambient');
-                // la section reste au-dessus du voile le temps qu'il s'efface
+                // the section stays above the veil while it fades
                 ambient.timer = setTimeout(() => section.classList.remove('is-ambient-stage'), 900);
             });
         }
 
-        // Le cadre bat sur les basses : --bass (0 → 1) suit les coups sous ~200 Hz, lus par le moteur d'écoute
+        // The frame beats on the bass: --bass (0 → 1) follows the hits under ~200 Hz, read by the listening engine
         if (ear.enabled) {
             const beat = () => {
                 const bass = video.paused ? 0 : ear.level.kick.toFixed(3);
                 mount.style.setProperty('--bass', bass);
-                // le bandeau de fond de la rangée respire avec la carte en cours
+                // the row's background strip breathes with the current card
                 micro.parentElement.style.setProperty('--beat', bass);
                 if (!video.paused) requestAnimationFrame(beat);
             };
@@ -706,7 +706,7 @@
             const rect = micro.getBoundingClientRect();
             const x = (event.clientX - rect.left) / rect.width;
             const y = (event.clientY - rect.top) / rect.height;
-            // is-live, --mx, --my : la feuille holo et le reflet .shiny-*
+            // is-live, --mx, --my: the holo foil and the .shiny-* glare
             micro.classList.add('is-tilting', 'is-live');
             mount.style.setProperty('--ry', `${(x - .5) * 18}deg`);
             mount.style.setProperty('--rx', `${(.5 - y) * 18}deg`);
@@ -723,7 +723,7 @@
             mount.style.removeProperty('--my');
         });
     });
-    // une seule vidéo à la fois sur la page (micro edits et intros confondus)
+    // a single video at a time on the page (micro edits and intros together)
     if (micros.length) {
         document.addEventListener('play', (event) => {
             document.querySelectorAll('video').forEach((other) => {
@@ -732,7 +732,7 @@
         }, true);
     }
 
-    // Objets brillants (carte d'abonné) : le reflet suit le pointeur (pas d'inclinaison : rien ne bouge au survol)
+    // Shiny objects (member card): the glare follows the pointer (no tilt: nothing moves on hover)
     document.querySelectorAll('[data-shiny]').forEach((zone) => {
         if (reduceMotion) return;
         zone.addEventListener('pointermove', (event) => {
@@ -749,7 +749,7 @@
         });
     });
 
-    // Projets : bandeaux défilants ou grille 3×3
+    // Projects: scrolling strips or 3×3 grid
     const stage = document.querySelector('.works-stage');
     if (!stage) return;
 
@@ -758,7 +758,7 @@
     const buttons = switcher.querySelectorAll('button');
     const works = [...grid.querySelectorAll('.work:not([data-soon])')];
 
-    // Deux bandeaux en sens inverse ; chaque piste est dupliquée pour boucler sans couture
+    // Two strips in opposite directions; each track is duplicated to loop seamlessly
     const bands = document.createElement('div');
     bands.className = 'bands';
     const rows = [works, [...works].reverse()];
@@ -776,7 +776,7 @@
                 track.appendChild(card);
             });
         });
-        // sur une pochette, le bandeau ralentit sans s'arrêter
+        // over a cover, the strip slows down without stopping
         const pace = (rate) => track.getAnimations().forEach((animation) => animation.updatePlaybackRate(rate));
         band.addEventListener('pointerover', (event) => pace(event.target.closest('.work') ? .25 : 1));
         band.addEventListener('pointerleave', () => pace(1));
@@ -787,7 +787,7 @@
     });
     stage.appendChild(bands);
 
-    // Pastille d'encre placée sous le bouton actif
+    // Ink chip placed under the active button
     const placePill = () => {
         const active = switcher.querySelector('[aria-pressed="true"]');
         if (!active) return;
@@ -798,7 +798,7 @@
     const setView = (view, animate) => {
         buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
         placePill();
-        try { localStorage.setItem('lancoli-works-view', view); } catch (e) { /* stockage indisponible */ }
+        try { localStorage.setItem('lancoli-works-view', view); } catch (e) { /* storage unavailable */ }
         if (!animate || reduceMotion) {
             stage.dataset.view = view;
             return;
@@ -811,9 +811,9 @@
     };
 
     let saved = null;
-    try { saved = localStorage.getItem('lancoli-works-view'); } catch (e) { /* stockage indisponible */ }
-    if (saved && !switcher.querySelector(`[data-view="${saved}"]`)) saved = null; // vue retirée depuis
-    // Bandeaux par défaut, sauf si le mouvement est réduit (ils resteraient figés)
+    try { saved = localStorage.getItem('lancoli-works-view'); } catch (e) { /* storage unavailable */ }
+    if (saved && !switcher.querySelector(`[data-view="${saved}"]`)) saved = null; // view removed since
+    // Strips by default, unless motion is reduced (they would stay frozen)
     switcher.classList.add('is-instant');
     setView(saved || (reduceMotion ? 'grid' : 'bands'), false);
     requestAnimationFrame(() => requestAnimationFrame(() => switcher.classList.remove('is-instant')));

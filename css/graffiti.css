@@ -1,5 +1,5 @@
-/* Mur libre : l'outil occupe tout l'écran ; les commandes sont des pastilles de papier posées dessus,
-   dans le langage du site (Arial, capitales espacées, filets d'encre). */
+/* Mur libre: the tool fills the whole screen; the controls are paper chips laid on top,
+   in the site's language (Arial, spaced capitals, ink rules). */
 
 :root {
     --paper: #fbfaf7;
@@ -37,7 +37,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
     padding: 12px max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
 }
 
-/* ── panneaux de papier ── */
+/* ── paper panels ── */
 .mur-top, .tools, .dock {
     background: var(--glass);
     -webkit-backdrop-filter: blur(14px) saturate(1.2);
@@ -97,7 +97,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .lang button { border: 0; background: none; padding: 6px 5px; font-size: 10px; letter-spacing: .08em; color: var(--muted); }
 .lang button[aria-pressed="true"] { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 
-/* ── export : un bouton qui se déplie ── */
+/* ── export: a button that unfolds ── */
 .export { position: relative; margin-left: 6px; }
 .pill-ink {
     display: flex; align-items: center; gap: 8px;
@@ -136,7 +136,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .export-menu strong { display: block; font-size: 12px; font-weight: 700; }
 .export-menu small { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
 
-/* ── outils ── */
+/* ── tools ── */
 .tools {
     grid-row: 2;
     align-self: center;
@@ -154,7 +154,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .tools button:hover { background: rgba(23, 23, 23, .07); }
 .tools button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 
-/* ── la scène ── */
+/* ── the stage ── */
 .stagebox {
     grid-column: 2;
     grid-row: 2;
@@ -204,7 +204,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .toast { top: auto; bottom: 48px; transform: translateX(-50%); opacity: 0; transition: opacity .4s; }
 .toast.on { opacity: 1; }
 
-/* ── couleurs et réglages ── */
+/* ── colours and settings ── */
 .dock {
     grid-column: 1 / -1;
     display: flex; align-items: center; gap: 14px;
@@ -252,7 +252,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 }
 .free { margin: 0; max-width: 210px; font-size: 10px; line-height: 1.4; color: var(--muted); }
 
-/* ── écrans étroits ── */
+/* ── narrow screens ── */
 @media (max-width: 1180px) {
     .free { display: none; }
     .palette { grid-template-columns: repeat(8, 22px); }

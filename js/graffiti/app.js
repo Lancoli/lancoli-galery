@@ -1,5 +1,5 @@
-// Mur libre : relie le moteur de peinture (engine.js), les murs générés (walls.js) et la vue 3D (scene.js).
-// La peinture vit dans un seul canevas à plat ; l'atelier le montre posé sur le mur, la vue 3D s'en sert de texture.
+// Mur libre: connects the paint engine (engine.js), the generated walls (walls.js) and the 3D view (scene.js).
+// The paint lives in a single flat canvas; the workshop shows it laid on the wall, the 3D view uses it as a texture.
 import { PaintEngine } from './engine.js';
 import { makeWall } from './walls.js';
 
@@ -8,12 +8,12 @@ const app = $('#app');
 const msg = (key) => (document.querySelector(`[data-msg="${key}"]`) || {}).textContent || key;
 const track = (name, detail) => { if (window.lancoliTrack) window.lancoliTrack(name, detail); };
 
-// Définition : plus modeste sur téléphone, pour la mémoire et la fluidité.
+// Resolution: more modest on a phone, for memory and smoothness.
 const small = Math.min(screen.width, screen.height) < 820 || (navigator.deviceMemory && navigator.deviceMemory <= 4);
 const W = small ? 2048 : 2560, H = W / 2;
 const engine = new PaintEngine({ width: W, height: H, undoDepth: small ? 8 : 12 });
 
-// Couleurs de bombe : noirs et blancs, les classiques du mur, et quelques fluos.
+// Spray colours: blacks and whites, the wall classics, and a few fluorescents.
 const COLORS = [
     '#111111', '#3b3b3b', '#8a8a8a', '#f4f1ea', '#e8302a', '#b3161b', '#ff6a1f', '#ffb000',
     '#ffe23a', '#c8e43c', '#39b54a', '#0f6b46', '#22c1c3', '#1f6fd1', '#1b2a8f', '#6a2fb5',
@@ -25,7 +25,7 @@ const state = {
     view: 'atelier', wall: 'brique', picking: false, edited: false,
 };
 
-// ───────── l'atelier : la peinture posée sur le mur, à plat ─────────
+// ───────── the workshop: the paint laid flat on the wall ─────────
 
 const workshopEl = $('#atelier');
 const stage = $('#stage');
@@ -74,7 +74,7 @@ function moveRing(e) {
     ring.style.transform = `translate(${e.clientX - r.left}px, ${e.clientY - r.top}px)`;
 }
 
-// Pointeurs : un seul = peindre ; deux doigts = déplacer et zoomer ; clic droit, milieu ou Espace = déplacer.
+// Pointers: one = paint; two fingers = pan and zoom; right click, middle or Space = pan.
 const pointers = new Map();
 let painting = null, panning = null, pinch = null, spaceHeld = false;
 
@@ -137,7 +137,7 @@ workshopEl.addEventListener('wheel', (e) => {
 }, { passive: false });
 new ResizeObserver(() => { if (state.view === 'atelier') fit(); }).observe(workshopEl);
 
-// ───────── un geste, d'où qu'il vienne (atelier ou mur 3D) ─────────
+// ───────── a gesture, wherever it comes from (workshop or 3D wall) ─────────
 
 function stroke(kind, p, e) {
     if (kind === 'begin' && (state.picking || (e && e.altKey))) {
@@ -156,7 +156,7 @@ function stroke(kind, p, e) {
     else if (kind === 'cancel') { engine.cancel(); refreshHistory(); }
 }
 
-// ───────── le mur 3D, chargé seulement quand on le demande ─────────
+// ───────── the 3D wall, loaded only when asked for ─────────
 
 let scene = null;
 let sceneLoading = null;
@@ -189,7 +189,7 @@ async function setView(name) {
     if (name === 'mur') { scene.resize(); textureStale = true; } else fit();
 }
 
-// ───────── boucle ─────────
+// ───────── loop ─────────
 
 let last = performance.now();
 function frame(now) {
@@ -204,7 +204,7 @@ function frame(now) {
     }
 }
 
-// ───────── outils et réglages ─────────
+// ───────── tools and settings ─────────
 
 function setTool(tool) {
     state.tool = tool;
@@ -248,8 +248,8 @@ $('#picker').addEventListener('click', () => setPicking(!state.picking));
 $('#size').addEventListener('input', (e) => setSize(+e.target.value));
 $('#flow').addEventListener('input', (e) => engine.set({ flow: e.target.value / 100 }));
 $('#drips').addEventListener('input', (e) => engine.set({ drips: e.target.value / 100 }));
-// le lettrage : le mot et sa typo ; la typo se charge avant le premier clic
-// (toutes les typos de assets/fonts/catalogue.js ; la bombe par défaut)
+// the lettering: the word and its typeface; the typeface loads before the first click
+// (every typeface of assets/fonts/catalogue.js; the spray by default)
 const FONTS = window.LancoliFonts;
 FONTS.fill($('#letterFont'), 'bombe');
 function setLetters() {
@@ -276,7 +276,7 @@ $('#clear').addEventListener('click', () => {
     refreshHistory();
 });
 
-// ───────── murs ─────────
+// ───────── walls ─────────
 
 function applyWall() {
     const wall = makeWall(state.wall, W, H);
@@ -286,7 +286,7 @@ function applyWall() {
 $('#wallKind').addEventListener('change', (e) => {
     state.wall = e.target.value;
     $('#loading').hidden = false;
-    // laisser le message s'afficher avant le calcul, qui bloque un instant
+    // let the message show before the calculation, which blocks for a moment
     requestAnimationFrame(() => setTimeout(() => { applyWall(); $('#loading').hidden = true; }, 30));
 });
 
@@ -352,7 +352,7 @@ async function exportAs(kind) {
         download(await scene.capture(), 'png');
     } else if (kind === 'copy') {
         try {
-            const blob = toBlob(flatten(), 'image/png'); // une promesse : Safari exige d'écrire dans le geste
+            const blob = toBlob(flatten(), 'image/png'); // a promise: Safari requires writing within the gesture
             await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
             toast(msg('copied'));
         } catch { toast(msg('copyFail')); }
@@ -374,7 +374,7 @@ function toast(text) {
     toastTimer = setTimeout(() => t.classList.remove('on'), 2600);
 }
 
-// ───────── clavier ─────────
+// ───────── keyboard ─────────
 
 const KEYS = { b: 'spray', m: 'marker', p: 'brush', t: 'splash', l: 'letters', e: 'eraser' };
 document.addEventListener('keydown', (e) => {
@@ -396,14 +396,14 @@ document.addEventListener('keyup', (e) => {
     if (e.code === 'Space') { spaceHeld = false; if (!panning) workshopEl.classList.remove('panning'); }
 });
 
-// Une peinture non exportée ne part pas sans prévenir.
+// An unexported painting is not lost without a warning.
 addEventListener('beforeunload', (e) => {
     if (!state.edited) return;
     e.preventDefault();
     e.returnValue = '';
 });
 
-// ───────── démarrage ─────────
+// ───────── start ─────────
 
 setTool(state.tool);
 setColor(state.color);
@@ -417,5 +417,5 @@ requestAnimationFrame(() => setTimeout(() => {
     requestAnimationFrame(frame);
 }, 30));
 
-// Pour essayer le moteur depuis la console du navigateur.
+// To try the engine from the browser console.
 window.murLibre = { engine, setTool, setColor, setSize, setView };

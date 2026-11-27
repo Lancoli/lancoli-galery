@@ -1,10 +1,10 @@
-// Mesure d'audience : sans cookie, sans bandeau, et rien ne part tant que ANALYTICS.id est vide.
-// Pour l'allumer : créer le site chez Umami ou Plausible, puis renseigner provider et id ci-dessous.
+// Audience measurement: no cookie, no banner, and nothing is sent while ANALYTICS.id is empty.
+// To turn it on: create the site at Umami or Plausible, then fill in provider and id below.
 (() => {
     const ANALYTICS = {
-        provider: '',   // 'umami' ou 'plausible'
-        id: '',         // umami : l'identifiant du site (website id) · plausible : le domaine, ex. 'lancoli.fr'
-        src: ''         // facultatif : adresse du script si elle diffère de celle par défaut (auto-hébergement, proxy)
+        provider: '',   // 'umami' or 'plausible'
+        id: '',         // umami: the website id · plausible: the domain, e.g. 'lancoli.fr'
+        src: ''         // optional: script address if it differs from the default (self-hosting, proxy)
     };
 
     const SOURCES = {
@@ -26,12 +26,12 @@
         document.head.appendChild(script);
     }
 
-    // Un seul point d'entrée pour tous les événements : lancoliTrack('Nom', { détail })
+    // A single entry point for every event: lancoliTrack('Name', { detail })
     const page = location.pathname.split('/').pop().replace('.html', '') || 'accueil';
     const track = (name, data = {}) => {
         const props = { page, ...data };
         if (!live) {
-            if (local) console.debug('[mesure]', name, props); // en local : on voit ce qui partirait
+            if (local) console.debug('[mesure]', name, props); // locally: show what would be sent
             return;
         }
         if (window.umami) window.umami.track(name, props);
@@ -51,7 +51,7 @@
             return;
         }
 
-        // Horlando Blast : la cassette, puis les dossiers
+        // Horlando Blast: the cassette, then the files
         if (event.target.closest('.horla-start')) track('Cassette inseree');
         const file = event.target.closest('[data-file]');
         if (file) track('Dossier ouvert', { dossier: file.dataset.file });
@@ -60,7 +60,7 @@
         if (view) track('Vue pochettes', { vue: view.dataset.view });
     });
 
-    // Lectures : une fois par média et par visite de page
+    // Plays: once per medium and per page visit
     const played = new WeakSet();
     const mediaName = (media) => {
         const figure = media.closest('figure');
@@ -80,7 +80,7 @@
         if (media instanceof HTMLMediaElement && !media.loop) track('Ecoute complete', { media: mediaName(media) });
     }, true);
 
-    // Lecture jusqu'au bout de la page : le lien « chapitre suivant » entre à l'écran
+    // Read to the end of the page: the "next chapter" link comes on screen
     const end = document.querySelector('a.next');
     if (end && 'IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => {

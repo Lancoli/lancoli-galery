@@ -5,7 +5,7 @@
     --line: rgba(23, 23, 23, .12);
     --glass: rgba(255, 255, 255, .42);
 
-    /* Foyers du fond pastel — redéfinis par chapitre */
+    /* Pastel background focal points — redefined per chapter */
     --aura-1: #ffd9c7;
     --aura-2: #e3d7ff;
     --aura-3: #cdeee0;
@@ -40,8 +40,8 @@ body[data-chapter="4"] {
     --aura-5: #e0f3d6;
 }
 
-/* Accueil : les foyers reprennent les teintes des pochettes, adoucies vers le papier
-   (orange Full Circle Revolution, bleu La fenêtre dans l'eau, rouge Ghostpel, magenta TMWTV, jaune Ronny) */
+/* Home: the focal points take the hues of the covers, softened towards paper
+   (Full Circle Revolution orange, La fenêtre dans l'eau blue, Ghostpel red, TMWTV magenta, Ronny yellow) */
 body.seuil {
     --aura-1: color-mix(in srgb, #f58a2e 60%, var(--paper));
     --aura-2: color-mix(in srgb, #2f9fd4 55%, var(--paper));
@@ -84,7 +84,7 @@ main.page {
     flex: 1
 }
 
-/* ---------- Fond : gradient pastel multi-foyers ---------- */
+/* ---------- Background: multi-focus pastel gradient ---------- */
 
 .aura {
     position: fixed;
@@ -119,7 +119,7 @@ main.page {
     100% { transform: translate3d(-4vmax, 7vmax, 0) scale(.94) }
 }
 
-/* Nuée de lignes (canvas injecté par lancoli.js) */
+/* Swarm of lines (canvas injected by lancoli.js) */
 .flock {
     position: fixed;
     inset: 0;
@@ -129,8 +129,8 @@ main.page {
     pointer-events: none
 }
 
-/* grain léger pour éviter l'effet « numérique » des dégradés : une image pré-calculée,
-   pas un feTurbulence que le navigateur recalcule (et affiche à moitié rendu) à chaque page */
+/* light grain to avoid the "digital" look of gradients: a precomputed image,
+   not a feTurbulence the browser recomputes (and shows half-rendered) on every page */
 .aura::after {
     content: "";
     position: absolute;
@@ -140,7 +140,7 @@ main.page {
     background-image: url("../assets/textures/grain.png")
 }
 
-/* ---------- Rideau de transition entre chapitres ---------- */
+/* ---------- Transition curtain between chapters ---------- */
 
 .curtain {
     position: fixed;
@@ -167,8 +167,8 @@ main.page {
     transform: scaleY(1)
 }
 
-/* Second plan, derrière le rideau : même geste, légèrement décalé dans le temps.
-   Il part devant à la sortie et traîne à l'entrée, d'où la profondeur. */
+/* Second layer, behind the curtain: the same gesture, slightly offset in time.
+   It leads on the way out and lags on the way in, hence the depth. */
 html::after {
     content: "";
     position: fixed;
@@ -212,13 +212,13 @@ html::after {
     transition-delay: .3s
 }
 
-/* ---------- Apparitions ---------- */
+/* ---------- Reveals ---------- */
 
 .reveal {
     opacity: 1
 }
 
-/* `translate` (et non `transform`) pour ne pas bloquer les effets de survol */
+/* `translate` (not `transform`) so as not to block the hover effects */
 .js .reveal {
     opacity: 0
 }
@@ -232,9 +232,9 @@ html::after {
     to { opacity: 1; translate: none }
 }
 
-/* ---------- En-tête ---------- */
+/* ---------- Header ---------- */
 
-/* barre de verre : floute le fond et le remonte légèrement en luminance */
+/* glass bar: blurs the background and lifts its brightness slightly */
 header {
     position: sticky;
     top: 0;
@@ -253,7 +253,7 @@ header .logo {
     transition: font-size .5s var(--ease-out)
 }
 
-/* une fois la page défilée, la barre se resserre */
+/* once the page is scrolled, the bar tightens */
 header.is-stuck {
     padding: 12px 0 10px
 }
@@ -342,7 +342,7 @@ nav a[aria-current="page"]::after {
     letter-spacing: .14em
 }
 
-/* Indicateur de chapitre */
+/* Chapter indicator */
 .chapter {
     display: flex;
     align-items: center;
@@ -374,7 +374,7 @@ nav a[aria-current="page"]::after {
     transform: scaleX(calc((var(--step) - 1) / 3))
 }
 
-/* ---------- Chapitre I : seuil + galerie ---------- */
+/* ---------- Chapter I: threshold + gallery ---------- */
 
 .threshold {
     flex: 1;
@@ -398,7 +398,7 @@ nav a[aria-current="page"]::after {
     letter-spacing: -.04em
 }
 
-/* le titre et le CTA se posent juste au-dessus de la rangée de tuiles */
+/* the title and the CTA sit just above the row of tiles */
 .threshold-hero {
     display: flex;
     justify-content: space-between;
@@ -455,7 +455,7 @@ nav a[aria-current="page"]::after {
     color: var(--ink)
 }
 
-/* les ateliers de l'accueil : les éditeurs graphiques ; au survol, la bordure et la couleur changent, rien ne bouge */
+/* the home page workshops: the graphic editors; on hover, border and colour change, nothing moves */
 .ateliers {
     display: flex;
     align-items: start;
@@ -556,7 +556,7 @@ a.atelier strong::after {
     padding-top: 16px
 }
 
-/* ---------- CTA d'entrée ---------- */
+/* ---------- Entry CTA ---------- */
 
 .cta-zone {
     display: grid;
@@ -721,7 +721,7 @@ a.atelier strong::after {
     100% { transform: scale(1.35); opacity: 0 }
 }
 
-/* ---------- En-têtes de chapitre ---------- */
+/* ---------- Chapter headers ---------- */
 
 .chapter-hero {
     padding: 56px 0 32px;
@@ -748,7 +748,7 @@ a.atelier strong::after {
     color: #444
 }
 
-/* ---------- Tuiles de la galerie (chapitre I) ---------- */
+/* ---------- Gallery tiles (chapter I) ---------- */
 
 .gallery {
     display: grid;
@@ -759,7 +759,7 @@ a.atelier strong::after {
 .tile {
     position: relative;
     overflow: hidden;
-    /* plus fine que sa colonne : la rangée respire */
+    /* thinner than its column: the row breathes */
     justify-self: center;
     width: 70%;
     aspect-ratio: .44/1;
@@ -768,9 +768,9 @@ a.atelier strong::after {
     transition: transform .6s var(--ease-out)
 }
 
-/* une pochette floutée jusqu'à n'être plus qu'un dégradé, pour les tuiles qui en portent une (--img).
-   Elle déborde de la tuile pour que le flou ne s'éclaircisse pas sur les bords.
-   --tile-blur : baisser pour laisser deviner l'image */
+/* a cover blurred until it is only a gradient, for the tiles that carry one (--img).
+   It overflows the tile so the blur does not lighten at the edges.
+   --tile-blur: lower it to let the image show through */
 .tile::before {
     content: "";
     position: absolute;
@@ -784,7 +784,7 @@ a.atelier strong::after {
     filter: brightness(1.15)
 }
 
-/* 1 et 6 : pochette floutée ; 2 à 5 : les aplats d'origine */
+/* 1 and 6: blurred cover; 2 to 5: the original flat colours */
 .tile:nth-child(1) {
     --img: url("../assets/covers/web/full-circle-revolution.jpg");
     --a: #f58a2e;
@@ -824,7 +824,7 @@ a.atelier strong::after {
     border-radius: 90px 20px 90px 20px
 }
 
-/* sélecteur de langue */
+/* language switch */
 .lang {
     display: inline-flex;
     gap: 2px
@@ -853,7 +853,7 @@ a.atelier strong::after {
     color: var(--ink)
 }
 
-/* ---------- Chapitre II : projets ---------- */
+/* ---------- Chapter II: projects ---------- */
 
 .head {
     display: flex;
@@ -875,7 +875,7 @@ a.atelier strong::after {
     font-size: 10px
 }
 
-/* Sélecteur de vue */
+/* View switch */
 .view-switch {
     position: relative;
     display: inline-flex;
@@ -908,7 +908,7 @@ a.atelier strong::after {
     border-radius: 999px
 }
 
-/* pastille d'encre qui glisse sous le bouton actif */
+/* ink chip sliding under the active button */
 .view-switch::before {
     content: "";
     position: absolute;
@@ -939,7 +939,7 @@ a.atelier strong::after {
     display: none
 }
 
-/* ----- Vue grille 3×3 ----- */
+/* ----- 3×3 grid view ----- */
 
 .works-grid {
     display: grid;
@@ -952,12 +952,12 @@ a.atelier strong::after {
     animation: rise 1s var(--ease-out) calc(var(--i, 0) * .06s) both
 }
 
-/* ----- Vue bandeaux défilants ----- */
+/* ----- Scrolling strips view ----- */
 
 .bands {
     display: grid;
     gap: 8px;
-    /* fondu sur les bords : les bandeaux entrent et sortent en douceur */
+    /* fade at the edges: the strips come in and out softly */
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent)
 }
@@ -982,12 +982,12 @@ a.atelier strong::after {
     flex: 0 0 clamp(220px, 22vw, 300px)
 }
 
-/* le contenu est dupliqué une fois : -50% (moins un demi-gap) boucle sans couture */
+/* the content is duplicated once: -50% (minus half a gap) loops seamlessly */
 @keyframes band {
     to { transform: translateX(calc(-50% - 10px)) }
 }
 
-/* ----- Cartes ----- */
+/* ----- Cards ----- */
 
 .work {
     display: block;
@@ -1036,7 +1036,7 @@ a.atelier strong::after {
     border-radius: 42px 18px 42px 18px
 }
 
-/* cases « à venir » qui complètent la grille */
+/* "coming soon" cells that complete the grid */
 .work--soon .work-image {
     --a: #f3d9e8;
     --b: #d6e4fb
@@ -1071,7 +1071,7 @@ a.atelier strong::after {
     font-size: 10px
 }
 
-/* ---------- Chapitre III : contact ---------- */
+/* ---------- Chapter III: contact ---------- */
 
 .contact {
     text-align: center;
@@ -1096,7 +1096,7 @@ a.atelier strong::after {
     margin: 0 auto 28px
 }
 
-/* ---------- Chapitre suivant ---------- */
+/* ---------- Next chapter ---------- */
 
 .next {
     display: block;
@@ -1253,9 +1253,9 @@ footer {
     }
 }
 
-/* ---------- Projets : cartes « coulisses » ---------- */
+/* ---------- Projects: "behind the scenes" cards ---------- */
 
-/* étiquette façon clap : codes de plan, fiches, statuts */
+/* clapperboard label: shot codes, sheets, statuses */
 .slate {
     font: 10px/1.4 ui-monospace, Consolas, "Courier New", monospace;
     letter-spacing: .1em;
@@ -1321,7 +1321,7 @@ a.project-card:focus-visible {
     object-fit: cover
 }
 
-/* zoom de base 1.35 : sort du cadre les bandes noires de l'image composée */
+/* base zoom 1.35: pushes the composite image's black bars out of frame */
 .project-cover img {
     transform: scale(1.35);
     transition: transform 1.2s var(--ease-out)
@@ -1388,7 +1388,7 @@ a.project-card:focus-visible {
     margin: 0
 }
 
-/* planche contact : quatre plans du film */
+/* contact sheet: four shots of the film */
 .project-strip {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1423,7 +1423,7 @@ a.project-card:focus-visible {
     color: var(--muted)
 }
 
-/* une carte sur deux : image à droite */
+/* every other card: image on the right */
 @media (min-width: 761px) {
     .project-card--flip {
         grid-template-columns: 1fr 1.4fr
@@ -1439,7 +1439,7 @@ a.project-card:focus-visible {
     }
 }
 
-/* ---------- Page projet : salle obscure ---------- */
+/* ---------- Project page: darkened cinema ---------- */
 
 html.film {
     --paper: #100f0d;
@@ -1461,7 +1461,7 @@ html.film .aura span {
     opacity: .7
 }
 
-/* le rideau reste sombre : pas de flash clair entre deux pages */
+/* the curtain stays dark: no bright flash between two pages */
 html.film .curtain {
     background: #171717;
     color: #fbfaf7
@@ -1475,14 +1475,14 @@ html.film .chapter-hero p {
     color: var(--muted)
 }
 
-/* Horla : béton la nuit, un accent par lieu (--accent posé sur chaque élément) */
+/* Horla: concrete at night, one accent per place (--accent set on each element) */
 html.film--horla {
     --paper: #121314;
     --accent: #ff8a2a
 }
 
 html.film--horla body {
-    /* gris béton, à peine teintés du bleu et du rouge de la gare routière */
+    /* concrete greys, barely tinted with the blue and red of the bus station */
     --aura-1: #3d4044;
     --aura-2: #4a2c28;
     --aura-3: #2f3236;
@@ -1494,7 +1494,7 @@ html.film--horla .aura span {
     opacity: .8
 }
 
-/* ---------- Horla : une scène plein écran, deux temps (entrée, puis ville) ---------- */
+/* ---------- Horla: a full-screen stage, two stages (entrance, then town) ---------- */
 
 html.stage body {
     height: 100vh;
@@ -1502,7 +1502,7 @@ html.stage body {
     overflow: hidden
 }
 
-/* la scène three.js passe sous l'interface et reçoit les clics là où il n'y a rien */
+/* the three.js scene sits under the interface and gets the clicks where there is nothing */
 .world-stage {
     position: fixed;
     inset: 0;
@@ -1535,7 +1535,7 @@ main.horla input,
     pointer-events: auto
 }
 
-/* Temps 1 : l'entrée */
+/* Stage 1: the entrance */
 .horla-intro {
     position: absolute;
     inset: 0;
@@ -1666,7 +1666,7 @@ main.horla input,
     border-color: var(--ink)
 }
 
-/* étiquette accrochée à la cassette 3D (placée par horla.js) */
+/* label hooked to the 3D cassette (placed by horla.js) */
 .tape-cue {
     position: fixed;
     left: 0;
@@ -1716,7 +1716,7 @@ html.horla-live .tape-cue {
     opacity: 0
 }
 
-/* Temps 2 : la ville */
+/* Stage 2: the town */
 .horla-world {
     position: absolute;
     inset: 0;
@@ -1772,7 +1772,7 @@ html.horla-live .horla-world {
     color: #121314
 }
 
-/* arrêts : posés sur la ville par horla.js, ils ouvrent les dossiers */
+/* stops: set on the town by horla.js, they open the files */
 .stops {
     position: fixed;
     inset: 0;
@@ -1836,14 +1836,14 @@ html.horla-live .horla-world {
     border-top: 2px solid var(--accent);
     background: rgba(18, 19, 20, .9);
     text-align: left;
-    /* toujours visible : une miniature par lieu, qui grandit quand le lieu est actif */
+    /* always visible: one thumbnail per place, growing when the place is active */
     transform: scale(.62);
     transform-origin: 0 0;
     filter: saturate(.7);
     transition: transform .5s var(--ease-out), filter .5s ease, box-shadow .4s ease
 }
 
-/* trois rendus par lieu : celui du dessus, deux autres glissés derrière */
+/* three renders per place: the top one, two others slipped behind */
 .stop-stack {
     position: relative;
     display: block
@@ -1901,7 +1901,7 @@ html.horla-live .horla-world {
     display: block
 }
 
-/* l'éventail s'ouvre sur le lieu actif ou survolé */
+/* the fan opens on the active or hovered place */
 .stop.is-active .stop-stack img:nth-child(2) {
     transform: translate(26px, -12px) rotate(5deg)
 }
@@ -1918,7 +1918,7 @@ html.horla-live .horla-world {
     outline: 1px solid var(--ink)
 }
 
-/* la timeline : le son du storyboard, découpé par lieu */
+/* the timeline: the storyboard sound, cut per place */
 .timeline {
     position: absolute;
     left: 0;
@@ -2083,7 +2083,7 @@ html.horla-live .horla-world {
     white-space: nowrap
 }
 
-/* sans WebGL : pas de ville, les arrêts s'alignent au-dessus de la timeline */
+/* without WebGL: no town, the stops line up above the timeline */
 html.no-gl .tape-cue {
     display: none
 }
@@ -2102,7 +2102,7 @@ html.no-gl .stop {
     margin: 0
 }
 
-/* lecteur de la face B, rangé dans le dossier Coulisses */
+/* B-side player, kept in the Behind-the-scenes file */
 .tape {
     padding: 8px 10px;
     border: 1px solid var(--line);
@@ -2190,7 +2190,7 @@ html.no-gl .stop {
     white-space: nowrap
 }
 
-/* dossiers : un tiroir par lieu, le défilement reste à l'intérieur */
+/* files: one drawer per place, scrolling stays inside */
 .file {
     position: fixed;
     inset: 0 0 0 auto;
@@ -2270,7 +2270,7 @@ html.no-gl .stop {
     margin: 36px 0 10px
 }
 
-/* fiche personnage : photo d'identité à gauche, présentation à droite */
+/* character sheet: ID photo on the left, presentation on the right */
 .file-intro {
     display: grid;
     grid-template-columns: 180px minmax(0, 1fr);
@@ -2304,7 +2304,7 @@ html.no-gl .stop {
     color: var(--accent)
 }
 
-/* tant que le fichier n'existe pas, le cadre l'annonce */
+/* as long as the file does not exist, the frame says so */
 .mugshot:not(:has(img))::before {
     content: "Photo à venir";
     position: absolute;
@@ -2324,9 +2324,9 @@ html.no-gl .stop {
     }
 }
 
-/* fiche personnage : un document administratif, tapé à la machine, posé dans le tiroir */
+/* character sheet: an administrative document, typewritten, laid in the drawer */
 .paper {
-    /* la feuille réécrit les couleurs du thème : tout ce qu'elle contient passe à l'encre */
+    /* the sheet rewrites the theme colours: everything in it turns to ink */
     --ink: #1b1a18;
     --muted: #6d665b;
     --line: rgba(27, 26, 24, .3);
@@ -2364,7 +2364,7 @@ html.no-gl .stop {
     color: var(--muted)
 }
 
-/* case du visa, vide */
+/* visa box, empty */
 .paper-foot i {
     display: inline-block;
     width: 96px;
@@ -2394,7 +2394,7 @@ html.no-gl .stop {
     margin: 22px 0 18px
 }
 
-/* rubriques numérotées, comme sur un formulaire */
+/* numbered sections, as on a form */
 .paper {
     counter-reset: rubrique
 }
@@ -2435,7 +2435,7 @@ html.no-gl .stop {
     opacity: .92
 }
 
-/* photo d'identité : bord blanc, posée un peu de travers */
+/* ID photo: white border, set slightly askew */
 .paper .mugshot {
     border: 5px solid #f3efe5;
     background: repeating-linear-gradient(-45deg, #cfc7b6 0 8px, #d8d1c1 8px 16px);
@@ -2459,7 +2459,7 @@ html.no-gl .stop {
     }
 }
 
-/* fiche personnage : une ligne par trait, les inconnues sont noircies */
+/* character sheet: one line per trait, the unknowns are blacked out */
 .sheet-list {
     margin: 0 0 8px;
     border-top: 1px solid var(--line)
@@ -2501,7 +2501,7 @@ html.no-gl .stop {
 }
 
 @media (max-width: 760px) {
-    /* le poste passe sous le texte */
+    /* the radio set moves below the text */
     .horla-intro {
         justify-content: flex-start;
         max-width: none;
@@ -2582,7 +2582,7 @@ html.no-gl .stop {
     background: #000
 }
 
-/* 2.39:1 : recadre les bandes noires incluses dans les images composées */
+/* 2.39:1: crops the black bars included in the composite images */
 .film-hero img {
     display: block;
     width: 100%;
@@ -2621,7 +2621,7 @@ html.no-gl .stop {
     vertical-align: 4px
 }
 
-/* Séquences : le texte reste en place pendant que les plans défilent */
+/* Sequences: the text stays in place while the shots scroll by */
 .act {
     display: grid;
     grid-template-columns: 280px 1fr;
@@ -2727,7 +2727,7 @@ html.no-gl .stop {
     margin-top: 12px
 }
 
-/* Préambule : des plans dessinés, pas encore fabriqués */
+/* Preamble: shots drawn, not yet made */
 .beats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -2759,7 +2759,7 @@ html.no-gl .stop {
     color: var(--muted)
 }
 
-/* Épilogue : le film s'arrête, la page le dit */
+/* Epilogue: the film stops, and the page says so */
 .epilogue {
     margin-top: 120px;
     padding-top: 20px;
@@ -2786,8 +2786,8 @@ html.no-gl .stop {
     color: var(--muted)
 }
 
-/* Itinéraire : les étapes sont des lieux, un tracé les relie (dessiné par lancoli.js).
-   --route-x : abscisse du tracé, dans la gouttière entre le texte et les plans */
+/* Route: the stages are places, a line links them (drawn by lancoli.js).
+   --route-x: x position of the line, in the gutter between the text and the shots */
 .journey {
     --route-x: 304px;
     --route: #e8a25a;
@@ -2861,7 +2861,7 @@ html.no-gl .stop {
     }
 }
 
-/* trajet : le blanc de la carte entre deux lieux, avec ses courbes de niveau */
+/* leg: the map's blank between two places, with its contour lines */
 .leg {
     position: relative;
     display: flex;
@@ -2908,7 +2908,7 @@ html.no-gl .stop {
     color: var(--muted)
 }
 
-/* Coulisses */
+/* Behind the scenes */
 .backstage {
     margin-top: 120px
 }
@@ -2935,7 +2935,7 @@ html.no-gl .stop {
     gap: 8px
 }
 
-/* avant / après : le rendu brut est rogné à --pos */
+/* before / after: the raw render is clipped at --pos */
 .compare {
     position: relative;
     margin: 0;
@@ -2991,7 +2991,7 @@ html.no-gl .stop {
     outline-offset: 2px
 }
 
-/* Apparition au défilement (pages longues) */
+/* Reveal on scroll (long pages) */
 .js .scroll-reveal {
     opacity: 0;
     translate: 0 28px;
@@ -3003,7 +3003,7 @@ html.no-gl .stop {
     translate: none
 }
 
-/* Visionneuse */
+/* Viewer */
 .lightbox {
     width: 100vw;
     height: 100vh;
@@ -3100,7 +3100,7 @@ html.no-gl .stop {
         position: static
     }
 
-    /* une seule colonne : le tracé descend dans la marge de la page */
+    /* single column: the line runs down the page margin */
     .journey {
         --route-x: -10px;
         margin-top: 64px
@@ -3138,7 +3138,7 @@ html.no-gl .stop {
     }
 }
 
-/* ---------- Micro edits : trois diapositives verticales ---------- */
+/* ---------- Micro edits: three vertical slides ---------- */
 
 .micros {
     display: grid;
@@ -3149,8 +3149,8 @@ html.no-gl .stop {
     margin-bottom: 64px
 }
 
-/* bandeau arc-en-ciel très estompé derrière les diapositives : trois boules floues qui dérivent,
-   et qui remontent un peu sur les basses (--beat, posé par lancoli.js) */
+/* very faded rainbow strip behind the slides: three blurred blobs drifting,
+   rising a little on the bass (--beat, set by lancoli.js) */
 .micros::before {
     content: "";
     position: absolute;
@@ -3173,24 +3173,24 @@ html.no-gl .stop {
     100% { background-position: 100% 50%; transform: scale(1.06, .92) }
 }
 
-/* un cache teinté par diapositive : jaune, cyan, magenta */
+/* one tinted mount per slide: yellow, cyan, magenta */
 .micro:nth-child(3n + 1) { --tint-a: #fff3a6; --tint-b: #ffd43b }
 .micro:nth-child(3n + 2) { --tint-a: #b9f3fb; --tint-b: #3fd0e6 }
 .micro:nth-child(3n) { --tint-a: #ffc2e6; --tint-b: #ff4fb0 }
 
-/* la figure reste à plat et porte la perspective : la zone de survol ne bouge pas avec l'inclinaison */
+/* the figure stays flat and holds the perspective: the hover area does not move with the tilt */
 .micro {
     margin: 0;
     perspective: 900px
 }
 
-/* le cache de la diapositive : carton teinté, fenêtre 9:16, marge d'étiquette en bas */
+/* the slide mount: tinted card, 9:16 window, label margin at the bottom */
 .micro-mount {
     position: relative;
     padding: 16px 16px 0;
     border-radius: 12px;
     background: linear-gradient(145deg, var(--tint-a, #fffefb), var(--tint-b, #ece8df));
-    /* --bass (0 → 1) : énergie des basses de la vidéo en cours, posée par lancoli.js */
+    /* --bass (0 → 1): bass energy of the current video, set by lancoli.js */
     box-shadow: 0 0 0 1px rgba(23, 23, 23, .08), 0 30px 50px -30px rgba(23, 23, 23, .5);
     transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(calc(1 + var(--bass, 0) * .045));
     transform-style: preserve-3d;
@@ -3203,7 +3203,7 @@ html.no-gl .stop {
     box-shadow: 0 0 0 1px rgba(23, 23, 23, .08), 0 50px 60px -34px rgba(23, 23, 23, .6)
 }
 
-/* feuille holo et reflet (.shiny-*), posés sur le cache : la teinte reste dominante */
+/* holo foil and glare (.shiny-*), laid on the mount: the tint stays dominant */
 .micro .shiny-holo,
 .micro .shiny-glare {
     border-radius: inherit
@@ -3213,7 +3213,7 @@ html.no-gl .stop {
     opacity: .5
 }
 
-/* en lecture : transitions courtes, sinon elles lisseraient les coups de basse */
+/* while playing: short transitions, otherwise they would smooth out the bass hits */
 .micro.is-playing .micro-mount {
     transition-duration: .09s, .09s
 }
@@ -3236,7 +3236,7 @@ html.no-gl .stop {
     cursor: pointer
 }
 
-/* reflet qui suit le curseur */
+/* glare that follows the cursor */
 .micro-window::after {
     content: "";
     position: absolute;
@@ -3326,7 +3326,7 @@ html.no-gl .stop {
     display: inline-block
 }
 
-/* Intros : mêmes diapositives, en 16:9 et en carton neutre, rangées en grille */
+/* Intros: the same slides, in 16:9 and neutral card, arranged in a grid */
 .intros {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3353,8 +3353,8 @@ html.no-gl .stop {
     color: var(--muted)
 }
 
-/* Intro en lecture : voile noir sur toute la page, et dessus la vidéo agrandie et floutée
-   (canvas alimenté par lancoli.js) pour que la salle prenne ses couleurs */
+/* Intro playing: a black veil over the whole page, and on it the video enlarged and blurred
+   (canvas fed by lancoli.js) so that the room takes on its colours */
 .ambient {
     position: fixed;
     inset: 0;
@@ -3383,7 +3383,7 @@ html.is-ambient .ambient {
     opacity: .6
 }
 
-/* la section des intros passe au-dessus du voile, en thème sombre */
+/* the intros section goes above the veil, in the dark theme */
 .is-ambient-stage {
     position: relative;
     z-index: 41
@@ -3410,7 +3410,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
 }
 
 @media (max-width: 760px) {
-    /* en colonne, comme une bande de photomaton */
+    /* in a column, like a photo-booth strip */
     .micros {
         grid-template-columns: minmax(0, 300px);
         justify-content: center;
@@ -3423,7 +3423,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     }
 }
 
-/* ---------- Mondes : la page reste sur le papier, seules les cartes des films sont sombres ---------- */
+/* ---------- Worlds: the page stays on paper, only the film cards are dark ---------- */
 
 .worlds {
     margin: 150px 0 64px
@@ -3445,7 +3445,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     margin: 0
 }
 
-/* les titres de la salle reprennent la typo du logo : Arial très gras, lettres serrées */
+/* the room titles use the logo's typeface: very bold Arial, tight letters */
 .worlds-intro h2,
 .worlds .project-body h3 {
     font-family: Arial, sans-serif;
@@ -3469,14 +3469,14 @@ html.is-ambient .is-ambient-stage .intro-soon {
     color: #444
 }
 
-/* les films sont parsemés : de l'air entre chaque bloc */
+/* the films are scattered: air between each block */
 .worlds .projects {
     gap: clamp(90px, 13vw, 180px);
     margin-bottom: 0
 }
 
-/* Cartes claires : une feuille blanche à bord net, décollée du fond par une ombre franche, sans flou.
-   --world (posée sur chaque carte, projets.html) n'apparaît qu'au survol : l'ombre et le bouton */
+/* Light cards: a white sheet with a sharp edge, lifted off the background by a hard shadow, no blur.
+   --world (set on each card, projets.html) only appears on hover: the shadow and the button */
 .worlds .project-card:not(.project-card--soon) {
     --world: #e8a25a;
     gap: 34px;
@@ -3484,8 +3484,8 @@ html.is-ambient .is-ambient-stage .intro-soon {
     position: relative;
     border: 1px solid var(--ink);
     border-radius: 4px;
-    /* papier froissé, fondu dans le blanc de la carte */
-    background: #fffdf9 url("../assets/textures/papier-blanc.jpg") center / cover;
+    /* crumpled paper, blended into the card's white */
+    background: #fffdf9 url("../assets/textures/paper-white.jpg") center / cover;
     background-blend-mode: multiply;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
@@ -3498,9 +3498,9 @@ html.is-ambient .is-ambient-stage .intro-soon {
     box-shadow: none
 }
 
-/* Cadre en trois couches : le filet plein de la carte, puis deux rangs de tirets qui tournent
-   en sens contraires. Chaque rang est fait de quatre bandes (haut, bas, gauche, droite) que l'on fait glisser.
-   --dash : longueur d'un tiret et de son vide · --ring : couleur du rang */
+/* Three-layer frame: the card's solid rule, then two rows of dashes turning
+   in opposite directions. Each row is four strips (top, bottom, left, right) that slide.
+   --dash: length of a dash and its gap · --ring: colour of the row */
 .worlds .project-card:not(.project-card--soon)::before,
 .worlds .project-card:not(.project-card--soon)::after {
     content: "";
@@ -3535,7 +3535,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     animation: ring-turn 5s linear infinite reverse
 }
 
-/* au survol, le cadre s'écarte et le rang extérieur prend la couleur du monde */
+/* on hover, the frame widens and the outer row takes the world's colour */
 .worlds a.project-card:hover::before,
 .worlds a.project-card:focus-visible::before {
     --gap: 12px
@@ -3547,7 +3547,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     --ring: var(--world)
 }
 
-/* un tour d'horloge : le haut file à droite, la droite descend, le bas revient, la gauche remonte */
+/* clockwise: the top runs right, the right goes down, the bottom comes back, the left goes up */
 @keyframes ring-turn {
     to {
         background-position: var(--dash) 0, calc(var(--dash) * -1) 100%, 0 calc(var(--dash) * -1), 100% var(--dash)
@@ -3569,7 +3569,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     padding: 12px 12px 6px 0
 }
 
-/* l'invitation à entrer : un bouton plein, à angles droits */
+/* the invitation to enter: a solid, square-cornered button */
 .worlds .project-more {
     align-items: center;
     margin-top: 16px;
@@ -3608,7 +3608,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     background: #151412
 }
 
-/* le produit du film : posé juste sous sa carte, décalé vers la droite */
+/* the film's product: placed just under its card, shifted right */
 .support {
     display: grid;
     grid-template-columns: minmax(0, 300px) minmax(0, 440px);
@@ -3618,7 +3618,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     margin-top: calc(clamp(90px, 13vw, 180px) * -.55)
 }
 
-/* carte de résilience au format carte bancaire, posée un peu de travers */
+/* resilience card in bank-card format, set slightly askew */
 .loyalty {
     display: flex;
     flex-direction: column;
@@ -3683,7 +3683,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     color: var(--muted)
 }
 
-/* citation : le financement de la culture, et les partenaires espérés */
+/* quote: funding for culture, and the hoped-for partners */
 .manifesto {
     margin: 0;
     padding-top: 20px;
@@ -3754,7 +3754,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     }
 }
 
-/* ---------- Intros : lecteur vidéo ---------- */
+/* ---------- Intros: video player ---------- */
 
 .reel {
     display: grid;
@@ -3790,7 +3790,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     border-radius: 0
 }
 
-/* grand bouton central, visible tant que la vidéo est en pause */
+/* big central button, visible while the video is paused */
 .reel-big {
     position: absolute;
     left: 50%;
@@ -3835,7 +3835,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     pointer-events: none
 }
 
-/* barre de commandes : s'efface pendant la lecture, revient au survol ou au clavier */
+/* control bar: fades while playing, returns on hover or keyboard */
 .reel-ui {
     position: absolute;
     left: 0;
@@ -3940,7 +3940,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     text-align: right
 }
 
-/* panneau latéral : intro en cours + liste de lecture */
+/* side panel: current intro + playlist */
 .reel-side {
     display: grid;
     grid-template-rows: auto 1fr auto;
@@ -4068,7 +4068,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     }
 }
 
-/* ---------- Objets « shiny » : inclinaison et reflet suivent le pointeur ---------- */
+/* ---------- "Shiny" objects: tilt and glare follow the pointer ---------- */
 .shiny {
     perspective: 1000px
 }
@@ -4080,7 +4080,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     pointer-events: none
 }
 
-/* feuille holographique : un arc-en-ciel qui glisse avec le pointeur */
+/* holographic foil: a rainbow sliding with the pointer */
 .shiny-holo {
     background: repeating-linear-gradient(112deg, #ff5ea8 0%, #ffe45e 9%, #6dff9c 18%, #5ecbff 27%, #b98cff 36%, #ff5ea8 45%);
     background-size: 280% 280%;
@@ -4103,7 +4103,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     mix-blend-mode: overlay
 }
 
-/* ---------- Pied de page : liens ---------- */
+/* ---------- Footer: links ---------- */
 
 .foot-links {
     display: flex;
@@ -4119,7 +4119,7 @@ html.is-ambient .is-ambient-stage .intro-soon {
     color: var(--ink)
 }
 
-/* ---------- Démarche : les terrains, le fait main, les repères ---------- */
+/* ---------- Approach: the grounds, the handmade, the landmarks ---------- */
 
 .stance {
     margin-top: 72px
@@ -4227,14 +4227,14 @@ html.is-ambient .is-ambient-stage .intro-soon {
     }
 }
 
-/* ---------- Lyon : bitume, marquage au sol, trois couleurs de bombe ---------- */
+/* ---------- Lyon: asphalt, road markings, three spray colours ---------- */
 
 html.film--lyon {
     --paper: #141516
 }
 
 html.film--lyon body {
-    /* gris bitume, à peine relevés de jaune, de cyan et de magenta */
+    /* asphalt greys, barely lifted with yellow, cyan and magenta */
     --aura-1: #2b2d30;
     --aura-2: #3a3320;
     --aura-3: #1d3338;
@@ -4246,7 +4246,7 @@ html.film--lyon .aura span {
     opacity: .8
 }
 
-/* titres au pochoir : gras, penchés, en capitales */
+/* stencil titles: bold, slanted, in capitals */
 html.film--lyon .chapter-hero h1,
 html.film--lyon .act-head h2,
 html.film--lyon .leg-label {
@@ -4260,8 +4260,8 @@ html.film--lyon .chapter-hero h1 em {
     color: #ffd43b
 }
 
-/* un edit, une couleur (--tint, posée sur chaque <section class="act">) : le titre penche comme un tag,
-   souligné d'un trait de bombe */
+/* one edit, one colour (--tint, set on each <section class="act">): the title leans like a tag,
+   underlined with a spray stroke */
 html.film--lyon .act-head h2 {
     font-size: clamp(32px, 3.4vw, 46px);
     letter-spacing: -.06em;
@@ -4284,7 +4284,7 @@ html.film--lyon .act-head .slate {
     color: var(--tint)
 }
 
-/* l'itinéraire devient une ligne de chaussée : pointillés larges, jaune une fois parcourue */
+/* the route becomes a road line: wide dashes, yellow once travelled */
 html.film--lyon .journey {
     --route: #ffd43b
 }
@@ -4300,7 +4300,7 @@ html.film--lyon .journey-track {
     opacity: .3
 }
 
-/* entre deux edits : un passage piéton */
+/* between two edits: a pedestrian crossing */
 html.film--lyon .leg::before,
 html.film--lyon .leg:nth-of-type(even)::before {
     inset: 32% 0 32% 36%;
@@ -4322,7 +4322,7 @@ html.film--lyon .leg-label small {
     font-weight: 400
 }
 
-/* Le mur : la vidéo d'abord, puis trois images collées comme des stickers, un peu de travers */
+/* The wall: the video first, then three images stuck on like stickers, slightly askew */
 .wall {
     display: grid;
     grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
@@ -4345,7 +4345,7 @@ html.film--lyon .leg-label small {
     aspect-ratio: 9 / 16
 }
 
-/* le carton de la diapositive est clair : son étiquette reste sombre, même sur une page film */
+/* the slide card is light: its label stays dark, even on a film page */
 html.film .micro figcaption strong {
     color: #171717
 }
@@ -4363,8 +4363,8 @@ html.film .micro figcaption strong {
     }
 }
 
-/* ---------- Bas de Projets : la carte d'abonné, sur une plaque coupée en deux ----------
-   à gauche le discours, blanc sur noir rayé ; à droite la carte, seule sur une feuille blanche */
+/* ---------- Bottom of Projects: the member card, on a plate cut in two ----------
+   on the left the pitch, white on striped black; on the right the card, alone on a white sheet */
 
 .pass {
     display: grid;
@@ -4388,13 +4388,13 @@ html.film .micro figcaption strong {
     background: #151412
 }
 
-/* les rayures : blanches sur noir dans l'image, donc fondues en éclaircissement.
-   opacity règle leur force */
+/* the stripes: white on black in the image, so blended in lighten mode.
+   opacity sets their strength */
 .pass-body::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: url("../assets/textures/rayures.jpg") center / cover;
+    background: url("../assets/textures/stripes.jpg") center / cover;
     mix-blend-mode: screen;
     opacity: .36;
     pointer-events: none
@@ -4404,14 +4404,14 @@ html.film .micro figcaption strong {
     position: relative
 }
 
-/* le présentoir : papier blanc, la carte posée au milieu */
+/* the display: white paper, the card placed in the middle */
 .pass-card {
     order: 1;
     display: grid;
     place-items: center;
     min-height: 420px;
     padding: clamp(28px, 5vw, 72px);
-    background: #fffdf9 url("../assets/textures/papier-blanc.jpg") center / cover;
+    background: #fffdf9 url("../assets/textures/paper-white.jpg") center / cover;
     background-blend-mode: multiply
 }
 
@@ -4425,7 +4425,7 @@ html.film .micro figcaption strong {
     color: var(--muted)
 }
 
-/* même typo que le logo et les titres des contes */
+/* same typeface as the logo and the tale titles */
 .pass-body h2 {
     font: 900 clamp(40px, 6vw, 84px) / .88 Arial, sans-serif;
     letter-spacing: -.09em;
@@ -4499,8 +4499,8 @@ html.film .micro figcaption strong {
     }
 }
 
-/* la carte d'abonné, version holographique : fond irisé, feuille arc-en-ciel qui brûle les couleurs,
-   reflet qui balaie, liseré lumineux. Elle s'incline vers le pointeur (lancoli.js, [data-shiny]) */
+/* the member card, holographic version: iridescent background, rainbow foil burning the colours,
+   sweeping glare, glowing edge. It tilts towards the pointer (lancoli.js, [data-shiny]) */
 .pass .loyalty {
     background:
         radial-gradient(90% 120% at 100% 0%, rgba(255, 138, 60, .85), transparent 55%),
@@ -4534,7 +4534,7 @@ html.film .micro figcaption strong {
     mix-blend-mode: soft-light
 }
 
-/* le reflet qui traverse la carte, comme sous une lampe */
+/* the glare crossing the card, as under a lamp */
 .shiny-sweep {
     position: absolute;
     inset: 0;
@@ -4557,7 +4557,7 @@ html.film .micro figcaption strong {
     }
 }
 
-/* ---------- Le livre des contes (livre.js) : les cartes projet en doubles pages three.js ---------- */
+/* ---------- The book of tales (book.js): the project cards as three.js spreads ---------- */
 
 .book {
     margin-bottom: 40px
@@ -4634,7 +4634,7 @@ html.film .micro figcaption strong {
     color: var(--muted)
 }
 
-/* l'invitation : ouvrir le livre, puis entrer dans le conte (elle prend alors la couleur du monde au survol) */
+/* the invitation: open the book, then enter the tale (it then takes the world's colour on hover) */
 .book-bar .book-enter {
     min-width: 260px;
     padding: 0 20px;
@@ -4666,7 +4666,7 @@ html.film .micro figcaption strong {
     cursor: pointer
 }
 
-/* Plein écran : le livre devient une application. Plus de défilement derrière, la scène prend toute la fenêtre */
+/* Full screen: the book becomes an app. No more scrolling behind, the stage takes the whole window */
 html.is-booked {
     overflow: hidden
 }
@@ -4715,7 +4715,7 @@ html.is-booked {
     cursor: pointer
 }
 
-/* pendant le travelling, il ne reste que l'image */
+/* during the dolly shot, only the image remains */
 .book.is-diving .book-bar,
 .book.is-diving .book-hint,
 .book.is-diving .book-close {
@@ -4749,7 +4749,7 @@ html.is-booked {
     }
 }
 
-/* sur la feuille irisée, le pied de carte passe en blanc pour rester lisible */
+/* on the iridescent foil, the card footer turns white to stay readable */
 .pass .loyalty-foot {
     color: #fff
 }

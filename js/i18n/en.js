@@ -56,7 +56,7 @@ window.LANCOLI_I18N.en = {
     'contact.next.tag': 'End of the visit · Back',
     'contact.next.title': 'The gallery',
 
-    // --- Mur libre (outil de graffiti) ---
+    // --- Mur libre (graffiti tool) ---
     'mur.pageTitle': 'Mur libre — Free online graffiti: spray, drips, 3D wall | Lancoli',
     'mur.back': 'Back to projects',
     'mur.title': 'Mur libre',

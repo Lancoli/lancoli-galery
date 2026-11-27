@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Lancoli — Atelier · Feuillets</title>
-    <!-- page d'atelier : on y règle la transition, elle ne fait pas partie de la visite -->
+    <!-- workshop page: the transition is tuned here, it is not part of the visit -->
     <meta name="robots" content="noindex">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="css/lancoli.css">
@@ -29,7 +29,7 @@
             font-style: italic
         }
 
-        /* Pupitre de réglage */
+        /* Tuning desk */
         .desk {
             position: fixed;
             left: 16px;
@@ -158,7 +158,7 @@
 
     <script src="js/leaflets.js"></script>
     <script>
-        // Atelier : chaque curseur pilote un réglage de Feuillets ou une variable de feuillets.css.
+        // Workshop: each slider drives a Leaflets setting or a variable of leaflets.css.
         const leaflets = Leaflets();
         const chapters = [
             ['Chapitre I · Atelier', 'La <em>galerie</em>', 'La galerie'],
@@ -168,7 +168,7 @@
         let current = 0;
         let busy = false;
 
-        // [clé, intitulé, min, max, pas, unité, variable CSS si ce n'est pas un réglage du moteur]
+        // [key, label, min, max, step, unit, CSS variable when it is not an engine setting]
         const ranges = [
             ['count', 'Feuilles', 1, 8, 1, ''],
             ['fps', 'Cadence', 3, 30, 1, 'p/s'],
@@ -209,7 +209,7 @@
             paper.blend = event.target.value;
             leaflets.root.style.setProperty('--leaf-blend', paper.blend);
         });
-        // La texture de papier : choisie ici, elle se pose sous le quadrillage de chaque feuille
+        // The paper texture: chosen here, it lies under the grid of each leaf
         document.getElementById('texture').addEventListener('change', (event) => {
             const file = event.target.files[0];
             leaflets.root.style.setProperty('--leaf-texture', file ? `url("${URL.createObjecturl(file)}")` : 'none');
@@ -249,7 +249,7 @@
             catch { prompt('Réglages à copier :', text); }
         });
 
-        // Pose figée depuis l'adresse, pour régler à l'arrêt : feuillets.html#cover:300, #reveal:250, #cover:300:film
+        // Frozen pose from the address, to tune while still: feuillets.html#cover:300, #reveal:250, #cover:300:film
         const frozen = location.hash.slice(1).split(':');
         if (frozen.length >= 2) {
             if (frozen[2]) document.documentElement.className = frozen[2];

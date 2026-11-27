@@ -1,10 +1,10 @@
-// La projection : la peinture à plat devient la texture d'un mur dans une rue, au soleil couchant.
-// Le mur et la peinture sont deux couches distinctes qui partagent le même relief :
-// la peinture suit les joints des briques, sans que le moteur de peinture le sache.
+// The projection: the flat paint becomes the texture of a wall in a street, at sunset.
+// The wall and the paint are two separate layers that share the same relief:
+// the paint follows the brick joints, without the paint engine knowing.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const WALL = { w: 8, h: 4 }; // mètres, même proportion que la peinture
+export const WALL = { w: 8, h: 4 }; // metres, same proportion as the paint
 
 function gradientTexture(stops) {
     const c = document.createElement('canvas');
@@ -38,7 +38,7 @@ function asphalt() {
     return t;
 }
 
-// onStroke(kind, point, event) : kind = 'begin' | 'move' | 'end' | 'cancel', point en pixels de la peinture.
+// onStroke(kind, point, event): kind = 'begin' | 'move' | 'end' | 'cancel', point in paint pixels.
 export function createWallScene({ container, paintCanvas, onStroke }) {
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -65,14 +65,14 @@ export function createWallScene({ container, paintCanvas, onStroke }) {
     controls.maxPolarAngle = 1.62;
     controls.minAzimuthAngle = -1.25;
     controls.maxAzimuthAngle = 1.25;
-    // Clic gauche et un doigt : on peint. Clic droit et deux doigts : on tourne autour du mur.
+    // Left click and one finger: paint. Right click and two fingers: orbit around the wall.
     controls.mouseButtons = { LEFT: null, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
     controls.touches = { ONE: null, TWO: THREE.TOUCH.DOLLY_ROTATE };
     controls.update();
 
     scene.add(new THREE.HemisphereLight(0xcfd8ff, 0x5a4636, 0.9));
     const sun = new THREE.DirectionalLight(0xffd2a1, 2.6);
-    sun.position.set(-7, 6, 5); // lumière rasante : elle révèle le relief sous la peinture
+    sun.position.set(-7, 6, 5); // grazing light: it reveals the relief under the paint
     scene.add(sun);
     const fill = new THREE.DirectionalLight(0x9fb6ff, 0.35);
     fill.position.set(6, 3, 6);
@@ -120,14 +120,14 @@ export function createWallScene({ container, paintCanvas, onStroke }) {
         const old = [wallMat.map, wallMat.normalMap];
         wallMat.map = texture(wall.albedo, true);
         wallMat.normalMap = texture(wall.normal, false);
-        paintMat.normalMap = wallMat.normalMap; // même relief pour la peinture
+        paintMat.normalMap = wallMat.normalMap; // same relief for the paint
         paintMat.normalScale.set(0.7, 0.7);
         edgeMat.color.set(wall.edge);
         wallMat.needsUpdate = paintMat.needsUpdate = true;
         old.forEach((t) => t && t.dispose());
     }
 
-    // ── peindre directement sur le mur 3D ──
+    // ── paint directly on the 3D wall ──
     const ray = new THREE.Raycaster();
     const ndc = new THREE.Vector2();
     const hit = (e) => {

@@ -1,16 +1,19 @@
-# Lancoli — règles de l'app
+# Lancoli — app rules
 
-Le site de l'artiste (voir [README.md](README.md)). Règles communes : [../CLAUDE.md](../CLAUDE.md).
+The artist's website (see [README.md](README.md)). Shared rules: [../CLAUDE.md](../CLAUDE.md).
 
-## Règles propres
+## Own rules
 
-- **Positionnement** : un artiste engagé, quatre terrains d'action, un merch fait main. **Ne rien inventer** : pas de date,
-  de collaboration, de chiffre ou de citation qui ne viennent pas de David.
-- **Le son n'est plus ici** : tout ce qui est musique vit dans LancoliStudio.
-- **Couleur couchant** : `--hit #f58a2e` (pochette Full Circle Revolution), dégradé vers `#7f2215`. Plus jamais de vert fluo.
-- **Au survol, rien ne bouge** : ni translate, ni rotate, ni tilt sur les cartes ni leurs enfants (18 cas à corriger,
-  voir `docs/design-baseline.json`).
+- **Positioning**: a committed artist, four grounds of action, handmade merch. **Invent nothing**: no date,
+  collaboration, figure or quote that does not come from David.
+- **Sound no longer lives here**: everything music lives in LancoliStudio.
+- **Sunset colour**: `--hit #f58a2e` (Full Circle Revolution cover), gradient towards `#7f2215`. Never fluorescent green again.
+- **On hover, nothing moves**: no translate, rotate or tilt on cards or their children (18 cases to fix,
+  see `docs/design-baseline.json`).
+- **Languages**: code, comments and docs in English. Every visitor sentence goes into both `js/i18n/fr.js` and
+  `js/i18n/en.js` (same key); `node tools/i18n-check.js` must stay at 0 errors. View ids and DOM ids that are still
+  French (`atelier`, `mur`, `brique`) wait for the next i18n pass.
 
-## Vérifier
+## Check
 
-`node tools/jalons.mjs Lancoli` · `node tools/design-lint.mjs Lancoli` · `lancer liens Lancoli` (depuis la racine).
+`node tools/i18n-check.js` · `node tools/jalons.mjs Lancoli` · `node tools/design-lint.mjs Lancoli` · `lancer liens Lancoli` (from the root).

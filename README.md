@@ -1,18 +1,26 @@
 # Lancoli
 
-Le site de Lancoli, artiste engagé : sa démarche, ses quatre terrains d'action, ses projets (graffiti, feuillets, Horla, Lyon, Leaving Home…) et son merch fait main.
+The website of Lancoli, a committed artist: his approach, his four grounds of action, his projects (graffiti, leaflets,
+Horla, Lyon, Leaving Home…) and his handmade merch.
 
-Pages : accueil, démarche, projets, feuillets, graffiti, Horla, Leaving Home, Lyon, contact.
+Pages: home, approach (`demarche.html`), projects, leaflets (`feuillets.html`), graffiti, Horla, Leaving Home, Lyon,
+contact. Public page names stay French: their addresses are live.
 
-## Lancer
+## Run
 
-Site statique, sans étape de construction.
+Static site, no build step.
 
-- **Avec tout le portfolio** : `lancer.cmd` à la racine du portfolio, puis http://localhost:4101/Lancoli/
-- **Dans Docker** (comme en ligne) : `lancer docker`, puis http://localhost:8080/Lancoli/
-- **Seul** : n'importe quel serveur statique ouvert dans ce dossier (les chemins sont relatifs).
+- **With the whole portfolio**: `lancer.cmd` at the portfolio root, then http://localhost:4101/Lancoli/
+- **In Docker** (as online): `lancer docker`, then http://localhost:8080/Lancoli/
+- **Alone**: any static server opened in this folder (paths are relative).
 
-## Qualité
+## Languages
 
-Ce projet suit les jalons du portfolio (`docs/JALONS.md` à la racine) : ses objectifs et son état sont dans `jalons.json`.
-Vérification : `node tools/jalons.mjs Lancoli` depuis la racine du portfolio.
+The HTML carries the French (readable without script, indexable); `js/i18n/fr.js` and `js/i18n/en.js` carry every
+visitor sentence under the same key, applied by `js/i18n.js` (`?lang=en`, or the visitor's saved choice).
+Check: `node tools/i18n-check.js` (same keys on both sides, every key used exists, the HTML French matches the dictionary).
+
+## Quality
+
+This project follows the portfolio milestones (`docs/JALONS.md` at the root): its goals and state are in `jalons.json`.
+Check: `node tools/jalons.mjs Lancoli` from the portfolio root.

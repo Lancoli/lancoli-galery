@@ -1,18 +1,18 @@
-// Feuillets : transition verticale en feuilles de papier, animée pose par pose comme un stop motion.
-// Les feuilles montent l'une après l'autre et couvrent la page (cover), puis s'effeuillent (reveal).
-//   const feuillets = Feuillets({ fps: 8 });
-//   await feuillets.cover('Projets');   // la page est couverte
-//   await feuillets.reveal();           // la page est découverte
+// Leaflets: vertical transition in paper leaves, animated pose by pose like stop motion.
+// The leaves rise one after another and cover the page (cover), then peel away (reveal).
+//   const leaflets = Leaflets({ fps: 8 });
+//   await leaflets.cover('Projets');   // the page is covered
+//   await leaflets.reveal();           // the page is uncovered
 window.Leaflets = (options = {}) => {
     const settings = {
-        count: 5,        // nombre de feuilles
-        fps: 8,          // poses par seconde : plus c'est bas, plus ça « fige »
-        duration: 420,   // trajet d'une feuille, en ms
-        stagger: 110,    // retard entre deux feuilles, en ms
-        tear: 14,        // profondeur de la déchirure, en px (0 = bord droit)
-        wobble: 1,       // tremblé d'une pose à l'autre (0 = aucun)
-        boil: true,      // la déchirure est redécoupée à chaque pose
-        direction: 'up', // 'up' : les feuilles montent · 'down' : elles descendent
+        count: 5,        // number of leaves
+        fps: 8,          // poses per second: the lower, the more it "freezes"
+        duration: 420,   // travel of one leaf, in ms
+        stagger: 110,    // delay between two leaves, in ms
+        tear: 14,        // depth of the tear, in px (0 = straight edge)
+        wobble: 1,       // jitter from one pose to the next (0 = none)
+        boil: true,      // the tear is recut at every pose
+        direction: 'up', // 'up': the leaves rise · 'down': they fall
         ...options
     };
 
@@ -29,7 +29,7 @@ window.Leaflets = (options = {}) => {
     let frame = 0;
     let done = null;
 
-    // hasard reproductible : une même graine redonne la même déchirure
+    // reproducible randomness: the same seed gives the same tear
     const rng = (seed) => {
         let a = (seed * 2654435761) >>> 0;
         return () => {
@@ -43,7 +43,7 @@ window.Leaflets = (options = {}) => {
     const clamp = (value) => Math.min(1, Math.max(0, value));
     const pad = () => Math.ceil(settings.tear * 2.6) + 12;
 
-    // Bord déchiré : une ligne qui flâne, du grain, et de temps en temps une barbe plus profonde
+    // Torn edge: a wandering line, some grain, and now and then a deeper barb
     const SEGMENTS = 36;
     const tornEdge = (seed) => {
         const random = rng(seed);
@@ -69,7 +69,7 @@ window.Leaflets = (options = {}) => {
             leaf.className = 'leaf';
             const paper = document.createElement('div');
             paper.className = 'leaf-paper';
-            // chaque feuille a son quadrillage décalé : cinq feuilles, pas cinq copies
+            // each leaf has its grid offset: five leaves, not five copies
             const random = rng(i + 77);
             paper.style.setProperty('--leaf-ox', `${Math.round(random() * 40)}px`);
             paper.style.setProperty('--leaf-oy', `${Math.round(random() * 40)}px`);
@@ -91,7 +91,7 @@ window.Leaflets = (options = {}) => {
         });
     };
 
-    // Les feuilles prennent les cinq teintes du chapitre en cours (--aura-1 … --aura-5)
+    // The leaves take the five hues of the current chapter (--aura-1 … --aura-5)
     const tint = () => {
         const style = getComputedStyle(document.body);
         leaves.forEach(({ paper }, i) => {
@@ -100,7 +100,7 @@ window.Leaflets = (options = {}) => {
         });
     };
 
-    // Une pose : où est chaque feuille à cet instant, arrondi à la cadence
+    // A pose: where each leaf is at that instant, rounded to the frame rate
     const draw = (elapsed, pose) => {
         const travel = window.innerHeight + pad() * 2;
         const sign = settings.direction === 'down' ? -1 : 1;
@@ -110,11 +110,11 @@ window.Leaflets = (options = {}) => {
             let moving = false;
             if (phase === 'cover') {
                 const local = clamp((elapsed - i * settings.stagger) / settings.duration);
-                y = Math.pow(1 - local, 4) * travel * sign; // arrivée freinée
+                y = Math.pow(1 - local, 4) * travel * sign; // braked arrival
                 moving = local > 0 && local < 1;
             } else if (phase === 'reveal') {
                 const local = clamp((elapsed - (last - i) * settings.stagger) / settings.duration);
-                y = -Math.pow(local, 3) * travel * sign; // départ lent, sortie franche
+                y = -Math.pow(local, 3) * travel * sign; // slow start, sharp exit
                 moving = local > 0 && local < 1;
             }
             const random = rng(pose * 31 + i * 7 + 1);
@@ -133,7 +133,7 @@ window.Leaflets = (options = {}) => {
         const pose = Math.floor(elapsed * settings.fps / 1000);
         if (pose !== lastPose) {
             lastPose = pose;
-            // on dessine l'instant de la pose, pas l'instant réel : c'est ce qui donne l'à-coup
+            // draw the pose's instant, not the real instant: that is what gives the jerk
             draw(pose * 1000 / settings.fps, pose);
         }
         if (phase !== 'held' && elapsed >= total() + 1000 / settings.fps) finish();
@@ -144,7 +144,7 @@ window.Leaflets = (options = {}) => {
         const resolve = done;
         done = null;
         if (phase === 'cover') {
-            phase = 'held'; // la page est couverte : les feuilles continuent de trembler
+            phase = 'held'; // the page is covered: the leaves keep trembling
             root.classList.add('is-held');
             startedAt = performance.now();
             lastPose = -1;
@@ -181,13 +181,13 @@ window.Leaflets = (options = {}) => {
         reveal() {
             return run('reveal');
         },
-        // change un réglage à chaud ; le nombre de feuilles et la déchirure demandent de reconstruire
+        // changes a setting live; the number of leaves and the tear require a rebuild
         set(changes) {
             Object.assign(settings, changes);
             if ('count' in changes) build();
             else if ('tear' in changes) layout();
         },
-        // fige une pose précise, pour régler ou capturer : still('cover', 300)
+        // freezes a precise pose, to tune or capture: still('cover', 300)
         still(which, elapsed, text = '') {
             cancelAnimationFrame(frame);
             tint();

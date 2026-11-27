@@ -1,9 +1,9 @@
-// Dictionnaire français. Une clé = une phrase du site ; en.js porte exactement les mêmes clés.
-// Convention : page.bloc.élément. Les clés en « .html » contiennent des balises (<em>, <sup>).
-// Vérifier la cohérence : node tools/i18n-check.js
+// French dictionary. One key = one sentence of the site; en.js carries exactly the same keys.
+// Convention: page.block.element. Keys ending in ".html" contain tags (<em>, <sup>).
+// Check consistency: node tools/i18n-check.js
 window.LANCOLI_I18N = window.LANCOLI_I18N || {};
 window.LANCOLI_I18N.fr = {
-    // --- commun à toutes les pages ---
+    // --- shared across pages ---
     'nav.gallery': 'Galerie',
     'nav.projects': 'Projets',
     'nav.tools': 'Ateliers',
@@ -13,7 +13,7 @@ window.LANCOLI_I18N.fr = {
     'footer.approach': 'Démarche',
     'footer.contact': 'Contact',
 
-    // --- accueil ---
+    // --- home ---
     'home.title': 'Lancoli — Artiste visuel et musicien engagé, Dijon',
     'home.chapter': 'I — La galerie',
     'home.kicker': 'Artiste visuel et musicien · Création indépendante et engagée',
@@ -41,7 +41,7 @@ window.LANCOLI_I18N.fr = {
     'home.approach': 'Lire la démarche ↗',
     'home.contact': 'Passer au contact ↗',
 
-    // --- projets ---
+    // --- projects ---
     'projects.title': 'Projets — Pochettes d’album, films 3D, mondes urbains | Lancoli',
     'projects.kicker': 'Chapitre II · Sélection',
     'projects.heading.html': 'Travaux <em>choisis</em>',
@@ -57,7 +57,7 @@ window.LANCOLI_I18N.fr = {
     'contact.next.tag': 'Fin de la visite · Retour',
     'contact.next.title': 'La galerie',
 
-    // --- Mur libre (outil de graffiti) ---
+    // --- Mur libre (graffiti tool) ---
     'mur.pageTitle': 'Mur libre — Graffiti en ligne gratuit : bombe, coulures, mur en 3D | Lancoli',
     'mur.back': 'Retour aux projets',
     'mur.title': 'Mur libre',

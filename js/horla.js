@@ -1,9 +1,9 @@
-// Le Horla : une cassette à l'entrée, puis une carte en relief conduite par le son.
-// Script classique (pas un module) pour fonctionner aussi en ouvrant le fichier directement ;
-// three.js est importé à la volée depuis l'importmap de horla.html.
+// Le Horla: a cassette at the entrance, then a relief map led by the sound.
+// Classic script (not a module) so it also works when the file is opened directly;
+// three.js is imported on the fly from the importmap of horla.html.
 (async () => {
-    // Chapitres du storyboard audio. Timecodes PROVISOIRES, calés sur les creux du son :
-    // à remplacer par le vrai découpage. `at` = position du lieu dans la ville (x, z).
+    // Chapters of the audio storyboard. PROVISIONAL timecodes, set on the dips of the sound:
+    // to replace with the real cut. `at` = position of the place in the town (x, z).
     const CHAPTERS = [
         { id: 'barres', title: 'Les barres', start: 0, color: '#f2c14e', at: [-52, -10] },
         { id: 'lotissement', title: 'Le lotissement', start: 58.6, color: '#c79bf2', at: [-25, 3] },
@@ -11,7 +11,7 @@
         { id: 'terminus', title: 'Le terminus', start: 155, color: '#ff4d3d', at: [28, 1] },
         { id: 'poste', title: 'Le poste', start: 213.8, color: '#ff8a2a', at: [54, -12] }
     ];
-    // Modèles fournis plus tard : un chemin .glb remplace la maquette (serveur local requis).
+    // Models supplied later: a .glb path replaces the mock-up (local server required).
     const MODELS = { boombox: null, cassette: null };
 
     const root = document.documentElement;
@@ -34,7 +34,7 @@
     const titleLabel = timeline.querySelector('.timeline-title');
     const chapterRow = timeline.querySelector('.timeline-chapters');
 
-    // ---------- Le son : enveloppe précalculée (horla-envelope.js), 20 valeurs par seconde ----------
+    // ---------- The sound: precomputed envelope (horla-envelope.js), 20 values per second ----------
     const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
     const levels = Float32Array.from(envelope.data, (char) => ABC.indexOf(char) / 63);
     const total = () => audio.duration || envelope.duration;
@@ -47,7 +47,7 @@
     const chapterAt = (t) => CHAPTERS.reduce((found, c, i) => (t >= c.start ? i : found), 0);
     const clock = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
-    // lien direct : horla.html#t=70 ouvre la ville à 70 s, sans passer par l'entrée
+    // direct link: horla.html#t=70 opens the town at 70 s, skipping the entrance
     const deepLink = /[#&]t=([\d.]+)/.exec(location.hash);
     let pendingTime = deepLink ? parseFloat(deepLink[1]) : 0;
     const now = () => (audio.readyState ? audio.currentTime : pendingTime);
@@ -72,7 +72,7 @@
         live = true;
         enteredAt = instant ? -1e7 : performance.now();
         root.classList.add('horla-live');
-        if (autoplay) audio.play().catch(() => { /* lecture refusée : le bouton de la timeline prend le relais */ });
+        if (autoplay) audio.play().catch(() => { /* playback refused: the timeline button takes over */ });
     };
 
     CHAPTERS.forEach((chapter, i) => {
@@ -109,7 +109,7 @@
     audio.addEventListener('loadedmetadata', () => {
         if (pendingTime) audio.currentTime = pendingTime;
     });
-    // une seule source sonore à la fois (la face B vit dans le dossier Coulisses)
+    // a single sound source at a time (the B-side lives in the Behind-the-scenes file)
     document.addEventListener('play', (event) => {
         if (event.target === audio) {
             document.querySelectorAll('.tape audio').forEach((other) => other.pause());
@@ -118,7 +118,7 @@
         }
     }, true);
 
-    // Forme d'onde : une barre tous les 3 px, colorée par lieu une fois jouée
+    // Waveform: one bar every 3 px, coloured per place once played
     let drawnAt = -1;
     let drawnWidth = 0;
     const drawWave = (t) => {
@@ -156,12 +156,12 @@
         if (live) drawWave(t);
     };
 
-    // ---------- La scène three.js ----------
+    // ---------- The three.js stage ----------
     let world = null;
     try {
         world = await buildWorld();
     } catch (error) {
-        root.classList.add('no-gl'); // pas de WebGL ou pas de réseau : la timeline et les dossiers restent
+        root.classList.add('no-gl'); // no WebGL or no network: the timeline and the files remain
     }
 
     if (deepLink) enter(false, true);
@@ -185,7 +185,7 @@
         scene.fog = new THREE.Fog(0x121314, 110, 330);
         scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .04).texture;
         scene.environmentIntensity = .22;
-        const rigEnvironment = 1 / .22 * .9; // le poste garde ses reflets malgré la nuit
+        const rigEnvironment = 1 / .22 * .9; // the radio set keeps its reflections despite the night
         scene.add(new THREE.HemisphereLight(0x93a6cc, 0x1c1714, .55));
         const moon = new THREE.DirectionalLight(0x9db4ff, .9);
         moon.position.set(-40, 70, 30);
@@ -198,7 +198,7 @@
             mesh.position.set(x, y, z);
             return mesh;
         };
-        // cylindre couché, face vers la caméra
+        // cylinder lying down, facing the camera
         const disc = (radius, depth, material, x = 0, y = 0, z = 0) => {
             const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, depth, 40), material);
             mesh.rotation.x = Math.PI / 2;
@@ -206,7 +206,7 @@
             return mesh;
         };
 
-        // ===== Temps 1 : le poste et la cassette, suspendus très haut au-dessus de la ville =====
+        // ===== Stage 1: the radio set and the cassette, hanging high above the town =====
         const SKY = 240;
         const rig = new THREE.Group();
         scene.add(rig);
@@ -225,10 +225,10 @@
         boombox.position.x = -1.3;
         rig.add(boombox);
         boombox.add(box(4.4, 2.3, 1.1, shell));
-        boombox.add(box(4.2, .5, .04, dark, 0, .72, .56));          // bandeau du tuner
-        boombox.add(box(2.2, .1, .03, dial, -.7, .78, .59));        // cadran allumé
-        boombox.add(box(1.2, .78, .06, dark, 0, -.32, .56));        // trappe à cassette
-        boombox.add(box(3.5, .1, .1, chrome, 0, 1.72, 0));          // poignée
+        boombox.add(box(4.2, .5, .04, dark, 0, .72, .56));          // tuner strip
+        boombox.add(box(2.2, .1, .03, dial, -.7, .78, .59));        // lit dial
+        boombox.add(box(1.2, .78, .06, dark, 0, -.32, .56));        // cassette door
+        boombox.add(box(3.5, .1, .1, chrome, 0, 1.72, 0));          // handle
         boombox.add(box(.1, .6, .1, chrome, -1.75, 1.42, 0), box(.1, .6, .1, chrome, 1.75, 1.42, 0));
         for (let i = 0; i < 6; i++) boombox.add(box(.22, .08, .3, chrome, -.7 + i * .28, 1.19, .2));
         for (let i = 0; i < 3; i++) boombox.add(disc(.11, .1, chrome, 1 + i * .36, .72, .6));
@@ -292,7 +292,7 @@
         if (MODELS.boombox || MODELS.cassette) {
             import('three/addons/loaders/GLTFLoader.js').then(({ GLTFLoader }) => {
                 const loader = new GLTFLoader();
-                // remplace les volumes d'un groupe par le modèle, recadré à la même largeur
+                // replaces a group's volumes with the model, scaled to the same width
                 const swap = (group, url, width) => loader.load(url, (gltf) => {
                     const size = new THREE.Box3().setFromObject(gltf.scene).getSize(new THREE.Vector3());
                     gltf.scene.scale.setScalar(width / size.x);
@@ -304,7 +304,7 @@
             });
         }
 
-        // ===== Temps 2 : la carte en relief, cinq lieux reliés par la ligne de bus =====
+        // ===== Stage 2: the relief map, five places linked by the bus line =====
         const city = new THREE.Group();
         scene.add(city);
         let seed = 7;
@@ -315,7 +315,7 @@
             return ((n ^ (n >>> 14)) >>> 0) / 4294967296;
         };
 
-        // relief : bruit de valeur à trois octaves, plaine au premier plan, crêtes vers le fond
+        // relief: three-octave value noise, plain in the foreground, ridges at the back
         const mix = (a, b, k) => a + (b - a) * k;
         const smooth = (from, to, v) => {
             const k = Math.max(0, Math.min(1, (v - from) / (to - from)));
@@ -335,7 +335,7 @@
         const fbm = (x, z) => noise(x, z) * .55 + noise(x * 2.1 + 9, z * 2.1) * .28 + noise(x * 4.3, z * 4.3 + 4) * .17;
         const rawHeight = (x, z) => fbm(x * .02 + 3, z * .02) ** 1.7 * 42 * mix(.22, 1, smooth(45, -40, z)) + Math.max(0, -z - 60) * .16;
         const stopsAt = CHAPTERS.map((c) => new THREE.Vector3(c.at[0], rawHeight(c.at[0], c.at[1]), c.at[1]));
-        // chaque lieu repose sur un replat taillé dans la pente
+        // each place rests on a shelf cut into the slope
         const heightAt = (x, z) => {
             let h = rawHeight(x, z);
             stopsAt.forEach((s) => { h = mix(s.y, h, smooth(10, 24, Math.hypot(x - s.x, z - s.z))); });
@@ -355,16 +355,16 @@
         for (let i = 0; i < spots.count; i++) {
             const h = heightAt(spots.getX(i), spots.getZ(i));
             spots.setY(i, h);
-            const tone = .06 + Math.min(1, h / 36) * .2;                    // plus clair en altitude
+            const tone = .06 + Math.min(1, h / 36) * .2;                    // lighter at altitude
             shades.set([tone, tone * 1.03, tone * 1.1], i * 3);
         }
         land.setAttribute('color', new THREE.BufferAttribute(shades, 3));
         land.computeVertexNormals();
         city.add(new THREE.Mesh(land, new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: .95, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 })));
-        // maillage apparent, comme un relevé topographique
+        // visible mesh, like a topographic survey
         city.add(new THREE.Mesh(land, new THREE.MeshBasicMaterial({ color: 0xece7df, wireframe: true, transparent: true, opacity: .05 })));
 
-        // ruban posé sur le relief le long d'une suite de points (ligne de bus)
+        // ribbon laid on the relief along a series of points (bus line)
         const ribbon = (points, width, lift, material) => {
             const positions = [];
             const index = [];
@@ -387,7 +387,7 @@
             city.add(mesh);
             return mesh;
         };
-        // découpe un tracé en petits pas pour qu'il épouse les pentes
+        // cuts a path into small steps so it hugs the slopes
         const drape = (points, step) => {
             const out = [];
             for (let i = 0; i < points.length - 1; i++) {
@@ -403,7 +403,7 @@
         };
         ribbon(drape(stopsAt, 1.5), 1.1, .6, new THREE.MeshBasicMaterial({ color: 0xff4d3d, side: THREE.DoubleSide }));
 
-        // quelques hameaux seulement : les constructions se regroupent, le reste est laissé au relief
+        // only a few hamlets: buildings cluster, the rest is left to the relief
         const unit = new THREE.BoxGeometry(1, 1, 1);
         unit.translate(0, .5, 0);
         const concrete = new THREE.MeshStandardMaterial({ color: 0xffffff, flatShading: true, roughness: .88, metalness: .05 });
@@ -421,7 +421,7 @@
                 if (count >= 1800 || rand() > Math.max(0, cluster - .52) * 2.2) continue;
                 const height = 1 + rand() ** 2 * 7;
                 matrix.makeScale(2.5 + rand() * 1.3, height + 1.5, 2.5 + rand() * 1.3);
-                matrix.setPosition(x, heightAt(x, z) - 1.5, z);              // enfoncé dans la pente
+                matrix.setPosition(x, heightAt(x, z) - 1.5, z);              // sunk into the slope
                 blocks.setMatrixAt(count, matrix);
                 const grey = .12 + rand() * .09;
                 blocks.setColorAt(count, tint.setRGB(grey, grey * 1.03, grey * 1.08));
@@ -431,26 +431,26 @@
         blocks.count = count;
         city.add(blocks);
 
-        // les cinq lieux : quelques volumes reconnaissables, une matière lumineuse par lieu
+        // the five places: a few recognisable volumes, one glowing material per place
         const slab = new THREE.MeshStandardMaterial({ color: 0x3d4046, flatShading: true, roughness: .85 });
         const districts = CHAPTERS.map((chapter, i) => {
             const group = new THREE.Group();
             group.position.copy(stopsAt[i]);
             city.add(group);
             const glow = new THREE.MeshStandardMaterial({ color: 0x0b0b0c, emissive: chapter.color, emissiveIntensity: .4 });
-            // volume posé au sol (y = base)
+            // volume set on the ground (y = base)
             const put = (w, h, d, x, y, z, material = slab) => group.add(box(w, h, d, material, x, y + h / 2, z));
 
             if (chapter.id === 'chambre') {
                 put(5, 15, 5, -4, 0, -5);
                 put(4, 9, 4, 2.5, 0, -6);
                 put(3.5, 6, 3.5, -5, 0, 2);
-                put(1.2, 1.5, .2, -4, 11, -2.45, glow);                     // la fenêtre bleue
+                put(1.2, 1.5, .2, -4, 11, -2.45, glow);                     // the blue window
             } else if (chapter.id === 'poste') {
                 put(7, 6, 5, 0, 0, -5);
                 put(3, 3.5, 3, 5.5, 0, -1);
-                put(2.4, 1.3, .2, 0, 3.4, -2.45, glow);                     // la pièce orange
-                put(.12, 3, .12, 2.6, 6, -5);                               // antenne
+                put(2.4, 1.3, .2, 0, 3.4, -2.45, glow);                     // the orange room
+                put(.12, 3, .12, 2.6, 6, -5);                               // antenna
             } else if (chapter.id === 'barres') {
                 for (let b = 0; b < 5; b++) {
                     const x = (b - 2) * 3.8;
@@ -464,20 +464,20 @@
                     const z = h < 3 ? -6.5 : 4.5;
                     put(3.4, .2, 3.4, x, 0, z);
                     [[-1.5, -1.5], [1.5, -1.5], [-1.5, 1.5], [1.5, 1.5]].forEach(([cx, cz]) => put(.22, 2.6 + (h % 2) * 1.2, .22, x + cx, .2, z + cz));
-                    if (h % 3 !== 1) put(3.6, .2, 3.6, x, 2.8, z);          // une maison sur trois sans toit
+                    if (h % 3 !== 1) put(3.6, .2, 3.6, x, 2.8, z);          // one house in three without a roof
                     if (h % 2 === 0) put(.4, .4, .4, x, 1, z, glow);
                 }
             } else {
-                put(15, .2, 6, 1, 0, -4);                                   // le quai
-                put(12, .3, 3.6, 1, 3.2, -4.6);                             // l'auvent
+                put(15, .2, 6, 1, 0, -4);                                   // the platform
+                put(12, .3, 3.6, 1, 3.2, -4.6);                             // the canopy
                 [-4, 1, 6].forEach((x) => put(.3, 3.2, .3, x, 0, -4.6));
                 put(5.2, 1.8, 1.6, 1.5, .35, 2.2, new THREE.MeshStandardMaterial({ color: 0xb9bdc4, flatShading: true, roughness: .6 }));
-                put(.12, .34, .34, -1.16, 1.1, 1.7, glow);                  // feux arrière
+                put(.12, .34, .34, -1.16, 1.1, 1.7, glow);                  // tail lights
                 put(.12, .34, .34, -1.16, 1.1, 2.7, glow);
                 put(10, .1, .12, 1, 3.05, -2.85, glow);
             }
 
-            // balise au sol + faisceau, pilotés par l'amplitude
+            // ground beacon + beam, driven by the amplitude
             const ring = new THREE.Mesh(new THREE.RingGeometry(1.5, 1.9, 48), new THREE.MeshBasicMaterial({ color: chapter.color, transparent: true, opacity: .5, side: THREE.DoubleSide }));
             ring.rotation.x = -Math.PI / 2;
             ring.position.copy(stopsAt[i]);
@@ -491,11 +491,11 @@
             return { group, glow, ring, beam };
         });
 
-        // une seule lampe se déplace de lieu en lieu et bat avec le son
+        // a single lamp moves from place to place and beats with the sound
         const pulse = new THREE.PointLight(0xffffff, 0, 60, 1.5);
         scene.add(pulse);
 
-        // ---------- Caméra : de l'entrée (dans le ciel) à la ville ----------
+        // ---------- Camera: from the entrance (in the sky) to the town ----------
         const introPos = new THREE.Vector3();
         const introLook = new THREE.Vector3();
         const worldOffset = new THREE.Vector3(0, 27, 84);
@@ -517,14 +517,14 @@
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
             const wide = camera.aspect > 1.15;
-            // grand écran : le poste occupe la moitié droite ; petit écran : il passe sous le texte
+            // large screen: the radio set fills the right half; small screen: it moves below the text
             const distance = wide ? Math.min(21, Math.max(12, 28 / camera.aspect)) : Math.max(13, 13.6 / camera.aspect);
             const visible = 2 * Math.tan(THREE.MathUtils.degToRad(16)) * distance;
             rig.position.set(wide ? visible * camera.aspect * .225 : -.1, SKY, 0);
             introPos.set(0, SKY + .5 + (wide ? 0 : visible * .24), distance);
             introLook.set(0, SKY + (wide ? .2 : visible * .24), 0);
             worldOffset.set(0, 27, 84).multiplyScalar(wide ? 1 : Math.min(2.2, 1.25 / camera.aspect));
-            // la brume recule avec la caméra pour que la ville reste lisible sur écran étroit
+            // the fog recedes with the camera so the town stays readable on a narrow screen
             scene.fog.near = worldOffset.length() * .75;
             scene.fog.far = worldOffset.length() * 3.6;
         };
@@ -549,11 +549,11 @@
 
         const render = (time) => {
             const t = time * .001;
-            // k : 0 à l'entrée, 1 une fois dans la ville (la cassette s'insère d'abord)
+            // k: 0 at the entrance, 1 once in the town (the cassette goes in first)
             const k = !live ? 0 : reduceMotion ? 1 : Math.min(1, Math.max(0, (time - enteredAt - 700) / 3000));
             const e = ease(k);
 
-            // --- entrée ---
+            // --- entrance ---
             rig.visible = k < 1;
             if (rig.visible) {
                 if (live) scratch.copy(slot);
@@ -571,12 +571,12 @@
                 }
             }
 
-            // --- ville ---
+            // --- town ---
             const playhead = now();
             amp += (levelAt(playhead) - amp) * .3;
             const current = Math.max(0, active);
             focusTarget.set(stopsAt[current].x * .62, stopsAt[current].y, stopsAt[current].z * .5 + 17);
-            focus.lerp(focusTarget, focusSet ? .025 : 1); // première image : pas de travelling
+            focus.lerp(focusTarget, focusSet ? .025 : 1); // first frame: no camera move
             focusSet = true;
             city.scale.y = .001 + (1 - (1 - Math.min(1, Math.max(0, (k - .35) / .65))) ** 3);
 
@@ -595,7 +595,7 @@
             pulse.color.set(CHAPTERS[current].color);
             pulse.intensity = live ? 40 + amp * amp * 700 : 0;
 
-            // --- caméra ---
+            // --- camera ---
             camera.position.lerpVectors(introPos, scratch.copy(focus).add(worldOffset), e);
             if (k === 1 && !reduceMotion) {
                 camera.position.x += pointer.x * 9;
@@ -605,7 +605,7 @@
             scratch.y += 5;
             camera.lookAt(look.lerpVectors(introLook, scratch, e));
 
-            // --- étiquettes HTML : repère de la cassette, puis arrêts posés sur la ville ---
+            // --- HTML labels: the cassette marker, then the stops set on the town ---
             if (!live) {
                 cassette.getWorldPosition(scratch).project(camera);
                 cue.style.translate = `${(scratch.x * .5 + .5) * width - 60}px ${(-scratch.y * .5 + .5) * height + height * .12}px`;

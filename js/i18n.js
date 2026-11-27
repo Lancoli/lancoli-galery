@@ -1,28 +1,28 @@
-// Traduction : le HTML porte le français (lisible sans script, indexable), les dictionnaires i18n/*.js
-// portent chaque phrase sous une clé. Ce script remplace le texte des éléments marqués :
-//   data-i18n="clé"                  → texte de l'élément
-//   data-i18n-html="clé"             → contenu avec balises (dictionnaires de confiance uniquement)
-//   data-i18n-attr="attribut:clé; …" → attributs (aria-label, alt, title…)
-// À charger après les dictionnaires et avant lancoli.js, qui lit certains textes au démarrage.
+// Translation: the HTML carries the French (readable without script, indexable), the i18n/*.js dictionaries
+// carry each sentence under a key. This script replaces the text of the marked elements:
+//   data-i18n="key"                  → element text
+//   data-i18n-html="key"             → content with tags (trusted dictionaries only)
+//   data-i18n-attr="attribute:key; …" → attributes (aria-label, alt, title…)
+// Load after the dictionaries and before lancoli.js, which reads some texts on start.
 (() => {
     const dictionaries = window.LANCOLI_I18N || {};
     const SUPPORTED = ['fr', 'en'];
     const FALLBACK = 'fr';
     const STORE = 'lancoli-lang';
 
-    // langue : ?lang=en dans l'adresse, sinon le dernier choix, sinon le français
+    // language: ?lang=en in the address, else the last choice, else French
     const pick = () => {
         const asked = new URLSearchParams(location.search).get('lang');
         if (SUPPORTED.includes(asked)) return asked;
         try {
             const saved = localStorage.getItem(STORE);
             if (SUPPORTED.includes(saved)) return saved;
-        } catch (error) { /* stockage indisponible */ }
+        } catch (error) { /* storage unavailable */ }
         return FALLBACK;
     };
     const lang = pick();
 
-    // une clé absente retombe sur le français, puis sur la clé elle-même (visible : l'oubli se voit)
+    // a missing key falls back to French, then to the key itself (visible: the gap shows)
     const t = (key) => {
         const own = dictionaries[lang] || {};
         if (key in own) return own[key];
@@ -35,7 +35,7 @@
     window.lancoliLang = lang;
 
     document.documentElement.lang = lang;
-    // en français le HTML est déjà juste : on ne touche au texte que pour une autre langue
+    // in French the HTML is already right: the text is only touched for another language
     if (lang !== FALLBACK) {
         document.querySelectorAll('[data-i18n]').forEach((node) => { node.textContent = t(node.dataset.i18n); });
         document.querySelectorAll('[data-i18n-html]').forEach((node) => { node.innerHTML = t(node.dataset.i18nHtml); });
@@ -47,12 +47,12 @@
         });
     }
 
-    // sélecteur : on enregistre le choix et on recharge, pour que les textes construits par script suivent aussi
+    // switch: save the choice and reload, so that script-built texts follow too
     document.querySelectorAll('[data-lang]').forEach((button) => {
         button.setAttribute('aria-pressed', String(button.dataset.lang === lang));
         button.addEventListener('click', () => {
             if (button.dataset.lang === lang) return;
-            try { localStorage.setItem(STORE, button.dataset.lang); } catch (error) { /* stockage indisponible */ }
+            try { localStorage.setItem(STORE, button.dataset.lang); } catch (error) { /* storage unavailable */ }
             const url = new URL(location.href);
             url.searchParams.delete('lang');
             location.replace(url);

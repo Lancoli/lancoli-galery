@@ -1,16 +1,16 @@
-/* ---------- Feuillets : transition verticale en feuilles quadrillées (feuillets.js) ---------- */
+/* ---------- Leaflets: vertical transition in grid-paper leaves (leaflets.js) ---------- */
 
-/* Réglages de papier : tout se pilote d'ici (ou depuis feuillets.html)
-   --leaf-grid     taille d'un carreau
-   --leaf-rule     couleur des lignes du quadrillage
-   --leaf-edge     tranche claire de la déchirure
-   --leaf-texture  image de papier : url("…"), ou none pour une feuille lisse
-   --leaf-blend    fusion de la texture avec la couleur de la feuille ; normal = texture seule, dessous */
+/* Paper settings: everything is driven from here (or from feuillets.html)
+   --leaf-grid     size of a square
+   --leaf-rule     colour of the grid lines
+   --leaf-edge     light edge of the tear
+   --leaf-texture  paper image: url("…"), or none for a smooth leaf
+   --leaf-blend    blend of the texture with the leaf colour; normal = texture alone, underneath */
 .leaves {
     --leaf-grid: 24px;
     --leaf-rule: color-mix(in srgb, var(--ink) 13%, transparent);
     --leaf-edge: var(--paper);
-    --leaf-texture: url("../assets/textures/papier-blanc.jpg");
+    --leaf-texture: url("../assets/textures/paper-white.jpg");
     --leaf-blend: multiply;
     position: fixed;
     inset: 0;
@@ -24,7 +24,7 @@
     visibility: visible
 }
 
-/* la feuille déborde sur les côtés : le tremblé ne découvre jamais un coin */
+/* the leaf overflows at the sides: the jitter never uncovers a corner */
 .leaf {
     position: absolute;
     left: -3%;
@@ -36,7 +36,7 @@
         drop-shadow(0 0 16px rgba(23, 23, 23, .2))
 }
 
-/* de haut en bas : quadrillage, texture de papier, couleur */
+/* top to bottom: grid, paper texture, colour */
 .leaf-paper {
     position: absolute;
     inset: 0;
@@ -50,7 +50,7 @@
     background-blend-mode: normal, normal, var(--leaf-blend)
 }
 
-/* le titre du chapitre, posé sur la dernière feuille : il apparaît d'un coup, sans fondu */
+/* the chapter title, laid on the last leaf: it appears at once, without a fade */
 .leaf-label {
     position: absolute;
     inset: 0;
@@ -66,7 +66,7 @@
     visibility: visible
 }
 
-/* pages film : la tranche de la déchirure reste claire sur fond sombre */
+/* film pages: the tear edge stays light on a dark background */
 html.film .leaves {
     --leaf-edge: var(--ink)
 }

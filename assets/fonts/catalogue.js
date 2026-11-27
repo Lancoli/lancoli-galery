@@ -1,8 +1,8 @@
-// Le catalogue des typos de Lancoli pour les éditeurs graphiques (pochette, lettrage du mur).
-// Les fichiers sont déclarés dans fonts.css ; une typo ne se télécharge que lorsqu'on la choisit.
-//   family, weight, style : la police ; stretch : la largeur, en mot-clé de canevas (ctx.fontStretch)
-//   spacing : l'approche en em ; upper : en capitales ; line : l'interligne
-//   LancoliFonts.css(typo, px) → la valeur de ctx.font ; LancoliFonts.load(typo) → une promesse
+// Lancoli's typeface catalogue for the graphic editors (cover, wall lettering).
+// The files are declared in fonts.css; a typeface is only downloaded when chosen.
+//   family, weight, style: the font; stretch: the width, as a canvas keyword (ctx.fontStretch)
+//   spacing: the tracking in em; upper: in capitals; line: the line height
+//   LancoliFonts.css(typo, px) → the value of ctx.font; LancoliFonts.load(typo) → a promise
 (() => {
     const T = (id, nom, family, weight, more = {}) => ({ id, nom, family, weight, style: 'normal', stretch: 'normal', spacing: -.04, upper: false, line: .92, ...more });
     const list = [
@@ -54,7 +54,7 @@
         get: (id) => byId.get(id),
         css,
         load: (f) => (document.fonts ? document.fonts.load(css(f, 40)) : Promise.resolve()),
-        // remplit un <select> : un optgroup par famille de typos
+        // fills a <select>: one optgroup per typeface family
         fill(select, selected) {
             select.textContent = '';
             for (const g of list) {
