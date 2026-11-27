@@ -3,10 +3,10 @@
  "date": "2026-11-27",
  "mesures": {
   "fichiers": 4,
-  "lignes": 5169,
+  "lignes": 5179,
   "hexHorsRoot": 145,
   "couleursDistinctes": 81,
-  "rgbaEnDur": 86,
+  "rgbaEnDur": 87,
   "tailles": 35,
   "interlettrages": 18,
   "polygones": 2,
@@ -15,7 +15,7 @@
   "couches": 13,
   "arrondis": 64,
   "survolQuiBouge": 0,
-  "important": 1,
+  "important": 0,
   "surcouches": 3
  }
 }

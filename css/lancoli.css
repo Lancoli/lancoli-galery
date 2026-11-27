@@ -281,12 +281,23 @@ html.film header {
     --nav-lift: 1.35
 }
 
-.nav,
-footer {
+.nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 24px
+}
+
+footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    border-top: 1px solid var(--line);
+    padding: 28px 0;
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 40px
 }
 
 .logo {
@@ -1151,14 +1162,6 @@ a.atelier strong::after {
     filter: brightness(1.15)
 }
 
-footer {
-    border-top: 1px solid var(--line);
-    padding: 28px 0;
-    color: var(--muted);
-    font-size: 11px;
-    margin-top: 40px
-}
-
 /* ---------- Responsive ---------- */
 
 @media (max-width: 760px) {
@@ -1308,12 +1311,12 @@ footer {
     transition: transform .4s var(--ease-out), box-shadow .4s ease
 }
 
-a.project-card:hover,
-a.project-card:focus-visible {
+a.project-card:hover {
     box-shadow: 10px 12px 0 rgba(23, 23, 23, .08)
 }
 
 a.project-card:focus-visible {
+    box-shadow: 10px 12px 0 rgba(23, 23, 23, .08);
     outline: 1px solid var(--ink);
     outline-offset: 3px
 }
@@ -1543,9 +1546,23 @@ main.horla {
 
 main.horla a,
 main.horla button,
-main.horla input,
-.timeline {
+main.horla input {
     pointer-events: auto
+}
+
+.timeline {
+    pointer-events: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 18px;
+    padding: 14px 16px 10px;
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--accent);
+    background: rgba(18, 19, 20, .84);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition: border-color .6s ease
 }
 
 /* Stage 1: the entrance */
@@ -1932,19 +1949,6 @@ html.horla-live .horla-world {
 }
 
 /* the timeline: the storyboard sound, cut per place */
-.timeline {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 18px;
-    padding: 14px 16px 10px;
-    border: 1px solid var(--line);
-    border-top: 2px solid var(--accent);
-    background: rgba(18, 19, 20, .84);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    transition: border-color .6s ease
-}
 
 .timeline-now {
     display: flex;
@@ -4260,13 +4264,21 @@ html.film--lyon .aura span {
 }
 
 /* stencil titles: bold, slanted, in capitals */
-html.film--lyon .chapter-hero h1,
-html.film--lyon .act-head h2,
-html.film--lyon .leg-label {
+html.film--lyon .chapter-hero h1 {
     font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
     font-weight: 900;
     font-style: italic;
     text-transform: uppercase
+}
+
+html.film--lyon .leg-label {
+    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: -.05em
 }
 
 html.film--lyon .chapter-hero h1 em {
@@ -4276,6 +4288,10 @@ html.film--lyon .chapter-hero h1 em {
 /* one edit, one colour (--tint, set on each <section class="act">): the title leans like a tag,
    underlined with a spray stroke */
 html.film--lyon .act-head h2 {
+    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
     font-size: clamp(32px, 3.4vw, 46px);
     letter-spacing: -.06em;
     color: var(--tint);
@@ -4321,12 +4337,6 @@ html.film--lyon .leg:nth-of-type(even)::before {
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent);
     opacity: .12
-}
-
-html.film--lyon .leg-label {
-    font-size: 22px;
-    line-height: 1;
-    letter-spacing: -.05em
 }
 
 html.film--lyon .leg-label small {
@@ -4626,9 +4636,9 @@ html.film .micro figcaption strong {
     transition: background .3s ease, color .3s ease, opacity .3s ease
 }
 
-.book-prev,
-.book-next {
-    font-size: 15px !important
+.book-bar .book-prev,
+.book-bar .book-next {
+    font-size: 15px
 }
 
 .book-bar button:hover:not(:disabled) {
