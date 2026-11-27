@@ -1,13 +1,18 @@
 # généré par tools/kit-github.mjs
 # PR de release automatique : à chaque push sur main, release-please tient une PR « chore: release »
 # (version, CHANGELOG.md tiré des feat/fix). La fusionner crée le tag et la release GitHub.
+# Off until switched on, otherwise every push fails (and sends an email):
+#   1. Settings → Actions → General → tick "Allow GitHub Actions to create and approve pull requests"
+#   2. Settings → Secrets and variables → Actions → Variables: RELEASE_PLEASE = on
 name: release
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 permissions: { contents: write, pull-requests: write }
 jobs:
   release-please:
+    if: vars.RELEASE_PLEASE == 'on'
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
