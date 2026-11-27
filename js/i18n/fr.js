@@ -34,7 +34,7 @@ window.LANCOLI_I18N.fr = {
     'home.tools.wall': 'Mur libre',
     'home.tools.wall.text': 'Bombe, marqueur, lettrage : peins un mur, exporte-le.',
     'home.tools.reel': 'Stories',
-    'home.tools.reel.text': 'Une pochette, un son : le visuel réagit à la musique, exporte la vidéo 1080 × 1920.',
+    'home.tools.reel.text': 'Une pochette, un son : le visuel réagit à la musique, et tu exportes la vidéo 1080 × 1920.',
     'home.tools.cover': 'Pochette',
     'home.tools.cover.text': 'Titre, typo, image : une pochette prête à sortir. Bientôt.',
     'home.places': 'Dijon · Paris · Lyon',
