@@ -37,8 +37,9 @@
       "texte": "N0 · sur GitHub, à jour (origin, 0 commit non poussé)",
       "pour": "github",
       "preuve": "pas de remote origin",
-      "fait": false,
-      "auto": true
+      "fait": true,
+      "auto": true,
+      "fait_le": "2026-11-27T03:35:49.757Z"
     },
     {
       "id": "auto-readme",
@@ -53,38 +54,38 @@
       "id": "auto-git",
       "texte": "N0 · dépôt git propre (rien en attente de commit)",
       "pour": "git",
-      "preuve": "pas de dépôt git",
-      "fait": true,
+      "preuve": "2 fichier(s) non commité(s)",
+      "fait": false,
       "auto": true,
       "fait_le": "2026-11-26T22:58:37.265Z"
     }
   ],
   "etat": {
-    "date": "2026-11-27T00:44:14.179Z",
+    "date": "2026-11-27T04:16:04.040Z",
     "niveau": null,
     "prochain": "N0",
     "bloque": [
-      "github"
+      "git"
     ],
     "humain": {},
     "criteres": {
       "git": {
-        "ok": true,
-        "preuve": "propre",
+        "ok": false,
+        "preuve": "2 fichier(s) non commité(s)",
         "niveau": "N0",
         "texte": "dépôt git propre (rien en attente de commit)",
         "type": "auto"
       },
       "github": {
-        "ok": false,
-        "preuve": "pas de remote origin",
+        "ok": true,
+        "preuve": "Lancoli/lancoli-galery.git",
         "niveau": "N0",
         "texte": "sur GitHub, à jour (origin, 0 commit non poussé)",
         "type": "auto"
       },
       "readme": {
         "ok": true,
-        "preuve": "833 caractères",
+        "preuve": "1901 caractères",
         "niveau": "N0",
         "texte": "README : ce que c'est, comment le lancer (≥ 300 caractères)",
         "type": "auto"
@@ -105,14 +106,14 @@
       },
       "console": {
         "ok": false,
-        "preuve": "9 erreur(s), ex. contact.html : Unexpected identifier 'observation' (dernier passage)",
+        "preuve": "1 erreur(s), ex. horla.html : 404 assets/projects/Horla/Horlando/portrait.jpg",
         "niveau": "N1",
         "texte": "chaque page s'ouvre sans erreur JS ni ressource en erreur",
         "type": "auto"
       },
       "mobile": {
         "ok": false,
-        "preuve": "trop large : contact.html (463 px), demarche.html (454 px), horla.html (458 px) (dernier passage)",
+        "preuve": "trop large : contact.html (463 px), demarche.html (454 px), horla.html (458 px)",
         "niveau": "N1",
         "texte": "aucune page plus large que 375 px",
         "type": "auto"
@@ -125,15 +126,15 @@
         "type": "auto"
       },
       "licence": {
-        "ok": false,
-        "preuve": "LICENSE absent",
+        "ok": true,
+        "preuve": "LICENSE",
         "niveau": "N1",
         "texte": "licence déclarée (fichier LICENSE)",
         "type": "auto"
       },
       "changelog": {
-        "ok": false,
-        "preuve": "CHANGELOG.md absent",
+        "ok": true,
+        "preuve": "CHANGELOG.md",
         "niveau": "N1",
         "texte": "journal des versions (CHANGELOG.md)",
         "type": "auto"
