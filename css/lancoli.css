@@ -1,7 +1,8 @@
 :root {
     --paper: #fbfaf7;
     --ink: #171717;
-    --muted: #6f6a63;
+    --muted: #5a5551;
+    --muted-light: #746e68;
     --line: rgba(23, 23, 23, .12);
     --glass: rgba(255, 255, 255, .42);
 
@@ -340,9 +341,15 @@ nav a:not(.pill)::after {
 }
 
 nav a:not(.pill):hover::after,
+nav a:not(.pill):focus-visible::after,
 nav a[aria-current="page"]::after {
     transform: scaleX(1);
     transform-origin: left
+}
+
+nav a:not(.pill):focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px
 }
 
 .pill {
@@ -357,6 +364,11 @@ nav a[aria-current="page"]::after {
 .pill:hover {
     background: var(--ink);
     color: var(--paper)
+}
+
+.pill:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px
 }
 
 .kicker,
@@ -469,7 +481,7 @@ nav a[aria-current="page"]::after {
     max-width: 380px;
     margin: 0;
     line-height: 1.5;
-    color: #444
+    color: var(--muted)
 }
 
 .threshold-intro .threshold-lede {
@@ -578,6 +590,11 @@ a.atelier strong::after {
     text-transform: uppercase;
     border-top: 1px solid var(--line);
     padding-top: 16px
+}
+
+.threshold-bottom a:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px
 }
 
 /* ---------- Entry CTA ---------- */
@@ -805,6 +822,15 @@ a.atelier strong::after {
 }
 
 .tile:hover::before {
+    filter: brightness(1.15)
+}
+
+.tile:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px
+}
+
+.tile:focus-visible::before {
     filter: brightness(1.15)
 }
 
