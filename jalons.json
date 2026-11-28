@@ -54,14 +54,14 @@
       "id": "auto-git",
       "texte": "N0 · dépôt git propre (rien en attente de commit)",
       "pour": "git",
-      "preuve": "3 fichier(s) non commité(s)",
+      "preuve": "4 fichier(s) non commité(s)",
       "fait": false,
       "auto": true,
       "fait_le": "2026-11-26T22:58:37.265Z"
     }
   ],
   "etat": {
-    "date": "2026-11-27T12:08:56.901Z",
+    "date": "2026-11-28T14:02:51.638Z",
     "niveau": null,
     "prochain": "N0",
     "bloque": [
@@ -71,7 +71,7 @@
     "criteres": {
       "git": {
         "ok": false,
-        "preuve": "3 fichier(s) non commité(s)",
+        "preuve": "4 fichier(s) non commité(s)",
         "niveau": "N0",
         "texte": "dépôt git propre (rien en attente de commit)",
         "type": "auto"
@@ -99,21 +99,21 @@
       },
       "liens": {
         "ok": true,
-        "preuve": "290 références",
+        "preuve": "289 références",
         "niveau": "N1",
         "texte": "tout ce qui est cité existe (tools/liens.mjs)",
         "type": "auto"
       },
       "console": {
-        "ok": false,
-        "preuve": "1 erreur(s), ex. horla.html : 404 assets/projects/Horla/Horlando/portrait.jpg",
+        "ok": true,
+        "preuve": "9 page(s) sans erreur",
         "niveau": "N1",
         "texte": "chaque page s'ouvre sans erreur JS ni ressource en erreur",
         "type": "auto"
       },
       "mobile": {
-        "ok": false,
-        "preuve": "trop large : contact.html (463 px), demarche.html (454 px), horla.html (458 px)",
+        "ok": true,
+        "preuve": "9 page(s) à 375 px",
         "niveau": "N1",
         "texte": "aucune page plus large que 375 px",
         "type": "auto"
