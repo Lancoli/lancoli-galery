@@ -36,8 +36,8 @@
       "id": "auto-github",
       "texte": "N0 · sur GitHub, à jour (origin, 0 commit non poussé)",
       "pour": "github",
-      "preuve": "5 commit(s) non poussé(s)",
-      "fait": true,
+      "preuve": "1 commit(s) non poussé(s)",
+      "fait": false,
       "auto": true,
       "fait_le": "2026-11-27T09:19:57.331Z"
     },
@@ -61,11 +61,12 @@
     }
   ],
   "etat": {
-    "date": "2026-11-28T14:04:36.425Z",
+    "date": "2026-11-28T16:37:15.669Z",
     "niveau": null,
     "prochain": "N0",
     "bloque": [
-      "git"
+      "git",
+      "github"
     ],
     "humain": {},
     "criteres": {
@@ -77,8 +78,8 @@
         "type": "auto"
       },
       "github": {
-        "ok": true,
-        "preuve": "Lancoli/lancoli-galery.git",
+        "ok": false,
+        "preuve": "1 commit(s) non poussé(s)",
         "niveau": "N0",
         "texte": "sur GitHub, à jour (origin, 0 commit non poussé)",
         "type": "auto"
@@ -106,14 +107,14 @@
       },
       "console": {
         "ok": true,
-        "preuve": "9 page(s) sans erreur",
+        "preuve": "9 page(s) sans erreur (dernier passage)",
         "niveau": "N1",
         "texte": "chaque page s'ouvre sans erreur JS ni ressource en erreur",
         "type": "auto"
       },
       "mobile": {
         "ok": true,
-        "preuve": "9 page(s) à 375 px",
+        "preuve": "9 page(s) à 375 px (dernier passage)",
         "niveau": "N1",
         "texte": "aucune page plus large que 375 px",
         "type": "auto"
