@@ -54,14 +54,14 @@
       "id": "auto-git",
       "texte": "N0 · dépôt git propre (rien en attente de commit)",
       "pour": "git",
-      "preuve": "4 fichier(s) non commité(s)",
+      "preuve": "1 fichier(s) non commité(s)",
       "fait": false,
       "auto": true,
       "fait_le": "2026-11-26T22:58:37.265Z"
     }
   ],
   "etat": {
-    "date": "2026-11-28T14:02:51.638Z",
+    "date": "2026-11-28T14:04:36.425Z",
     "niveau": null,
     "prochain": "N0",
     "bloque": [
@@ -71,7 +71,7 @@
     "criteres": {
       "git": {
         "ok": false,
-        "preuve": "4 fichier(s) non commité(s)",
+        "preuve": "1 fichier(s) non commité(s)",
         "niveau": "N0",
         "texte": "dépôt git propre (rien en attente de commit)",
         "type": "auto"
