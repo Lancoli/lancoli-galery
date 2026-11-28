@@ -37,9 +37,9 @@
       "texte": "N0 · sur GitHub, à jour (origin, 0 commit non poussé)",
       "pour": "github",
       "preuve": "1 commit(s) non poussé(s)",
-      "fait": false,
+      "fait": true,
       "auto": true,
-      "fait_le": "2026-11-27T09:19:57.331Z"
+      "fait_le": "2026-11-28T17:17:12.917Z"
     },
     {
       "id": "auto-readme",
@@ -61,12 +61,11 @@
     }
   ],
   "etat": {
-    "date": "2026-11-28T16:37:15.669Z",
+    "date": "2026-11-28T17:17:12.917Z",
     "niveau": null,
     "prochain": "N0",
     "bloque": [
-      "git",
-      "github"
+      "git"
     ],
     "humain": {},
     "criteres": {
@@ -78,8 +77,8 @@
         "type": "auto"
       },
       "github": {
-        "ok": false,
-        "preuve": "1 commit(s) non poussé(s)",
+        "ok": true,
+        "preuve": "Lancoli/lancoli-galery.git",
         "niveau": "N0",
         "texte": "sur GitHub, à jour (origin, 0 commit non poussé)",
         "type": "auto"
@@ -100,7 +99,7 @@
       },
       "liens": {
         "ok": true,
-        "preuve": "289 références",
+        "preuve": "288 références",
         "niveau": "N1",
         "texte": "tout ce qui est cité existe (tools/liens.mjs)",
         "type": "auto"
