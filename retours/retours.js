@@ -130,7 +130,7 @@
     const viewNote = el('div', 'retours-vue');
     const zone = el('textarea', 'retours-texte');
     zone.rows = 6;
-    zone.placeholder = 'What's wrong, what needs changing… (or dictate with the mic)';
+    zone.placeholder = 'What’s wrong, what needs changing… (or dictate with the mic)';
     zone.value = store.get(DRAFT) || '';
     zone.addEventListener('input', () => store.set(DRAFT, zone.value));
     const tools = el('div', 'retours-outils');

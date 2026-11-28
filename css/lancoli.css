@@ -1169,13 +1169,13 @@ a.atelier strong::after {
         width: calc(100% - 32px)
     }
 
+    .nav, nav { gap: 12px } nav .chapter { display: none }
+
     nav a:not(.pill) {
         display: none
     }
 
-    .chapter-bar {
-        width: 40px
-    }
+    .chapter-bar { width: 40px }
 
     .chapter-hero {
         grid-template-columns: 1fr;
