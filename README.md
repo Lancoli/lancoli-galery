@@ -1,5 +1,9 @@
 # Lancoli
 
+<!-- badges : généré par tools/kit-github.mjs -->
+[![qualité](https://github.com/Lancoli/lancoli-galery/actions/workflows/qualite.yml/badge.svg)](https://github.com/Lancoli/lancoli-galery/actions/workflows/qualite.yml) [![release](https://img.shields.io/github/v/release/Lancoli/lancoli-galery?include_prereleases&label=version)](https://github.com/Lancoli/lancoli-galery/releases) [![Conventional Commits](https://img.shields.io/badge/commits-conventionnels%20%2B%20gitmoji-ff69b4)](https://www.conventionalcommits.org/fr/) [![dernier commit](https://img.shields.io/github/last-commit/Lancoli/lancoli-galery)](https://github.com/Lancoli/lancoli-galery/commits)
+<!-- /badges -->
+
 The website of Lancoli, a committed artist: his approach, his four grounds of action, his projects (graffiti, leaflets,
 Horla, Lyon, Leaving Home…) and his handmade merch.
 

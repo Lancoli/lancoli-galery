@@ -1,33 +1,33 @@
-// Les retours : un bouton « Dire à Claude » posé sur le site, pour noter ce qu'il faut corriger pendant qu'on s'en sert,
-// comme un visiteur. Chaque note devient un ticket (Supabase, projet lancoli-retours), que Claude traite
-// (tools/retours.mjs, tools/RETOURS.md) : il le prend, corrige, commite, répond ici ; on valide ou on renvoie.
+// Feedback widget: a "Tell Claude" button on the site, to note what needs fixing while using it,
+// like a visitor. Each note becomes a ticket (Supabase, lancoli-retours project), that Claude handles
+// (tools/retours.mjs, tools/RETOURS.md): takes it, fixes, commits, answers here; we validate or send back.
 //
-// Qui le voit : seulement un navigateur activé. On l'active une fois par https://<site>/?retours=<jeton>
-// (le jeton du .env, RETOURS_JETON) ; il reste dans ce navigateur (localStorage) et disparaît de l'adresse.
-// ?retours=off le désactive. Sans jeton, rien ne se charge : un visiteur ne voit jamais ce bouton.
-// La dictée : le micro du navigateur (Chrome, Edge ; il faut https ou localhost). Sur téléphone, le micro du clavier
-// fait aussi bien. Chaque ticket emporte son contexte : la page, le mode, l'écran, le thème, la version, ce qui joue,
-// le texte sélectionné, et l'élément pointé (« Pointer » puis un clic sur la page).
-// Module partagé : la source est Portfolio/retours/widget/ ; `node retours/installer.mjs` la recopie dans chaque app
-// (ne pas modifier la copie). La config : window.RETOURS = { app, url, cle, theme } (retours-config.js, écrit par
-// l'installeur), sinon window.STUDIO.retours (Lancoli Studio, par le .env). theme = des variables CSS (--retours-…).
+// Who sees it: only an activated browser. Activate once via https://<site>/?retours=<token>
+// (the token from .env, RETOURS_JETON); it stays in that browser (localStorage) and vanishes from the address.
+// ?retours=off deactivates it. Without token, nothing loads: a visitor never sees this button.
+// Dictation: browser microphone (Chrome, Edge; requires https or localhost). On phone, keyboard mic
+// works fine too. Each ticket carries its context: page, mode, screen, theme, version, what's playing,
+// selected text, and pointed element ("Point" then click on page).
+// Shared module: source is Portfolio/retours/widget/; `node retours/installer.mjs` copies it into each app
+// (don't modify the copy). Config: window.RETOURS = { app, url, cle, theme } (retours-config.js, written by
+// installer), otherwise window.STUDIO.retours (Lancoli Studio, from .env). theme = CSS variables (--retours-…).
 (() => {
     const ICI = (document.currentScript && document.currentScript.src) || '';
     const S = window.STUDIO || { version: '', env: '' };
     const R = window.RETOURS || (window.STUDIO && window.STUDIO.retours && { app: 'lancoli-studio', ...window.STUDIO.retours });
     if (!R || R.on === false || !R.url || !R.cle) return;
-    // l'app visée : celle de la page ; le tableau de bord la change (window.Retours.ouvrir('jondi'))
+    // targeted app: the page's one; dashboard changes it (window.Retours.ouvrir('jondi'))
     let app = R.app || 'lancoli-studio';
 
     const CLE = 'lancoli:retours-jeton';
-    const BROUILLON = 'lancoli:retours-brouillon';
+    const DRAFT = 'lancoli:retours-brouillon';
     const store = {
         get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
-        set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* navigation privée */ } },
-        drop: (k) => { try { localStorage.removeItem(k); } catch { /* idem */ } }
+        set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* private browsing */ } },
+        drop: (k) => { try { localStorage.removeItem(k); } catch { /* same */ } }
     };
 
-    // l'activation par l'adresse : le jeton est gardé, puis retiré de la barre d'adresse
+    // activation via URL: token is kept, then removed from address bar
     const params = new URLSearchParams(location.search);
     if (params.has('retours')) {
         const v = params.get('retours');
@@ -44,7 +44,7 @@
     css.href = ICI ? new URL('retours.css', ICI).href : `${R.base || ''}retours.css`;
     document.head.append(css);
 
-    // ---------- L'API : PostgREST, le jeton en en-tête (les règles RLS le vérifient) ----------
+    // ---------- API: PostgREST, token in header (RLS rules check it) ----------
     const api = async (chemin, { method = 'GET', body, prefer } = {}) => {
         const res = await fetch(`${R.url}/rest/v1/${chemin}`, {
             method,
@@ -73,22 +73,22 @@
         return b;
     };
 
-    // ---------- Le contexte : ce que Claude doit savoir pour retrouver le problème ----------
-    let pointe = null;
-    const decrire = (n) => {
+    // ---------- Context: what Claude needs to know to find the issue ----------
+    let pointed = null;
+    const describe = (n) => {
         if (!n || n.nodeType !== 1) return null;
-        const chemin = [];
-        for (let x = n; x && x !== document.body && chemin.length < 5; x = x.parentElement) {
-            chemin.unshift(x.tagName.toLowerCase() + (x.id ? `#${x.id}` : '') + [...x.classList].slice(0, 3).map((c) => `.${c}`).join(''));
+        const path = [];
+        for (let x = n; x && x !== document.body && path.length < 5; x = x.parentElement) {
+            path.unshift(x.tagName.toLowerCase() + (x.id ? `#${x.id}` : '') + [...x.classList].slice(0, 3).map((c) => `.${c}`).join(''));
         }
         const r = n.getBoundingClientRect();
         return {
-            chemin: chemin.join(' > '),
+            chemin: path.join(' > '),
             texte: (n.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 160),
             boite: `${Math.round(r.left)},${Math.round(r.top)} ${Math.round(r.width)}×${Math.round(r.height)}`
         };
     };
-    const contexte = () => {
+    const context = () => {
         const L = window.Lecteur;
         const st = L && L.state;
         const piste = st && st.file ? ((st.file.tracks[st.index] || {}).title || st.file.title) : '';
@@ -104,237 +104,237 @@
             navigateur: (navigator.userAgent.match(/(Firefox|Edg|OPR|Chrome|Safari)\/[\d.]+/) || [''])[0],
             lecture: piste ? `${piste}${st.playing ? ' (en lecture)' : ''}` : '',
             selection: sel || undefined,
-            element: pointe || undefined
+            element: pointed || undefined
         };
     };
 
-    // ---------- Le bouton et le panneau ----------
-    const racine = el('div', 'retours');
-    racine.setAttribute('data-retours', '');
-    Object.entries(R.theme || {}).forEach(([k, v]) => racine.style.setProperty(k, v));
-    const ouvrir = bouton('retours-ouvrir', 'Dire à Claude', 'Noter une correction pour Claude');
-    const panneau = el('section', 'retours-panneau');
-    panneau.hidden = true;
-    panneau.setAttribute('aria-label', 'Noter une correction');
+    // ---------- Button and panel ----------
+    const root = el('div', 'retours');
+    root.setAttribute('data-retours', '');
+    Object.entries(R.theme || {}).forEach(([k, v]) => root.style.setProperty(k, v));
+    const openBtn = bouton('retours-ouvrir', 'Tell Claude', 'Note a fix for Claude');
+    const panel = el('section', 'retours-panneau');
+    panel.hidden = true;
+    panel.setAttribute('aria-label', 'Note a fix');
 
-    const tete = el('div', 'retours-tete');
-    const titre = el('strong', 'retours-titre', 'Dire à Claude');
-    const onglets = el('div', 'retours-onglets');
-    const ongletNoter = bouton('retours-onglet is-actif', 'Noter');
-    const ongletSuivi = bouton('retours-onglet', 'Suivi');
-    const fermer = bouton('retours-fermer', '×', 'Fermer');
-    onglets.append(ongletNoter, ongletSuivi);
-    tete.append(titre, onglets, fermer);
+    const head = el('div', 'retours-tete');
+    const title = el('strong', 'retours-titre', 'Tell Claude');
+    const tabs = el('div', 'retours-onglets');
+    const tabNote = bouton('retours-onglet is-actif', 'Note');
+    const tabTrack = bouton('retours-onglet', 'Track');
+    const closeBtn = bouton('retours-fermer', '×', 'Close');
+    tabs.append(tabNote, tabTrack);
+    head.append(title, tabs, closeBtn);
 
-    // -- noter --
-    const vueNoter = el('div', 'retours-vue');
+    // -- note --
+    const viewNote = el('div', 'retours-vue');
     const zone = el('textarea', 'retours-texte');
     zone.rows = 6;
-    zone.placeholder = 'Ce qui ne va pas, ce qu’il faut changer… (ou dicte avec le micro)';
-    zone.value = store.get(BROUILLON) || '';
-    zone.addEventListener('input', () => store.set(BROUILLON, zone.value));
-    const outils = el('div', 'retours-outils');
-    const micro = bouton('retours-micro', 'Dicter', 'Dicter au micro');
-    const pointer = bouton('retours-pointer', 'Pointer', 'Pointer un élément de la page');
-    const urgent = el('label', 'retours-urgent');
-    const caseUrgent = el('input');
-    caseUrgent.type = 'checkbox';
-    urgent.append(caseUrgent, document.createTextNode(' Urgent'));
-    outils.append(micro, pointer, urgent);
-    const vise = el('p', 'retours-vise');
-    vise.hidden = true;
-    const pied = el('div', 'retours-pied');
-    const envoyer = bouton('retours-envoyer', 'Envoyer');
-    const etat = el('p', 'retours-etat');
-    etat.setAttribute('role', 'status');
-    pied.append(envoyer, etat);
-    vueNoter.append(zone, outils, vise, pied);
+    zone.placeholder = 'What's wrong, what needs changing… (or dictate with the mic)';
+    zone.value = store.get(DRAFT) || '';
+    zone.addEventListener('input', () => store.set(DRAFT, zone.value));
+    const tools = el('div', 'retours-outils');
+    const micBtn = bouton('retours-micro', 'Dictate', 'Dictate to microphone');
+    const pointBtn = bouton('retours-pointer', 'Point', 'Point to a page element');
+    const urgentLbl = el('label', 'retours-urgent');
+    const urgentChk = el('input');
+    urgentChk.type = 'checkbox';
+    urgentLbl.append(urgentChk, document.createTextNode(' Urgent'));
+    tools.append(micBtn, pointBtn, urgentLbl);
+    const aimed = el('p', 'retours-vise');
+    aimed.hidden = true;
+    const footer = el('div', 'retours-pied');
+    const sendBtn = bouton('retours-envoyer', 'Send');
+    const statusEl = el('p', 'retours-etat');
+    statusEl.setAttribute('role', 'status');
+    footer.append(sendBtn, statusEl);
+    viewNote.append(zone, tools, aimed, footer);
 
-    // -- suivi --
-    const vueSuivi = el('div', 'retours-vue');
-    vueSuivi.hidden = true;
-    const outilsSuivi = el('div', 'retours-outils');
-    const rafraichir = bouton('retours-petit', 'Rafraîchir');
-    const toutCopier = bouton('retours-petit', 'Copier les ouverts');
-    outilsSuivi.append(rafraichir, toutCopier);
-    const liste = el('ol', 'retours-liste');
-    vueSuivi.append(outilsSuivi, liste);
+    // -- track --
+    const viewTrack = el('div', 'retours-vue');
+    viewTrack.hidden = true;
+    const toolsTrack = el('div', 'retours-outils');
+    const refreshBtn = bouton('retours-petit', 'Refresh');
+    const copyAllBtn = bouton('retours-petit', 'Copy open');
+    toolsTrack.append(refreshBtn, copyAllBtn);
+    const list = el('ol', 'retours-liste');
+    viewTrack.append(toolsTrack, list);
 
-    panneau.append(tete, vueNoter, vueSuivi);
-    racine.append(panneau, ouvrir);
-    document.body.append(racine);
+    panel.append(head, viewNote, viewTrack);
+    root.append(panel, openBtn);
+    document.body.append(root);
 
-    const montrer = (vue) => {
-        vueNoter.hidden = vue !== 'noter';
-        vueSuivi.hidden = vue !== 'suivi';
-        ongletNoter.classList.toggle('is-actif', vue === 'noter');
-        ongletSuivi.classList.toggle('is-actif', vue === 'suivi');
-        if (vue === 'suivi') charger();
+    const show = (view) => {
+        viewNote.hidden = view !== 'note';
+        viewTrack.hidden = view !== 'track';
+        tabNote.classList.toggle('is-actif', view === 'note');
+        tabTrack.classList.toggle('is-actif', view === 'track');
+        if (view === 'track') load();
     };
-    ongletNoter.addEventListener('click', () => montrer('noter'));
-    ongletSuivi.addEventListener('click', () => montrer('suivi'));
-    ouvrir.addEventListener('click', () => {
-        panneau.hidden = !panneau.hidden;
-        ouvrir.setAttribute('aria-expanded', String(!panneau.hidden));
-        if (!panneau.hidden && !vueNoter.hidden) zone.focus();
+    tabNote.addEventListener('click', () => show('note'));
+    tabTrack.addEventListener('click', () => show('track'));
+    openBtn.addEventListener('click', () => {
+        panel.hidden = !panel.hidden;
+        openBtn.setAttribute('aria-expanded', String(!panel.hidden));
+        if (!panel.hidden && !viewNote.hidden) zone.focus();
     });
-    fermer.addEventListener('click', () => { panneau.hidden = true; arreterMicro(); });
+    closeBtn.addEventListener('click', () => { panel.hidden = true; stopMic(); });
 
-    const dire = (texte, classe = '') => { etat.textContent = texte; etat.className = `retours-etat ${classe}`; };
+    const say = (text, cls = '') => { statusEl.textContent = text; statusEl.className = `retours-etat ${cls}`; };
 
-    // ---------- La dictée (Web Speech API) ----------
+    // ---------- Dictation (Web Speech API) ----------
     const Reco = window.SpeechRecognition || window.webkitSpeechRecognition;
     let reco = null;
     let base = '';
-    const arreterMicro = () => { if (reco) { reco.stop(); } };
+    const stopMic = () => { if (reco) { reco.stop(); } };
     if (!Reco || !isSecureContext) {
-        micro.disabled = true;
-        micro.title = 'Dictée indisponible ici (il faut Chrome ou Edge, en https ou localhost). Le micro du clavier marche aussi.';
+        micBtn.disabled = true;
+        micBtn.title = 'Dictation unavailable here (requires Chrome or Edge, on https or localhost). Your keyboard mic also works.';
     } else {
-        micro.addEventListener('click', () => {
-            if (reco) { arreterMicro(); return; }
+        micBtn.addEventListener('click', () => {
+            if (reco) { stopMic(); return; }
             reco = new Reco();
             reco.lang = 'fr-FR';
             reco.continuous = true;
             reco.interimResults = true;
             base = zone.value ? zone.value.replace(/\s*$/, ' ') : '';
-            let fixe = '';
+            let fixed = '';
             reco.onresult = (e) => {
-                let provisoire = '';
+                let interim = '';
                 for (let i = e.resultIndex; i < e.results.length; i++) {
                     const t = e.results[i][0].transcript;
-                    if (e.results[i].isFinal) fixe += t; else provisoire += t;
+                    if (e.results[i].isFinal) fixed += t; else interim += t;
                 }
-                zone.value = base + fixe + provisoire;
-                store.set(BROUILLON, zone.value);
+                zone.value = base + fixed + interim;
+                store.set(DRAFT, zone.value);
             };
-            reco.onend = () => { reco = null; micro.classList.remove('is-actif'); micro.textContent = 'Dicter'; };
-            reco.onerror = (e) => dire(e.error === 'not-allowed' ? 'Micro refusé par le navigateur.' : `Dictée : ${e.error}`, 'is-erreur');
+            reco.onend = () => { reco = null; micBtn.classList.remove('is-actif'); micBtn.textContent = 'Dictate'; };
+            reco.onerror = (e) => say(e.error === 'not-allowed' ? 'Mic denied by browser.' : `Dictation: ${e.error}`, 'is-erreur');
             reco.start();
-            micro.classList.add('is-actif');
-            micro.textContent = 'Stop';
+            micBtn.classList.add('is-actif');
+            micBtn.textContent = 'Stop';
         });
     }
 
-    // ---------- Pointer un élément : le prochain clic sur la page le désigne ----------
-    let marque = null;
-    pointer.addEventListener('click', () => {
-        dire('Clique sur l’élément concerné…');
+    // ---------- Point element: next click on page designates it ----------
+    let mark = null;
+    pointBtn.addEventListener('click', () => {
+        say('Click on the element…');
         document.documentElement.classList.add('retours-visee');
-        const viser = (e) => {
+        const aim = (e) => {
             if (e.target.closest('[data-retours]')) return;
             e.preventDefault();
             e.stopPropagation();
-            document.removeEventListener('click', viser, true);
+            document.removeEventListener('click', aim, true);
             document.documentElement.classList.remove('retours-visee');
-            pointe = decrire(e.target);
-            if (marque) marque.classList.remove('retours-marque');
-            marque = e.target;
-            marque.classList.add('retours-marque');
-            vise.hidden = false;
-            vise.textContent = `Élément : ${pointe.chemin}${pointe.texte ? ` « ${pointe.texte.slice(0, 60)} »` : ''}`;
-            dire('');
+            pointed = describe(e.target);
+            if (mark) mark.classList.remove('retours-marque');
+            mark = e.target;
+            mark.classList.add('retours-marque');
+            aimed.hidden = false;
+            aimed.textContent = `Element: ${pointed.chemin}${pointed.texte ? ` « ${pointed.texte.slice(0, 60)} »` : ''}`;
+            say('');
             zone.focus();
         };
-        document.addEventListener('click', viser, true);
+        document.addEventListener('click', aim, true);
     });
 
-    // ---------- Envoyer ----------
+    // ---------- Send ----------
     const page = () => location.pathname.split('/').pop() || 'index.html';
-    envoyer.addEventListener('click', async () => {
-        const texte = zone.value.trim();
-        if (!texte) { dire('Écris (ou dicte) d’abord ce qu’il faut corriger.', 'is-erreur'); return; }
-        arreterMicro();
-        envoyer.disabled = true;
-        dire('Envoi…');
-        // une suite (« Pas bon », « Répondre ») : le nouveau ticket renvoie à l'ancien, qui passe en refusé
-        const suite = Number(zone.dataset.suite) || null;
+    sendBtn.addEventListener('click', async () => {
+        const text = zone.value.trim();
+        if (!text) { say('Write (or dictate) what needs fixing first.', 'is-erreur'); return; }
+        stopMic();
+        sendBtn.disabled = true;
+        say('Sending…');
+        // follow-up ("Not good", "Reply"): new ticket refers to old one, which becomes refused
+        const followUp = Number(zone.dataset.suite) || null;
         try {
             const [t] = await api('tickets', {
                 method: 'POST',
                 prefer: 'return=representation',
-                body: { texte, page: page() + location.hash, url: location.href.slice(0, 1000), app, contexte: contexte(), priorite: caseUrgent.checked ? 'urgente' : 'normale', suite_de: suite }
+                body: { texte: text, page: page() + location.hash, url: location.href.slice(0, 1000), app, contexte: context(), priorite: urgentChk.checked ? 'urgente' : 'normale', suite_de: followUp }
             });
-            if (suite) { delete zone.dataset.suite; await maj(suite, { statut: 'refuse' }); }
+            if (followUp) { delete zone.dataset.suite; await update(followUp, { statut: 'refuse' }); }
             zone.value = '';
-            store.drop(BROUILLON);
-            caseUrgent.checked = false;
-            pointe = null;
-            vise.hidden = true;
-            if (marque) { marque.classList.remove('retours-marque'); marque = null; }
-            dire(`Ticket #${t.id} envoyé.`, 'is-ok');
+            store.drop(DRAFT);
+            urgentChk.checked = false;
+            pointed = null;
+            aimed.hidden = true;
+            if (mark) { mark.classList.remove('retours-marque'); mark = null; }
+            say(`Ticket #${t.id} sent.`, 'is-ok');
         } catch (err) {
-            dire(`Pas envoyé : ${err.message}. Le texte est gardé.`, 'is-erreur');
+            say(`Not sent: ${err.message}. Text kept.`, 'is-erreur');
         } finally {
-            envoyer.disabled = false;
+            sendBtn.disabled = false;
         }
     });
 
-    // ---------- Le suivi : les tickets, leur statut, la réponse de Claude ----------
-    const STATUTS = { nouveau: 'À faire', en_cours: 'En cours', a_verifier: 'À vérifier', question: 'Question', fait: 'Fait', refuse: 'Refusé' };
-    const enTexte = (t) => `#${t.id} [${STATUTS[t.statut] || t.statut}${t.priorite === 'urgente' ? ', urgent' : ''}] ${t.page || ''}\n${t.texte}`
-        + `\nContexte : ${JSON.stringify(t.contexte)}${t.reponse ? `\nRéponse : ${t.reponse}` : ''}`;
-    const copier = async (texte, n) => {
-        try { await navigator.clipboard.writeText(texte); dire(`${n} copié${n > 1 ? 's' : ''}.`, 'is-ok'); } catch { dire('Copie refusée par le navigateur.', 'is-erreur'); }
+    // ---------- Track: tickets, their status, Claude's reply ----------
+    const STATUTS = { nouveau: 'To do', en_cours: 'In progress', a_verifier: 'To verify', question: 'Question', fait: 'Done', refuse: 'Refused' };
+    const asText = (t) => `#${t.id} [${STATUTS[t.statut] || t.statut}${t.priorite === 'urgente' ? ', urgent' : ''}] ${t.page || ''}\n${t.texte}`
+        + `\nContext: ${JSON.stringify(t.contexte)}${t.reponse ? `\nReply: ${t.reponse}` : ''}`;
+    const copy = async (text, n) => {
+        try { await navigator.clipboard.writeText(text); say(`${n} copied.`, 'is-ok'); } catch { say('Copy denied by browser.', 'is-erreur'); }
     };
     let tickets = [];
-    async function charger() {
-        liste.replaceChildren(el('li', 'retours-vide', 'Chargement…'));
+    async function load() {
+        list.replaceChildren(el('li', 'retours-vide', 'Loading…'));
         try {
             tickets = await api(`tickets?select=*&app=eq.${app}&order=cree_le.desc&limit=40`);
         } catch (err) {
-            liste.replaceChildren(el('li', 'retours-vide', `Impossible de charger : ${err.message}`));
+            list.replaceChildren(el('li', 'retours-vide', `Cannot load: ${err.message}`));
             return;
         }
-        liste.replaceChildren();
-        if (!tickets.length) liste.append(el('li', 'retours-vide', 'Aucun ticket pour l’instant.'));
+        list.replaceChildren();
+        if (!tickets.length) list.append(el('li', 'retours-vide', 'No tickets yet.'));
         tickets.forEach((t) => {
             const li = el('li', `retours-ticket is-${t.statut}`);
-            const haut = el('div', 'retours-ticket-haut');
-            haut.append(el('span', 'retours-statut', STATUTS[t.statut] || t.statut), el('span', 'retours-meta',
+            const top = el('div', 'retours-ticket-haut');
+            top.append(el('span', 'retours-statut', STATUTS[t.statut] || t.statut), el('span', 'retours-meta',
                 `#${t.id} · ${new Date(t.cree_le).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })} · ${t.page || ''}${t.priorite === 'urgente' ? ' · urgent' : ''}`));
-            li.append(haut, el('p', 'retours-ticket-texte', t.texte));
+            li.append(top, el('p', 'retours-ticket-texte', t.texte));
             if (t.reponse) {
-                const rep = el('p', 'retours-reponse');
-                rep.append(el('strong', null, 'Claude : '), document.createTextNode(t.reponse));
-                li.append(rep);
+                const reply = el('p', 'retours-reponse');
+                reply.append(el('strong', null, 'Claude: '), document.createTextNode(t.reponse));
+                li.append(reply);
             }
             const actions = el('div', 'retours-actions');
-            const cp = bouton('retours-petit', 'Copier');
-            cp.addEventListener('click', () => copier(enTexte(t), 1));
-            actions.append(cp);
+            const cpBtn = bouton('retours-petit', 'Copy');
+            cpBtn.addEventListener('click', () => copy(asText(t), 1));
+            actions.append(cpBtn);
             if (t.statut === 'a_verifier' || t.statut === 'question') {
-                const ok = bouton('retours-petit is-ok', 'C’est bon');
-                ok.addEventListener('click', async () => { await maj(t.id, { statut: 'fait' }); charger(); });
-                const pasBon = bouton('retours-petit', t.statut === 'question' ? 'Répondre' : 'Pas bon');
-                pasBon.addEventListener('click', () => {
-                    montrer('noter');
-                    zone.value = `Suite du ticket #${t.id} : `;
+                const okBtn = bouton('retours-petit is-ok', 'Good');
+                okBtn.addEventListener('click', async () => { await update(t.id, { statut: 'fait' }); load(); });
+                const notGoodBtn = bouton('retours-petit', t.statut === 'question' ? 'Reply' : 'Not good');
+                notGoodBtn.addEventListener('click', () => {
+                    show('note');
+                    zone.value = `Follow-up to ticket #${t.id}: `;
                     zone.dataset.suite = String(t.id);
                     zone.focus();
                 });
-                actions.append(ok, pasBon);
+                actions.append(okBtn, notGoodBtn);
             }
             li.append(actions);
-            liste.append(li);
+            list.append(li);
         });
     }
-    const maj = async (id, champs) => {
-        try { await api(`tickets?id=eq.${id}`, { method: 'PATCH', body: champs }); } catch (err) { dire(err.message, 'is-erreur'); }
+    const update = async (id, fields) => {
+        try { await api(`tickets?id=eq.${id}`, { method: 'PATCH', body: fields }); } catch (err) { say(err.message, 'is-erreur'); }
     };
-    rafraichir.addEventListener('click', charger);
-    // pour le tableau de bord : ouvrir le panneau sur une app donnée
+    refreshBtn.addEventListener('click', load);
+    // for dashboard: open panel on a given app
     window.Retours = {
-        ouvrir(cible, vue = 'noter') {
-            if (cible) app = cible;
-            titre.textContent = cible && cible !== R.app ? `Dire à Claude · ${cible}` : 'Dire à Claude';
-            panneau.hidden = false;
-            montrer(vue);
-            if (vue === 'noter') zone.focus();
+        ouvrir(target, view = 'note') {
+            if (target) app = target;
+            title.textContent = target && target !== R.app ? `Tell Claude · ${target}` : 'Tell Claude';
+            panel.hidden = false;
+            show(view);
+            if (view === 'note') zone.focus();
         }
     };
-    toutCopier.addEventListener('click', () => {
-        const ouverts = tickets.filter((t) => !['fait', 'refuse'].includes(t.statut));
-        copier(ouverts.map(enTexte).join('\n\n---\n\n'), ouverts.length);
+    copyAllBtn.addEventListener('click', () => {
+        const open = tickets.filter((t) => !['fait', 'refuse'].includes(t.statut));
+        copy(open.map(asText).join('\n\n---\n\n'), open.length);
     });
 })();

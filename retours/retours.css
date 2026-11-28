@@ -1,6 +1,6 @@
-/* ---------- Les retours (retours.js) : le bouton « Dire à Claude » et son panneau ----------
-   Seulement dans un navigateur activé (?retours=<jeton>). En bas à droite, au-dessus de tout ; sombre de jour
-   comme de nuit, l'orange couchant pour l'action. Rien ne bouge au survol : couleur et bordure seulement. */
+/* ---------- Feedback widget (retours.js): "Tell Claude" button and panel ----------
+   Only in an activated browser (?retours=<token>). Bottom right, above everything; dark day
+   and night, sunset orange for action. Nothing moves on hover: color and border only. */
 .retours {
     position: fixed;
     right: 14px;
@@ -10,7 +10,7 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 10px;
-    /* le thème : chaque app règle ces variables (window.RETOURS.theme) ; les défauts sont ceux de Lancoli Studio */
+    /* theme: each app sets these variables (window.RETOURS.theme); defaults are Lancoli Studio's */
     --r-accent: var(--retours-accent, var(--hit, #f58a2e));
     --r-sur-accent: var(--retours-sur-accent, #160c06);
     --r-fond: var(--retours-fond, #141210);
@@ -280,7 +280,7 @@
     gap: 6px
 }
 
-/* « Pointer » : la page entière vise ; l'élément choisi garde un liseré */
+/* "Point": whole page aims; chosen element keeps a border */
 html.retours-visee,
 html.retours-visee * {
     cursor: crosshair !important
@@ -304,7 +304,7 @@ html.retours-visee * {
 }
 
 @media (max-width: 760px) {
-    /* le bouton flottant Réglages est en bas à gauche ; le lecteur en haut */
+    /* floating Settings button is bottom left; player is top */
     .retours {
         right: 10px;
         bottom: 10px
